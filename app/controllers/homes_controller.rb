@@ -65,7 +65,7 @@ class HomesController < ApplicationController
   def test_ftp
    
     sftp1=Net::SFTP
-    sftp1.start('http://integra.ing.puc.cl',:port =>21,:user=> 'grupo2', :password => 'apijd9292') do |sftp|
+    sftp1.start('integra.ing.puc.cl',:port =>21,:user=> 'grupo2', :password => 'apijd9292') do |sftp|
         @status=sftp.status
     end
     
