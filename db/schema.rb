@@ -13,11 +13,6 @@
 
 ActiveRecord::Schema.define(version: 20140410172032) do
 
-  create_table "as", force: true do |t|
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
-
   create_table "homes", force: true do |t|
     t.datetime "created_at"
     t.datetime "updated_at"

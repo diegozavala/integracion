@@ -63,9 +63,11 @@ class HomesController < ApplicationController
   end
   
   def test_ftp
+    require 'rubygems' 
+    require 'net/sftp' 
    
-    sftp1=Net::SFTP
-    sftp1.start('integra.ing.puc.cl',:port =>21,:user=> 'grupo2', :password => 'apijd9292') do |sftp|
+    sftp2=Net::SFTP
+    sftp2.start('integra.ing.puc.cl',:port =>22,:user=> 'grupo2', :password => 'apijd9292') do |sftp|
         @status=sftp.status
     end
     
