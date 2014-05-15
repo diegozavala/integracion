@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140410172032) do
+ActiveRecord::Schema.define(version: 20140514211137) do
 
   create_table "homes", force: true do |t|
     t.datetime "created_at"
@@ -756,6 +756,11 @@ ActiveRecord::Schema.define(version: 20140410172032) do
     t.string   "description"
     t.boolean  "default_tax",        default: false
     t.integer  "zone_members_count", default: 0
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "stocks", force: true do |t|
     t.datetime "created_at"
     t.datetime "updated_at"
   end
