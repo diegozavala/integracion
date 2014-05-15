@@ -1,19 +1,30 @@
 %h1 
 	Almacenes
-%table
+%table.table
 	%tr
 		%th Grupo
 		%th id
-		%th Pulmon
-		%th Despacho
-		%th Recepcion
+		%th Tipo
 		%th Espacio total
 		%th Espacio Utilizado
-- @request.each do |almacen|
-	= almacen["_id"]
+	- @request.each do |almacen|
+		%tr
+			%td= almacen["grupo"]
+			%td= almacen["_id"]
+			- if almacen["pulmon"]==true
+				%td Pulmon	
+			- elsif almacen["despacho"]==true
+				%td Despacho
+			- elsif almacen["recepcion"]==true
+				%td Recepcion
+			- else
+				%td Otro
+			%td= almacen["totalSpace"]
+			%td= almacen["usedSpace"]
+			%td
+				= link_to 'Ver SKUS con stock', stock_skus_path(almacen: almacen["_id"]), class: 'btn btn-primary'
+
 %h2 Acciones:
--# params almacen_id
-= link_to 'Ver SKUS con stock', stock_skus_path
 %br
 -#params almacenid, sku y limit (opcional)
 = link_to 'Ver stock de un SKU', stock_sku_path

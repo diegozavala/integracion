@@ -4,7 +4,7 @@ Integra2::Application.routes.draw do
 
   get 'stocks' => 'stock#index', as: 'stock'
   get 'stocks/almacenes' => 'stock#almacenes', as: 'stock_almacenes'
-  get 'stocks/skus_with_stocks' => 'stock#skus_with_stocks', as: 'stock_skus'
+  get 'stocks/skus_with_stock' => 'stock#skus_with_stock', as: 'stock_skus'
   get 'stocks/sku' => 'stock#sku', as: 'stock_sku'
   # This line mounts Spree's routes at the root of your application.
   # This means, any requests to URLs such as /products, will go to Spree::ProductsController.
