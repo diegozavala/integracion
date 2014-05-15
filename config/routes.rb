@@ -2,10 +2,10 @@ Integra2::Application.routes.draw do
 
   resources :homes
 
-  get 'stocks' => 'stock#index', as: 'stock'
-  get 'stocks/almacenes' => 'stock#almacenes', as: 'stock_almacenes'
-  get 'stocks/skus_with_stock' => 'stock#skus_with_stock', as: 'stock_skus'
-  get 'stocks/sku' => 'stock#sku', as: 'stock_sku'
+  get 'gestion_de_stocks' => 'stock#index', as: 'stock'
+  get 'gestion_de_stocks/almacenes' => 'stock#almacenes', as: 'stock_almacenes'
+  get 'gestion_de_stocks/almacenes/:almacen' => 'stock#almacen', as: 'stock_almacen'
+  get 'gestion_de_stocks/almacenes/:almacen/sku/:sku' => 'stock#products', as: 'stock_products'
   # This line mounts Spree's routes at the root of your application.
   # This means, any requests to URLs such as /products, will go to Spree::ProductsController.
   # If you would like to change where this engine is mounted, simply change the :at option to something different.

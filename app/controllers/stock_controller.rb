@@ -8,12 +8,12 @@ class StockController < ApplicationController
 		@request = JSON.parse(RestClient.get Integra2::STOCK_API_URL+'almacenes', {:Authorization => generate_auth_hash('GET')})
 	end
 
-	def skus_with_stock
+	def almacen
 		@almacen = params[:almacen]
-		@request = JSON.parse(RestClient.get Integra2::STOCK_API_URL+'skusWithStock', {:Authorization => generate_auth_hash('GET'+@almacen), :params=>{:almacenId=>@almacen}})
+		@skus_with_stock = JSON.parse(RestClient.get Integra2::STOCK_API_URL+'skusWithStock', {:Authorization => generate_auth_hash('GET'+@almacen), :params=>{:almacenId=>@almacen}})
 	end
 
-	def sku
+	def products
 		@sku = params[:sku]
 		@request = JSON.parse(RestClient.get Integra2::STOCK_API_URL+'stock', {:Authorization => generate_auth_hash('GET'+params[:almacen]+params[:sku]), :params=>{:almacenId=>params[:almacen], :sku=>params[:sku]}})
 	end
