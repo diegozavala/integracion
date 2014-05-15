@@ -1,0 +1,19 @@
+%h1 
+	Almacenes
+%table
+	%tr
+		%th Grupo
+		%th id
+		%th Pulmon
+		%th Despacho
+		%th Recepcion
+		%th Espacio total
+		%th Espacio Utilizado
+- @request.each do |almacen|
+	= almacen["_id"]
+%h2 Acciones:
+-# params almacen_id
+= link_to 'Ver SKUS con stock', stock_skus_path
+%br
+-#params almacenid, sku y limit (opcional)
+= link_to 'Ver stock de un SKU', stock_sku_path
