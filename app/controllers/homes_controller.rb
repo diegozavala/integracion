@@ -1080,7 +1080,7 @@ data.each do |d|
 
 end
 
-<<<<<<< HEAD
+
 #url_taxon = 'http://integra2.ing.puc.cl/store/api/taxonomies/8/taxons' 
  # hash.each do |hash|
  
