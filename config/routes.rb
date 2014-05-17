@@ -1,5 +1,7 @@
 Integra2::Application.routes.draw do
 
+  resources :ftp_pedidos
+
   resources :homes
 
   # This line mounts Spree's routes at the root of your application.

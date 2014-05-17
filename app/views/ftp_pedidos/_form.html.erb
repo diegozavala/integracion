@@ -1,0 +1,29 @@
+<%= form_for(@ftp_pedido) do |f| %>
+  <% if @ftp_pedido.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(@ftp_pedido.errors.count, "error") %> prohibited this ftp_pedido from being saved:</h2>
+
+      <ul>
+      <% @ftp_pedido.errors.full_messages.each do |msg| %>
+        <li><%= msg %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="field">
+    <%= f.label :nombre_archivo %><br>
+    <%= f.text_field :nombre_archivo %>
+  </div>
+  <div class="field">
+    <%= f.label :numero_pedido %><br>
+    <%= f.number_field :numero_pedido %>
+  </div>
+  <div class="field">
+    <%= f.label :fecha_procesado %><br>
+    <%= f.date_select :fecha_procesado %>
+  </div>
+  <div class="actions">
+    <%= f.submit %>
+  </div>
+<% end %>

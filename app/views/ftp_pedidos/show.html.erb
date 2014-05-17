@@ -1,0 +1,19 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <strong>Nombre archivo:</strong>
+  <%= @ftp_pedido.nombre_archivo %>
+</p>
+
+<p>
+  <strong>Numero pedido:</strong>
+  <%= @ftp_pedido.numero_pedido %>
+</p>
+
+<p>
+  <strong>Fecha procesado:</strong>
+  <%= @ftp_pedido.fecha_procesado %>
+</p>
+
+<%= link_to 'Edit', edit_ftp_pedido_path(@ftp_pedido) %> |
+<%= link_to 'Back', ftp_pedidos_path %>
