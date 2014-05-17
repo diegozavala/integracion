@@ -1080,12 +1080,15 @@ data.each do |data|
 
 end
 
-#url_taxon = 'http://integra2.ing.puc.cl/store/api/taxonomies/7/taxons' 
- # hash.each do |hash|
+Spree::Product.destroy_all
+Spree::Taxon.destroy_all
+
+url_taxon = 'http://integra2.ing.puc.cl/store/api/taxonomies/7/taxons' 
+  hash.each do |hash|
  
- # (HTTParty.post url_taxon, 
- #   :body => { 'taxon[name]' => hash[0], 'taxon[id]' => hash[1] ,'token' => "7771e9b7bd0676c2d5b4e2f424328b52a82add010ea9b1c2"})
- # end 
+  (HTTParty.post url_taxon, 
+    :body => { 'taxon[name]' => hash[0], 'taxon[id]' => hash[1] ,'token' => "7771e9b7bd0676c2d5b4e2f424328b52a82add010ea9b1c2"})
+  end 
 
 
 
@@ -1099,7 +1102,7 @@ require 'open-uri'
 data.each do |data|
 arr=[]
 data['categorias'].each do |cat|
-arr<< hash[cat]+1512
+arr<< hash[cat]+1703
  end
 open('public/imagenes/'+a.to_s+'.png', 'wb') do |file|
   file << open(data['imagen']).read
