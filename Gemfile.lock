@@ -290,13 +290,7 @@ PLATFORMS
 DEPENDENCIES
   coffee-rails (~> 4.0.0)
   haml (~> 4.0.5)
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD
-=======
->>>>>>> e0e2c791c45e2c7d6c6f67361eec65631c707d4e
   httparty
->>>>>>> 20cd33c114246375f9685ad063718cbfdd6210d4
   jbuilder (~> 1.2)
   jquery-rails
   money (= 6.0.1)

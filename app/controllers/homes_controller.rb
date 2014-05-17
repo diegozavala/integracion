@@ -1088,19 +1088,19 @@ end
  # end 
 
 
-arr=[]
-  data['categorias'].each do |cat|
-arr<< hash[cat]+1512
-  end
+
 
 
     url_product = 'http://integra2.ing.puc.cl/store/api/products'
 
 a=0
 require 'open-uri'
-Spree::Product.destroy_all
+#Spree::Product.destroy_all
 data.each do |data|
-
+arr=[]
+data['categorias'].each do |cat|
+arr<< hash[cat]+1512
+ end
 open('public/imagenes/'+a.to_s+'.png', 'wb') do |file|
   file << open(data['imagen']).read
 end
@@ -1163,27 +1163,7 @@ end
             c.save!
               
             # y procesar
-            doc = Nokogiri::XML(c.contenido)
-            root = doc.root
-            ped = doc.at_xpath("/*/Pedidos")
-            fecha = ped["fecha"]
-            hora = ped["hora"]
-            rut = doc.at_xpath("/*/Pedidos/rut").text
-            dirId = doc.at_xpath("/*/Pedidos/direccionId").text
-            fecha_despacho = doc.at_xpath("/*/Pedidos/fecha").text
-      
-            pedido = Pedido.create(:fecha => fecha, :hora => hora, :rut => rut, :direccionId => dirId )
-      
-      
-            pedi = doc.xpath("//Pedido")
-            pedi.each do |p|
-              sku = p["sku"]
-              
-              cant = p["cantidad"]
-              un = p["unidad"]
-              prod = Producto.find_or_create_by(sku: sku)
-              PedidoProducto.create(:pedido_id => pedido.id, :producto_id => prod.id, :cantidad => cant , :unidad => un)
-            end
+                
               
           end
       
@@ -1196,10 +1176,18 @@ end
             
       end
       
+      c= FtpPedido.first
+      doc = Nokogiri::XML(c.contenido)
+      root = doc.root
+      ped = doc.at_xpath("/*/Pedidos")
+      fecha = ped["fecha"]
+      hora = ped["hora"]
+      rut = doc.at_xpath("/*/Pedidos/rut").text
+      dirId = doc.at_xpath("/*/Pedidos/direccionId").text
+      fecha_despacho = doc.at_xpath("/*/Pedidos/fecha").text
       
-      
-      
-      
+      pedidos = doc.at_xpath("/*/Pedidos/Pedido")
+      @status = pedidos
       
       
     
