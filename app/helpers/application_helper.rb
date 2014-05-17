@@ -1,5 +1,5 @@
 module ApplicationHelper
-	
+
 	def get_almacenes
 		@request = JSON.parse(RestClient.get Integra2::STOCK_API_URL+'almacenes', {:Authorization => generate_auth_hash('GET')})
 	end
@@ -13,6 +13,7 @@ module ApplicationHelper
 			@request = JSON.parse(RestClient.get Integra2::STOCK_API_URL+'stock', {:Authorization => generate_auth_hash('GET'+almacen+sku), :params=>{:almacenId=>almacen, :sku=>sku}})
 		else
 			@request = JSON.parse(RestClient.get Integra2::STOCK_API_URL+'stock', {:Authorization => generate_auth_hash('GET'+almacen+sku), :params=>{:almacenId=>almacen, :sku=>sku, :limit=>limit}})
+		end
 	end
 
 	#metodos de la api por usar
@@ -38,4 +39,5 @@ module ApplicationHelper
 		hash  = Base64.encode64(OpenSSL::HMAC.digest('sha1', Integra2::STOCK_PRIVATE_KEY, action))
 		auth = 'UC '+Integra2::STOCK_PUBLIC_KEY+':'+hash
 	end
+
 end
