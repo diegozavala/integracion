@@ -1,0 +1,31 @@
+<h1>Listing ftp_pedidos</h1>
+
+<table>
+  <thead>
+    <tr>
+      <th>Nombre archivo</th>
+      <th>Numero pedido</th>
+      <th>Fecha procesado</th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @ftp_pedidos.each do |ftp_pedido| %>
+      <tr>
+        <td><%= ftp_pedido.nombre_archivo %></td>
+        <td><%= ftp_pedido.numero_pedido %></td>
+        <td><%= ftp_pedido.fecha_procesado %></td>
+        <td><%= link_to 'Show', ftp_pedido %></td>
+        <td><%= link_to 'Edit', edit_ftp_pedido_path(ftp_pedido) %></td>
+        <td><%= link_to 'Destroy', ftp_pedido, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<br>
+
+<%= link_to 'New Ftp pedido', new_ftp_pedido_path %>

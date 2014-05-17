@@ -1,0 +1,13 @@
+%h1= "Almacen: "+@almacen
+.col-md-2.col-md-offset-1
+	%table.table.table-bordered
+		%tr.info
+			%th SKU
+			%th Total
+			%th
+		- @skus_with_stock.each do |sku|
+			%tr
+				%td= sku["_id"]
+				%td= sku["total"]
+				%td= link_to 'Ver productos', stock_products_path(almacen: @almacen, sku: sku["_id"]), class: "btn btn-primary"
+-#Por ahora no acepta limit (opcional)

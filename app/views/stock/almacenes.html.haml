@@ -1,0 +1,30 @@
+%h1 
+	Almacenes
+.col-md-9.col-md-offset-1
+	%table.table.table-bordered
+		%tr.info
+			%th Grupo
+			%th id
+			%th Tipo
+			%th Espacio total
+			%th Espacio Utilizado
+			%th
+		- @request.each do |almacen|
+			%tr
+				%td= almacen["grupo"]
+				%td= almacen["_id"]
+				- if almacen["pulmon"]==true
+					%td Pulmon	
+				- elsif almacen["despacho"]==true
+					%td Despacho
+				- elsif almacen["recepcion"]==true
+					%td Recepcion
+				- else
+					%td Otro
+				%td= almacen["totalSpace"]
+				%td= almacen["usedSpace"]
+				%td
+					- if almacen["usedSpace"]==0
+						= link_to 'SKUS', stock_almacen_path(almacen: almacen["_id"]), class: 'btn btn-primary', disabled: 'disabled'
+					-else
+						= link_to 'SKUS', stock_almacen_path(almacen: almacen["_id"]), class: 'btn btn-primary'

@@ -1,0 +1,20 @@
+%h1= "SKU: "+@sku
+.col-md-2.col-md-offset-1	
+	%table.table.table-bordered.table-condensed
+		%tr.info
+			%th Grupo
+			%th id del Producto
+			%th Almacen
+			%th Direccion
+			%th Precio
+			%th Despachado
+			%th Costo
+		- @request.each do |p|
+			%tr
+				%td= p["grupo"]
+				%td= p["_id"]
+				%td= p["almacen"]
+				%td= p["direccion"]
+				%td= p["precio"]
+				%td= p["despachado"]
+				%td= p["costo"]
