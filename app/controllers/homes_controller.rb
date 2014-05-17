@@ -91,7 +91,27 @@ class HomesController < ApplicationController
             c.save!
               
             # y procesar
-                
+            doc = Nokogiri::XML(c.contenido)
+            root = doc.root
+            ped = doc.at_xpath("/*/Pedidos")
+            fecha = ped["fecha"]
+            hora = ped["hora"]
+            rut = doc.at_xpath("/*/Pedidos/rut").text
+            dirId = doc.at_xpath("/*/Pedidos/direccionId").text
+            fecha_despacho = doc.at_xpath("/*/Pedidos/fecha").text
+      
+            pedido = Pedido.create(:fecha => fecha, :hora => hora, :rut => rut, :direccionId => dirId )
+      
+      
+            pedi = doc.xpath("//Pedido")
+            pedi.each do |p|
+              sku = p["sku"]
+              
+              cant = p["cantidad"]
+              un = p["unidad"]
+              prod = Producto.find_or_create_by(sku: sku)
+              PedidoProducto.create(:pedido_id => pedido.id, :producto_id => prod.id, :cantidad => cant , :unidad => un)
+            end
               
           end
       
@@ -104,18 +124,10 @@ class HomesController < ApplicationController
             
       end
       
-      c= FtpPedido.first
-      doc = Nokogiri::XML(c.contenido)
-      root = doc.root
-      ped = doc.at_xpath("/*/Pedidos")
-      fecha = ped["fecha"]
-      hora = ped["hora"]
-      rut = doc.at_xpath("/*/Pedidos/rut").text
-      dirId = doc.at_xpath("/*/Pedidos/direccionId").text
-      fecha_despacho = doc.at_xpath("/*/Pedidos/fecha").text
       
-      pedidos = doc.at_xpath("/*/Pedidos/Pedido")
-      @status = pedidos
+      
+      
+      
       
       
     
