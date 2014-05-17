@@ -1068,9 +1068,9 @@ class HomesController < ApplicationController
 data = JSON.parse(jsonArray)
 i=0
 hash= Hash.new
-data.each do |data|
+data.each do |d|
 
-  data['categorias'].each do |cat|
+  d['categorias'].each do |cat|
     if not hash.any? { |key, value| key.include? cat }
       hash[cat]=i
       i=i+1
@@ -1080,21 +1080,13 @@ data.each do |data|
 
 end
 
-Spree::Product.destroy_all
-Spree::Taxon.destroy_all
-
-url_taxon = 'http://integra2.ing.puc.cl/store/api/taxonomies/7/taxons' 
-  hash.each do |hash|
+#url_taxon = 'http://integra2.ing.puc.cl/store/api/taxonomies/8/taxons' 
+ # hash.each do |hash|
  
-  (HTTParty.post url_taxon, 
-    :body => { 'taxon[name]' => hash[0], 'taxon[id]' => hash[1] ,'token' => "7771e9b7bd0676c2d5b4e2f424328b52a82add010ea9b1c2"})
-  end 
+  #(HTTParty.post url_taxon, 
+   # :body => { 'taxon[name]' => hash[0], 'taxon[id]' => hash[1] ,'token' => "7771e9b7bd0676c2d5b4e2f424328b52a82add010ea9b1c2"})
+  #end 
 
-
-
-
-
-    url_product = 'http://integra2.ing.puc.cl/store/api/products'
 
 a=0
 require 'open-uri'
@@ -1102,7 +1094,7 @@ require 'open-uri'
 data.each do |data|
 arr=[]
 data['categorias'].each do |cat|
-arr<< hash[cat]+1703
+arr<< hash[cat]+1947
  end
 open('public/imagenes/'+a.to_s+'.png', 'wb') do |file|
   file << open(data['imagen']).read
