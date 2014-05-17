@@ -1,0 +1,11 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  nombre_archivo: MyString
+  numero_pedido: 1
+  fecha_procesado: 2014-05-17
+
+two:
+  nombre_archivo: MyString
+  numero_pedido: 1
+  fecha_procesado: 2014-05-17

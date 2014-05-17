@@ -1,5 +1,7 @@
 Integra2::Application.routes.draw do
 
+  resources :ftp_pedidos
+
   resources :homes
 
   get 'gestion_de_stocks' => 'stock#index', as: 'stock'

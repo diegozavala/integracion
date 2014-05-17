@@ -11,7 +11,16 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140514211137) do
+ActiveRecord::Schema.define(version: 20140517162736) do
+
+  create_table "ftp_pedidos", force: true do |t|
+    t.string   "nombre_archivo"
+    t.integer  "numero_pedido"
+    t.date     "fecha_procesado"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.text     "contenido"
+  end
 
   create_table "homes", force: true do |t|
     t.datetime "created_at"
