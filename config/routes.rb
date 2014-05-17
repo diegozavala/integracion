@@ -8,7 +8,9 @@ Integra2::Application.routes.draw do
 
   resources :homes
 
-  get '/create_prod', to: 'homes#create_prod'
+
+  get 'create_prod' =>'homes#create_prod', as: 'create_prod'
+
 
   get 'gestion_de_stocks' => 'stock#index', as: 'stock'
   get 'gestion_de_stocks/almacenes' => 'stock#almacenes', as: 'stock_almacenes'
