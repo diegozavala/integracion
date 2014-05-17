@@ -54,4 +54,6 @@ gem 'net-sftp'
 
 gem 'whenever'
 
+gem 'httparty'
+
 
