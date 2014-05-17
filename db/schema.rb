@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140517162736) do
+ActiveRecord::Schema.define(version: 20140517202943) do
 
   create_table "ftp_pedidos", force: true do |t|
     t.string   "nombre_archivo"
@@ -23,6 +23,28 @@ ActiveRecord::Schema.define(version: 20140517162736) do
   end
 
   create_table "homes", force: true do |t|
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "pedidos", force: true do |t|
+    t.date     "fecha"
+    t.time     "hora"
+    t.text     "rut"
+    t.integer  "direccionId"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.date     "fecha_despacho"
+  end
+
+  create_table "pedidos_productos", id: false, force: true do |t|
+    t.integer "pedido_id"
+    t.integer "producto_id"
+    t.integer "sku"
+  end
+
+  create_table "productos", force: true do |t|
+    t.integer  "sku"
     t.datetime "created_at"
     t.datetime "updated_at"
   end

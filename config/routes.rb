@@ -1,5 +1,9 @@
 Integra2::Application.routes.draw do
 
+  resources :productos
+
+  resources :pedidos
+
   resources :ftp_pedidos
 
   resources :homes

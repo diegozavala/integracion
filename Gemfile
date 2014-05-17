@@ -54,4 +54,7 @@ gem 'net-sftp'
 
 gem 'whenever'
 
+#para xml
+gem 'nokogiri'
+
 

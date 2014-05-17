@@ -65,44 +65,64 @@ class HomesController < ApplicationController
  
 
   private
-    # Use callbacks to share common setup or constraints between actions.
-    def set_home
-      @home = Home.find(params[:id])
-    end
+  # Use callbacks to share common setup or constraints between actions.
+  def set_home
+    @home = Home.find(params[:id])
+  end
 
-    # Never trust parameters from the scary internet, only allow the white list through.
-    def home_params
-      params[:home]
-    end
+  # Never trust parameters from the scary internet, only allow the white list through.
+  def home_params
+    params[:home]
+  end
     
-    def test_ftp 
-      require 'net/sftp' 
+  def test_ftp 
+    require 'net/sftp' 
    
-      sftp2=Net::SFTP
-      sftp2.start('integra.ing.puc.cl','grupo2', :password => 'apijd9292') do |sftp|
+    sftp2=Net::SFTP
+    sftp2.start('integra.ing.puc.cl','grupo2', :password => 'apijd9292') do |sftp|
       
-        cont=0
-        sftp.dir.foreach("/home/grupo2/Pedidos") do |entry|
-          if entry.name.downcase.include? ".xml"
+      cont=0
+      sftp.dir.foreach("/home/grupo2/Pedidos") do |entry|
+        if entry.name.downcase.include? ".xml"
            
-            FtpPedido.find_or_create_by(nombre_archivo: entry.name, numero_pedido: entry.name[entry.name.index('_')+1..entry.name.index('.')-1] ) do |c|
-              c.contenido = sftp.download!("/home/grupo2/Pedidos/"+entry.name)
-              c.save!
-             
-              # y procesar
-            end
-      
+          FtpPedido.find_or_create_by(nombre_archivo: entry.name, numero_pedido: entry.name[entry.name.index('_')+1..entry.name.index('.')-1] ) do |c|
+            #bajo el contenido del archivo y lo guardo en contenido
+            c.contenido = sftp.download!("/home/grupo2/Pedidos/"+entry.name)
+            c.save!
+              
+            # y procesar
+                
+              
           end
+      
+        end
          
           
           
           
-          cont+=1
-        end
-        
+        cont+=1
+            
       end
+      
+      c= FtpPedido.first
+      doc = Nokogiri::XML(c.contenido)
+      root = doc.root
+      ped = doc.at_xpath("/*/Pedidos")
+      fecha = ped["fecha"]
+      hora = ped["hora"]
+      rut = doc.at_xpath("/*/Pedidos/rut").text
+      dirId = doc.at_xpath("/*/Pedidos/direccionId").text
+      fecha_despacho = doc.at_xpath("/*/Pedidos/fecha").text
+      
+      pedidos = doc.at_xpath("/*/Pedidos/Pedido")
+      @status = pedidos
+      
+      
     
+      
     end
+    
+  end
     
     
 end

@@ -283,6 +283,7 @@ DEPENDENCIES
   jquery-rails
   money (= 6.0.1)
   net-sftp
+  nokogiri
   rails (= 4.0.4)
   sass-rails (~> 4.0.2)
   sdoc
