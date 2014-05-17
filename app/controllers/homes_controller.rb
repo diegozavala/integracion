@@ -1088,10 +1088,10 @@ end
  # end 
 
 
-#arr=[]
- # data['categorias'].each do |cat|
-#arr<< hash[cat]+1512
- # end
+arr=[]
+  data['categorias'].each do |cat|
+arr<< hash[cat]+1512
+  end
 
 
     url_product = 'http://integra2.ing.puc.cl/store/api/products'
@@ -1114,7 +1114,7 @@ end
                                 :available_on => Time.now,
 
                                 
-                                :taxon_ids => [2,3]
+                                :taxon_ids => arr
                               )
 
 
