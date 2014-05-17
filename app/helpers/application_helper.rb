@@ -38,5 +38,4 @@ module ApplicationHelper
 		hash  = Base64.encode64(OpenSSL::HMAC.digest('sha1', Integra2::STOCK_PRIVATE_KEY, action))
 		auth = 'UC '+Integra2::STOCK_PUBLIC_KEY+':'+hash
 	end
-
 end
