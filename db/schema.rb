@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140517202943) do
+ActiveRecord::Schema.define(version: 20140517211459) do
 
   create_table "ftp_pedidos", force: true do |t|
     t.string   "nombre_archivo"
@@ -40,7 +40,8 @@ ActiveRecord::Schema.define(version: 20140517202943) do
   create_table "pedidos_productos", id: false, force: true do |t|
     t.integer "pedido_id"
     t.integer "producto_id"
-    t.integer "sku"
+    t.integer "cantidad"
+    t.text    "unidad"
   end
 
   create_table "productos", force: true do |t|
@@ -787,11 +788,6 @@ ActiveRecord::Schema.define(version: 20140517202943) do
     t.string   "description"
     t.boolean  "default_tax",        default: false
     t.integer  "zone_members_count", default: 0
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
-
-  create_table "stocks", force: true do |t|
     t.datetime "created_at"
     t.datetime "updated_at"
   end

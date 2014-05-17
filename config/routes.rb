@@ -11,6 +11,7 @@ Integra2::Application.routes.draw do
 
   get 'create_prod' =>'homes#create_prod', as: 'create_prod'
 
+
   get 'gestion_de_stocks' => 'stock#index', as: 'stock'
   get 'gestion_de_stocks/almacenes' => 'stock#almacenes', as: 'stock_almacenes'
   get 'gestion_de_stocks/almacenes/:almacen' => 'stock#almacen', as: 'stock_almacen'
