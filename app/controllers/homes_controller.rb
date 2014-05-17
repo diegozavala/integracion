@@ -1110,7 +1110,7 @@ end
                                 :available_on => Time.now,
 
                                 
-                                :taxon_ids => 
+                                :taxon_ids => arr
                               )
 
 
