@@ -1081,7 +1081,6 @@ data.each do |data|
 end
 
 Spree::Product.destroy_all
-Spree::Taxon.destroy_all
 
 url_taxon = 'http://integra2.ing.puc.cl/store/api/taxonomies/7/taxons' 
   hash.each do |hash|
