@@ -1,0 +1,24 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <strong>Fecha:</strong>
+  <%= @pedido.fecha %>
+</p>
+
+<p>
+  <strong>Hora:</strong>
+  <%= @pedido.hora %>
+</p>
+
+<p>
+  <strong>Rut:</strong>
+  <%= @pedido.rut %>
+</p>
+
+<p>
+  <strong>Direccionid:</strong>
+  <%= @pedido.direccionId %>
+</p>
+
+<%= link_to 'Edit', edit_pedido_path(@pedido) %> |
+<%= link_to 'Back', pedidos_path %>

@@ -1,5 +1,16 @@
 source 'https://rubygems.org'
 
+#haml
+gem 'haml', '~> 4.0.5'
+
+#for API requests
+gem 'rest-client', '~> 1.6.7'
+gem 'netrc', '~> 0.7.7'
+gem 'rdoc', '~> 4.1.1'
+
+#bootstrap
+gem 'twitter-bootstrap-rails', '~> 2.2.8'
+
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
 gem 'rails', '4.0.4'
 
@@ -53,5 +64,12 @@ gem 'spree_auth_devise', :git => 'https://github.com/spree/spree_auth_devise.git
 gem 'net-sftp'
 
 gem 'whenever'
+
+
+gem 'httparty'
+
+#para xml
+gem 'nokogiri'
+
 
 

@@ -7,8 +7,12 @@ require 'rails/all'
 Bundler.require(*Rails.groups)
 
 module Integra2
-  class Application < Rails::Application
-    
+  #GLOBAL CONSTANTS FOR STOCKS MANAGEMENT
+  STOCK_API_URL = 'http://bodega-integracion-2014.herokuapp.com/'
+  STOCK_PUBLIC_KEY = 'grupo2'
+  STOCK_PRIVATE_KEY = 'CvsDU4MT'
+
+  class Application < Rails::Application 
     config.to_prepare do
       # Load application's model / class decorators
       Dir.glob(File.join(File.dirname(__FILE__), "../app/**/*_decorator*.rb")) do |c|
