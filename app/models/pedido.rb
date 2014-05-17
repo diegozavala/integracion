@@ -1,3 +1,3 @@
 class Pedido < ActiveRecord::Base
-  has_many_and_belongs_to :partidos
+  has_many :productos, through: :pedido_producto
 end
