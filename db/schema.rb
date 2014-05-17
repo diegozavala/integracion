@@ -13,6 +13,11 @@
 
 ActiveRecord::Schema.define(version: 20140517162736) do
 
+  create_table "as", force: true do |t|
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
   create_table "ftp_pedidos", force: true do |t|
     t.string   "nombre_archivo"
     t.integer  "numero_pedido"
