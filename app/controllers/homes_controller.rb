@@ -86,10 +86,10 @@ class HomesController < ApplicationController
           if entry.name.downcase.include? ".xml"
            
             FtpPedido.find_or_create_by(nombre_archivo: entry.name, numero_pedido: entry.name[entry.name.index('_')+1..entry.name.index('.')-1] ) do |c|
-              
-              @status=sftp.download!("/home/grupo2/Pedidos/"+entry.name, "/pedidos")
-              @status=@status?@status+entry.name+"\n" : entry.name+"\n"
-              #descargar archivo a carpeta? y procesar
+              c.contenido = sftp.download!("/home/grupo2/Pedidos/"+entry.name)
+              c.save!
+             
+              # y procesar
             end
       
           end
