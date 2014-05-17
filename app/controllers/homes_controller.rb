@@ -1099,7 +1099,7 @@ require 'open-uri'
 data.each do |data|
 arr=[]
 data['categorias'].each do |cat|
-arr<< hash[cat]+1512
+arr<< hash[cat]+1703
  end
 open('public/imagenes/'+a.to_s+'.png', 'wb') do |file|
   file << open(data['imagen']).read
