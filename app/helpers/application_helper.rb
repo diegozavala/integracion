@@ -18,17 +18,22 @@ module ApplicationHelper
 
 	#metodos de la api por usar
 	def mover_stock (producto, almacen)
-		@request = JSON.parse(RestClient.get Integra2::STOCK_API_URL+'moveStock', {:Authorization => generate_auth_hash('POST'+producto+almacen), :params=>{:almacenId=>almacen, :productId=>producto}})
+		
+			response = RestClient.post Integra2::STOCK_API_URL+'moveStock', {:Authorization => generate_auth_hash('POST'+producto.to_s+almacen.to_s), :params=>{:almacenId=>almacen, :productoId=>producto}}
+			puts 'RESPONSE'
+			puts response.code
+			puts response.to_s
+			@request = JSON.parse(response)
 		#retorna Producto
 	end 
 
 	def mover_stock_bodega(producto, almacen)
-		@request = JSON.parse(RestClient.get Integra2::STOCK_API_URL+'moveStockBodega', {:Authorization => generate_auth_hash('POST'+producto+almacen), :params=>{:almacenId=>almacen, :productId=>producto}})
+		@request = JSON.parse(RestClient.post Integra2::STOCK_API_URL+'moveStockBodega', {:Authorization => generate_auth_hash('POST'+producto+almacen), :params=>{:almacenId=>almacen, :productoId=>producto}})
 		#retorna Producto
 	end
 
 	def despachar_stock(producto, direccion, precio, pedido)
-		@request = JSON.parse(RestClient.get Integra2::STOCK_API_URL+'stock', {:Authorization => generate_auth_hash('DELETE'+producto+direccion+precio.to_s+pedido), :params=>{:productId=>producto, :direccion=>direccion, :precio=>precio, :pedidoId=>pedido}})
+		@request = JSON.parse(RestClient.delete Integra2::STOCK_API_URL+'stock', {:Authorization => generate_auth_hash('DELETE'+producto+direccion+precio.to_s+pedido), :params=>{:productoId=>producto, :direccion=>direccion, :precio=>precio, :pedidoId=>pedido}})
 	end
 
 	def generate_auth_hash(action)
