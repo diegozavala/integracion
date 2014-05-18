@@ -1,8 +1,9 @@
 class Home < ActiveRecord::Base
-  
-  
-  
-  
+
+
+
+
+
   def test_ftp 
     require 'net/sftp' 
    
