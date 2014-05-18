@@ -15,6 +15,8 @@ gem 'uglifier', '>= 1.3.0'
 # Use CoffeeScript for .js.coffee assets and views
 gem 'coffee-rails', '~> 4.0.0'
 
+gem 'dropbox-sdk'
+
 # See https://github.com/sstephenson/execjs#readme for more supported runtimes
  gem 'therubyracer', platforms: :ruby
 
@@ -29,6 +31,11 @@ gem 'jbuilder', '~> 1.2'
 
 #Gema para eliminar un bug, tambien se agrega por spree
 gem 'money', '6.0.1'
+
+gem 'mdb', '~> 0.3.1'
+gem 'nice-ffi', '~> 0.4'
+gem 'activemdb', '~> 0.2.2'
+
 
 group :doc do
   # bundle exec rake doc:rails generates the API under doc/api.
