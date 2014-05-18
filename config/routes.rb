@@ -35,6 +35,7 @@ Integra2::Application.routes.draw do
   # Example of named route that can be invoked with purchase_url(id: product.id)
   #   get 'products/:id/purchase' => 'catalog#purchase', as: :purchase
 root :to => "homes#index"
+get 'dropbox' => 'homes#dropbox'
   # Example resource route (maps HTTP verbs to controller actions automatically):
   #   resources :products
 
