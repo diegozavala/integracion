@@ -41,21 +41,30 @@ class Home < ActiveRecord::Base
               #prod = Spree::Product.where(:sku => sku)["id"]
               PedidoProducto.create(:pedido_id => pedido.id, :producto_id => prod.id, :cantidad => cant , :unidad => un)
               
-              #procesar (por cada pedidoProducto)
-              #Ver si el cliente es vip
-              #Si es vip, ver si tiene reserva en gdocs. Si tiene reserva, actualizar el utilizado y pasar al siguiente paso
-              #Si no es vip, o no tiene reserva, ver si hay stock en gestion de stock. Si hay, descontar lo que se va a comprar y pasar al siguiente paso. Si no hay, pasar al ultimo paso e informar de quiebre al dw
-              if(get_stock(almace, sku)>0)
               
-              end
-              
-              #buscar direccion de despacho en vtiger con la direccionId
-              #buscar el precio en la bd que viene de dropbox
-              #realizar movimientos en bodega (gestion de stock) para dejar el producto en la bodega de despacho
-              #despachar (gestion de stock)
-              #realizar informe de venta/quiebre al dw
               
             end
+            
+          
+            
+            #procesar (por cada pedidoProducto)
+            #Ver si el cliente es vip
+            #Si es vip, ver si tiene reserva en gdocs. Si tiene reserva, actualizar el utilizado y pasar al siguiente paso
+            #Si no es vip, o no tiene reserva, ver si hay stock en gestion de stock. Si hay, descontar lo que se va a comprar y pasar al siguiente paso. Si no hay, pasar al ultimo paso e informar de quiebre al dw
+            hay_stock=true
+            
+            pedido.productos.each do |c|
+              
+              if(get_stock(almace, c.sku)>0)
+                
+              end
+            end
+            
+            #buscar direccion de despacho en vtiger con la direccionId
+            #buscar el precio en la bd que viene de dropbox
+            #realizar movimientos en bodega (gestion de stock) para dejar el producto en la bodega de despacho
+            #despachar (gestion de stock)
+            #realizar informe de venta/quiebre al dw
             
             
       
