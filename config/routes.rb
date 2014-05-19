@@ -13,6 +13,7 @@ Integra2::Application.routes.draw do
 
   ##### Inicio API #####
   post 'api/pedir_producto' => 'api#pedir_productos'
+  get 'api/pedir_producto' => 'api#pedir_productos'
   #####  Fin API   #####
 
   get 'create_prod' =>'homes#create_prod', as: 'create_prod'
