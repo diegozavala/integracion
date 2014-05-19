@@ -18,17 +18,25 @@ module ApplicationHelper
 
 	#metodos de la api por usar
 	def mover_stock (producto, almacen)
-		@request = JSON.parse(RestClient.get Integra2::STOCK_API_URL+'moveStock', {:Authorization => generate_auth_hash('POST'+producto+almacen), :params=>{:almacenId=>almacen, :productId=>producto}})
+		r = HTTParty.post(Integra2::STOCK_API_URL+'moveStock',
+		{ 
+		:body => {"productoId" => producto, "almacenId" => almacen},
+		:headers => {'Authorization' => generate_auth_hash('POST'+producto+almacen)}
+		})
 		#retorna Producto
 	end 
 
 	def mover_stock_bodega(producto, almacen)
-		@request = JSON.parse(RestClient.get Integra2::STOCK_API_URL+'moveStockBodega', {:Authorization => generate_auth_hash('POST'+producto+almacen), :params=>{:almacenId=>almacen, :productId=>producto}})
+		r = HTTParty.post(Integra2::STOCK_API_URL+'moveStockBodega',
+		{ 
+		:body => {"productoId" => producto, "almacenId" => almacen},
+		:headers => {'Authorization' => generate_auth_hash('POST'+producto+almacen)}
+		})
 		#retorna Producto
 	end
 
 	def despachar_stock(producto, direccion, precio, pedido)
-		@request = JSON.parse(RestClient.get Integra2::STOCK_API_URL+'stock', {:Authorization => generate_auth_hash('DELETE'+producto+direccion+precio.to_s+pedido), :params=>{:productId=>producto, :direccion=>direccion, :precio=>precio, :pedidoId=>pedido}})
+		@request = JSON.parse(RestClient.delete Integra2::STOCK_API_URL+'stock', {:Authorization => generate_auth_hash('DELETE'+producto+direccion+precio.to_s+pedido), :params=>{:productoId=>producto, :direccion=>direccion, :precio=>precio, :pedidoId=>pedido}})
 	end
 
 	def generate_auth_hash(action)

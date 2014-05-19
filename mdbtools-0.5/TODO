@@ -1,0 +1,59 @@
+Things to Do
+------------
+
+general:
+
+. compile with -Wall and fix warnings
+
+file format:
+
+. how does global allocation map work? (done)
+. export VBA script
+. re-examine KKD records for form design (OLE streams?)
+. write support (understood, not coded)
+
+libmdb:
+
+. Complete the list of datatypes
+. Straighten out which functions in libmdb are meant to be used and which   
+  ones should be static.
+. Create an API reference for libmdb (maybe some man pages).
+. Sargs need to support all datatypes
+. Need a way to express logical relationships between sargs (tree)
+. Add support for index scanning when using sargs
+. Use allocation maps to read tables, should be more efficient (done)
+. write support
+
+utils:
+
+. need program to unpack VBA script to file (see prole)
+. Access forms to glade converter ?
+. need --version flag
+. -o on mdb-sql not working
+
+SQL Engine:
+
+. SQL Engine does not handle uppercase keywords (done)
+. Joins
+. OR clauses using sarg trees from above
+. insert/updates
+. bogus column name in where clause not caught
+. const = const type operations not working (e.g. WHERE 0=1)
+. list tables/describe table shouldn't directly write to stdout
+
+ODBC:
+
+. Figure out why we get unresolved symbols when ODBC driver load by DM (iODBC 
+  only?)
+. Boolean not working
+. many unimplemented funtions
+
+GMDB:
+
+. Finish debug dissectors
+. Export schema not implemented (done)
+. Printing not implemented
+. Export needs finishing (done)
+. Fix bitmask size bug in debugger
+. sql window section in manual
+. debugger section in manual

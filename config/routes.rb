@@ -14,6 +14,8 @@ Integra2::Application.routes.draw do
 
   get 'gestion_de_stocks' => 'stock#index', as: 'stock'
   get 'gestion_de_stocks/almacenes' => 'stock#almacenes', as: 'stock_almacenes'
+  post 'gestion_de_stocks/almacenes' => 'stock#move_stock', as: 'stock_mover'
+  post 'gestion_de_stocks/almacenes' => 'stock#move_stock_bodega', as: 'stock_mover_bodega'
   get 'gestion_de_stocks/almacenes/:almacen' => 'stock#almacen', as: 'stock_almacen'
   get 'gestion_de_stocks/almacenes/:almacen/sku/:sku' => 'stock#products', as: 'stock_products'
 
@@ -35,6 +37,7 @@ Integra2::Application.routes.draw do
   # Example of named route that can be invoked with purchase_url(id: product.id)
   #   get 'products/:id/purchase' => 'catalog#purchase', as: :purchase
 root :to => "homes#index"
+get 'dropbox' => 'homes#dropbox'
   # Example resource route (maps HTTP verbs to controller actions automatically):
   #   resources :products
 
