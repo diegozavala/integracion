@@ -18,17 +18,20 @@ module ApplicationHelper
 
 	#metodos de la api por usar
 	def mover_stock (producto, almacen)
-		
-			response = RestClient.post Integra2::STOCK_API_URL+'moveStock', {:Authorization => generate_auth_hash('POST'+producto.to_s+almacen.to_s), :params=>{:almacenId=>almacen, :productoId=>producto}}
-			puts 'RESPONSE'
-			puts response.code
-			puts response.to_s
-			@request = JSON.parse(response)
+		r = HTTParty.post(Integra2::STOCK_API_URL+'moveStock',
+		{ 
+		:body => {"productoId" => producto, "almacenId" => almacen},
+		:headers => {'Authorization' => generate_auth_hash('POST'+producto+almacen)}
+		})
 		#retorna Producto
 	end 
 
 	def mover_stock_bodega(producto, almacen)
-		@request = JSON.parse(RestClient.post Integra2::STOCK_API_URL+'moveStockBodega', {:Authorization => generate_auth_hash('POST'+producto+almacen), :params=>{:almacenId=>almacen, :productoId=>producto}})
+		r = HTTParty.post(Integra2::STOCK_API_URL+'moveStockBodega',
+		{ 
+		:body => {"productoId" => producto, "almacenId" => almacen},
+		:headers => {'Authorization' => generate_auth_hash('POST'+producto+almacen)}
+		})
 		#retorna Producto
 	end
 

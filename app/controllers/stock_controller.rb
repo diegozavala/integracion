@@ -15,6 +15,16 @@ class StockController < ApplicationController
 		@request = get_almacenes
 	end
 
+	def move_stock 
+		mover_stock(params["ID Producto"],params["ID Almacen"])
+		redirect_to stock_almacenes_path
+	end
+
+	def move_stock_bodega
+		mover_stock_bodega(params["ID Producto"],params["ID Almacen"])
+		redirect_to stock_almacenes_path
+	end
+
 	def almacen
 		@almacen = params[:almacen]
 		@skus_with_stock = get_skus_with_stock(@almacen)
