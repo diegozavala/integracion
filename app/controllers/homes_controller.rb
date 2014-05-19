@@ -1163,7 +1163,7 @@ class HomesController < ApplicationController
             c.contenido = sftp.download!("/home/grupo2/Pedidos/"+entry.name)
             c.save!
               
-            # y procesar
+            # leer el pedido y crear los objetos
             doc = Nokogiri::XML(c.contenido)
             root = doc.root
             ped = doc.at_xpath("/*/Pedidos")
@@ -1186,7 +1186,19 @@ class HomesController < ApplicationController
               #prod = Spree::Product.where(:sku => sku)["id"]
               PedidoProducto.create(:pedido_id => pedido.id, :producto_id => prod.id, :cantidad => cant , :unidad => un)
               
+              #procesar (por cada pedidoProducto)
+              #Ver si el cliente es vip
+              #Si es vip, ver si tiene reserva en gdocs. Si tiene reserva, actualizar el utilizado y pasar al siguiente paso
+              #Si no es vip, o no tiene reserva, ver si hay stock en spree. Si hay, descontar lo que se va a comprar y pasar al siguiente paso. Si no hay, pasar al ultimo paso e informar de quiebre al dw
+              #buscar direccion de despacho en vtiger con la direccionId
+              #buscar el precio en la bd que viene de dropbox
+              #realizar movimientos en bodega (gestion de stock) para dejar el producto en la bodega de despacho
+              #despachar (gestion de stock)
+              #realizar informe de venta/quiebre al dw
+              
             end
+            
+            
       
           end
          
