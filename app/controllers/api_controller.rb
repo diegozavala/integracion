@@ -7,11 +7,11 @@ user_pass=params[:password]
 if ApiUser.where(:name => user_name).where(:password => user_pass).blank?
 	render :json => { :errors => "no funciona"}
 else
-
+render :json => { :errors => "funciona"}
 end
 
 
-render :json => { :errors => "funciona"}
+
 end
 
 end
