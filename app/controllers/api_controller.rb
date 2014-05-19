@@ -1,6 +1,7 @@
 class ApiController < ApplicationController
   protect_from_forgery with: :null_session
 
+include ApplicationHelper
 
 def pedir_productos
 
@@ -11,14 +12,11 @@ sku = params[:SKU]
 cantidad = params[:cantidad]
 
 if ApiUser.where(:name => user_name).where(:password => user_pass).blank?
-	render :json => { :user_name => user_name,
-	:user_pass => user_pass,
-	:bodega_destino => bodega_destino,
-	:sku => sku,
-	:cantidad => cantidad
+	render :json => { :error => "usuario o contraseña incorrectos"
 	 }
 else
-	render :json => { :errors => "funciona"}
+	response = 
+	render :json => response
 end
 
 
