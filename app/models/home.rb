@@ -1,3 +1,4 @@
+<<<<<<< Local Changes
 class Home < ActiveRecord::Base
   helper :all
 
@@ -55,6 +56,13 @@ class Home < ActiveRecord::Base
               #despachar (gestion de stock)
               #realizar informe de venta/quiebre al dw
               
+<<<<<<< Local Changes
+              if(get_stock(almace, c.sku)<1)
+                hay_stock = false
+                break
+              end
+=======
+>>>>>>> External Changes
             end
             
             
@@ -84,3 +92,5 @@ class Home < ActiveRecord::Base
   
   
 end
+=======
+>>>>>>> External Changes
