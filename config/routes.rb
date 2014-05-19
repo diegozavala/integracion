@@ -1,5 +1,7 @@
 Integra2::Application.routes.draw do
 
+  resources :api_users
+
   resources :productos
 
   resources :pedidos
@@ -9,7 +11,12 @@ Integra2::Application.routes.draw do
   resources :homes
 
 
+  ##### Inicio API #####
+  post 'api/pedir_producto' => 'api#pedir_productos'
+  #####  Fin API   #####
+
   get 'create_prod' =>'homes#create_prod', as: 'create_prod'
+  
 
 
   get 'gestion_de_stocks' => 'stock#index', as: 'stock'

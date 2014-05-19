@@ -11,9 +11,11 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140517211459) do
+ActiveRecord::Schema.define(version: 20140519195822) do
 
-  create_table "as", force: true do |t|
+  create_table "api_users", force: true do |t|
+    t.string   "name"
+    t.string   "password"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
