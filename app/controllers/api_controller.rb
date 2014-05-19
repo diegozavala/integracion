@@ -5,13 +5,13 @@ def pedir_productos
 user_name=params[:usuario]
 user_pass=params[:password]
 if ApiUser.where(:name => user_name).where(:password => user_pass).blank?
-	return "Usuario o contraseña incorrecta"
+	render :json => { :errors => "no funciona"}
 else
-	
+
 end
 
 
-return "conectaste"
+render :json => { :errors => "funciona"}
 end
 
 end
