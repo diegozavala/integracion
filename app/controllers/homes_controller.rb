@@ -1209,7 +1209,7 @@ class HomesController < ApplicationController
               #vemos stocks privilegiados
               get_num_rows_gdoc.times do |j|
                 linea=get_row_gdoc(j+4)
-                if linea[1]==rut and linea[2]==sku and (linea[3]-linea[4])>c.cantidad
+                if(linea[1]==rut and linea[2]==sku and (linea[3]-linea[4])>c.cantidad) 
                   hay_stock[i] = 1
                   break
                   #actualizar linea[4]=linea[4]-c.cantidad
@@ -1217,7 +1217,7 @@ class HomesController < ApplicationController
               end
               
               #si no hay privilegiado, veamos normal
-              if hay_stock[i] == 0 and get_stock(53571c4f682f95b80b7563e6, c.sku)>c.cantidad
+              if( hay_stock[i] ==0 and get_stock(53571c4f682f95b80b7563e6, c.sku)>c.cantidad)
                 hay_stock[i] = 2
               end
               i+=1
