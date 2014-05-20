@@ -68,7 +68,7 @@ module ApplicationHelper
 		:body => {"productoId" => producto, "direccion" => direccion, "precio" => precio, "pedidoId"=> pedido},
 		:headers => {'Authorization' => generate_auth_hash('DELETE'+producto+direccion+precio.to_s+pedido)}
 		})
-		puts "Stock despachado => "+r
+		puts "Stock despachado => "+r.to_s
 		#retorna Producto
 	end
 

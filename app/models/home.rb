@@ -55,8 +55,9 @@ class Home < ActiveRecord::Base
             hay_stock = []
             
             pedi = doc.xpath("//Pedido")
+            i=0
             pedi.each do |p|
-              i=0
+              
               sku = p.xpath("sku").text
     
               cant = p.xpath("cantidad").text
@@ -71,28 +72,27 @@ class Home < ActiveRecord::Base
               num_row.times do |j|
                 #linea=get_row_gdoc(j+4)
                 if(linea[j][1]==rut and linea[j][2]==sku and (linea[j][3]-linea[j][4])>cant) 
+                  puts "Hay stock en reserva"
                   hay_stock[i] = 1
                   write_data_gdoc(j+4,linea[j][4]-cant)
                   break
                 end
               end
+              sku=sku.delete(' ')
+              sto = JSON.parse(get_stock('53571c4f682f95b80b7563e6', sku.to_s))
+              stock_disp = sto.length
               
-              sto = JSON.parse(get_stock("53571c4f682f95b80b7563e6", sku.to_s))
-              stock_disp = sto.count
-              puts "test -------------------"
-              puts stock_disp
-              puts sku 
-              puts cant
-              puts sto
-
+              
               if( hay_stock[i] == 0 and stock_disp>cant.to_i)
+                puts "Hay stock en bodega"
                 hay_stock[i] = 2
               end
               i+=1
             end
             
-            if hay_stock.find(0)
+            if hay_stock.index(0)
               #informar quiebre de pedido a dw. ¿Se mandan los productos que si estan???
+              puts "No hay stock"
               error +=1
               #si hay stock  
             else
@@ -100,21 +100,21 @@ class Home < ActiveRecord::Base
               i=0
               direccion = get_shipto(dirId)
               #averiguar direccion del cliente
-            
+              
               pedido.productos.each do |c|
-                #si es que no hay stock..
-             
-                
-                
+
                 #pasar stock a despacho
-                precio = get_price_with_sku(c.sku)
-                puts "Test ---------------------------"
-                puts precio
-                sto = JSON.parse(get_stock("53571c4f682f95b80b7563e6", c.sku, c.cantidad.to_i))
-                puts sto
-                c.cantidad.times do |j|
-                  puts sto[j]["_id"]
-                  mover_stock_bodega(sto[j]["_id"], "53571c4f682f95b80b7563e5")
+                sku = c.sku.to_s.delete(' ')
+                precio = get_price_with_sku(sku)
+                
+                pp = PedidoProducto.find_by(producto_id: c.id, pedido_id: pedido.id)
+              
+          
+                sto = JSON.parse(get_stock('53571c4f682f95b80b7563e6', sku.to_s, pp.cantidad.to_i))
+           
+                pp.cantidad.times do |j|
+                  
+                  mover_stock(sto[j]["_id"].to_s, '53571c4f682f95b80b7563e5')
                   despachar_stock(sto[j]["_id"], direccion, precio, num_pedido)
                 end
                   
@@ -158,7 +158,7 @@ class Home < ActiveRecord::Base
           
           
         if cont>10
-          #raise error.to_s
+         # raise error.to_s
         end
         
       end
@@ -172,6 +172,7 @@ class Home < ActiveRecord::Base
      
       
   end
+    
 
 
   def test_dropbox
