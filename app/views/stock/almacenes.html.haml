@@ -1,30 +1,66 @@
-%h1 
-	Almacenes
-.col-md-9.col-md-offset-1
-	%table.table.table-bordered
-		%tr.info
-			%th Grupo
-			%th id
-			%th Tipo
-			%th Espacio total
-			%th Espacio Utilizado
-			%th
-		- @request.each do |almacen|
-			%tr
-				%td= almacen["grupo"]
-				%td= almacen["_id"]
-				- if almacen["pulmon"]==true
-					%td Pulmon	
-				- elsif almacen["despacho"]==true
-					%td Despacho
-				- elsif almacen["recepcion"]==true
-					%td Recepcion
-				- else
-					%td Otro
-				%td= almacen["totalSpace"]
-				%td= almacen["usedSpace"]
-				%td
-					- if almacen["usedSpace"]==0
-						= link_to 'SKUS', stock_almacen_path(almacen: almacen["_id"]), class: 'btn btn-primary', disabled: 'disabled'
-					-else
-						= link_to 'SKUS', stock_almacen_path(almacen: almacen["_id"]), class: 'btn btn-primary'
+.row
+	.col-md-9.col-md-offset-1
+		%h1 
+			Almacenes		
+		%table.table.table-bordered
+			%tr.info
+				%th Grupo
+				%th id
+				%th Tipo
+				%th Espacio total
+				%th Espacio Utilizado
+				%th
+			- @request.each do |almacen|
+				%tr
+					%td= almacen["grupo"]
+					%td= almacen["_id"]
+					- if almacen["pulmon"]==true
+						%td Pulmon	
+					- elsif almacen["despacho"]==true
+						%td Despacho
+					- elsif almacen["recepcion"]==true
+						%td Recepcion
+					- else
+						%td Otro
+					%td= almacen["totalSpace"]
+					%td= almacen["usedSpace"]
+					%td
+						- if almacen["usedSpace"]==0
+							= link_to 'SKUS', stock_almacen_path(almacen: almacen["_id"]), class: 'btn btn-primary', disabled: 'disabled'
+						-else
+							= link_to 'SKUS', stock_almacen_path(almacen: almacen["_id"]), class: 'btn btn-primary'					
+.row
+	.col-md-5.col-md-offset-1
+		%h2
+			Mover stock	entre almacenes
+		= form_tag stock_mover_path, class: 'form-inline' do
+			= text_field_tag "ID Producto",'', class: 'form-group form-control', placeholder: "ID Producto"
+			= text_field_tag "ID Almacen",'', class: 'form-group form-control', placeholder: "ID Almacen destino"
+			= submit_tag "Mover", class: 'btn btn-success'
+	.col-md-5
+		%h2
+			Mover stock a otra bodega	
+		= form_tag stock_mover_bodega_path, class: 'form-inline' do
+			= text_field_tag "ID Producto",'', class: 'form-group form-control', placeholder: "ID Producto"
+			= text_field_tag "ID Almacen",'', class: 'form-group form-control', placeholder: "ID Almacen destino"
+			= submit_tag "Mover", class: 'btn btn-success'
+		
+%script{src: "http://crypto-js.googlecode.com/svn/tags/3.1.2/build/rollups/hmac-sha1.js"}
+
+:javascript
+	$('#moveButton1').click(function(event){
+		event.preventDefault();
+		var producto = $('#inputProducto1').val();
+		var almacen = $('#inputAlmacen1').val();
+		$.ajax({
+			type: "POST",
+			url: "http://bodega-integracion-2014.herokuapp.com/moveStock",
+			data: {almacenId: almacen, productoId: producto},
+			beforeSend: function(xhr) {
+				var hash = CryptoJS.HmacSHA1("POST"+producto+almacen, "CvsDU4MT");
+				xhr.setRequestHeader("Authorization", hash);
+			}
+		}).success(function() {
+			alert('OK')
+		});
+	});

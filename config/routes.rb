@@ -1,5 +1,9 @@
 Integra2::Application.routes.draw do
 
+  resources :clientes
+
+  resources :api_users
+
   resources :productos
 
   resources :pedidos
@@ -9,11 +13,19 @@ Integra2::Application.routes.draw do
   resources :homes
 
 
+  ##### Inicio API #####
+  post 'api/pedir_producto' => 'api#pedir_productos'
+  get 'api/pedir_producto' => 'api#pedir_productos'
+  #####  Fin API   #####
+
   get 'create_prod' =>'homes#create_prod', as: 'create_prod'
+  
 
 
   get 'gestion_de_stocks' => 'stock#index', as: 'stock'
   get 'gestion_de_stocks/almacenes' => 'stock#almacenes', as: 'stock_almacenes'
+  post 'gestion_de_stocks/almacenes' => 'stock#move_stock', as: 'stock_mover'
+  post 'gestion_de_stocks/almacenes' => 'stock#move_stock_bodega', as: 'stock_mover_bodega'
   get 'gestion_de_stocks/almacenes/:almacen' => 'stock#almacen', as: 'stock_almacen'
   get 'gestion_de_stocks/almacenes/:almacen/sku/:sku' => 'stock#products', as: 'stock_products'
 
