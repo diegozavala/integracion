@@ -1150,7 +1150,26 @@ class HomesController < ApplicationController
   end
     
   def test_ftp 
-    num_row=get_num_rows_gdoc()
+    
+    linea = []
+    
+    require 'google_drive'
+    session=GoogleDrive.login("integradosuc@gmail.com", "clavesecreta")
+    file= session.spreadsheet_by_key('0As9H3pQDLg79dDJzZkU1TldhQmg5MXdDZFM5R1RCQXc').worksheets[0]
+    num_row=file.num_rows-4
+
+    values=[]
+    
+    
+    num_row.times do |j|
+      linea[j] = []
+      linea[j][1] = file[j+4,1]
+      linea[j][2] = file[j+4,2]
+      linea[j][3] = file[j+4,3]
+      linea[j][4] = file[j+4,4]
+    end
+    
+    
     require 'net/sftp' 
    
     sftp2=Net::SFTP
@@ -1160,7 +1179,8 @@ class HomesController < ApplicationController
       sftp.dir.foreach("/home/grupo2/Pedidos") do |entry|
         if entry.name.downcase.include? ".xml"
           num_pedido = entry.name[entry.name.index('_')+1..entry.name.index('.')-1]
-           
+          
+          
           FtpPedido.find_or_create_by(nombre_archivo: entry.name, numero_pedido: num_pedido ) do |c|
             #bajo el contenido del archivo y lo guardo en contenido
             c.contenido = sftp.download!("/home/grupo2/Pedidos/"+entry.name)
@@ -1194,10 +1214,10 @@ class HomesController < ApplicationController
               #vemos stocks privilegiados
               
               num_row.times do |j|
-                linea=get_row_gdoc(j+4)
-                if(linea[1]==rut and linea[2]==sku and (linea[3]-linea[4])>cant) 
+                #linea=get_row_gdoc(j+4)
+                if(linea[j][1]==rut and linea[j][2]==sku and (linea[j][3]-linea[j][4])>cant) 
                   hay_stock[i] = 1
-                  write_data_gdoc(j+4,linea[4]-cant)
+                  write_data_gdoc(j+4,linea[j][4]-cant)
                   break
                 end
               end
@@ -1217,7 +1237,7 @@ class HomesController < ApplicationController
               if hay_stock.find(0)
                 #informar quiebre de pedido a dw. ¿Se mandan los productos que si estan???
                 
-              #si hay stock  
+                #si hay stock  
               else
               
                 #averiguar direccion del cliente
@@ -1247,7 +1267,7 @@ class HomesController < ApplicationController
             
       
             end 
-
+            cont+=1
           end
             
           #procesar (por cada pedidoProducto)
@@ -1266,8 +1286,10 @@ class HomesController < ApplicationController
           
           
           
-          cont+=1
-            
+          
+          if cont>15
+            # break
+          end
         end
       
       
