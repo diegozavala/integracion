@@ -29,31 +29,35 @@
 							= link_to 'SKUS', stock_almacen_path(almacen: almacen["_id"]), class: 'btn btn-primary', disabled: 'disabled'
 						-else
 							= link_to 'SKUS', stock_almacen_path(almacen: almacen["_id"]), class: 'btn btn-primary'					
-.row
-	.col-md-5.col-md-offset-1
-		%h2
-			Mover stock entre almacenes
-		= form_tag stock_post_path, class: 'form-inline' do
-			= text_field_tag "ID Producto",'', class: 'form-group form-control', placeholder: "ID Producto"
-			= text_field_tag "ID Almacen",'', class: 'form-group form-control', placeholder: "ID Almacen destino"
-			= hidden_field_tag "action", value: 'mover_stock'
-			= submit_tag "Mover", class: 'btn btn-success btn-mini'
-	.col-md-5
-		%h2
-			Mover stock a otra bodega	
-		= form_tag stock_post_path, class: 'form-inline' do
-			= text_field_tag "ID Producto",'', class: 'form-group form-control', placeholder: "ID Producto"
-			= text_field_tag "ID Almacen",'', class: 'form-group form-control', placeholder: "ID Almacen destino"
-			= hidden_field_tag "action", value: 'mover_stock_bodega'
-			= submit_tag "Mover", class: 'btn btn-success btn-mini'
-.row
-	.col-md-10.col-md-offset-1
-		%h2
-			Despachar Stock
-		= form_tag stock_post_path, class: 'form-inline' do
-			= text_field_tag "ID Producto",'', class: 'form-group form-control', placeholder: "ID Producto"
-			= text_field_tag "Direccion",'', class: 'form-group form-control', placeholder: "Direccion"
-			= text_field_tag "Precio",'', class: 'form-group form-control', placeholder: "Precio"
-			= text_field_tag "ID Pedido",'', class: 'form-group form-control', placeholder: "ID Pedido"
-			= hidden_field_tag "action", value: 'despachar_stock'
-			= submit_tag "Despachar", class: 'btn btn-success btn-mini'
+-unless params[:admin]=="123456"
+	.user
+-else
+	.admin
+		.row
+			.col-md-5.col-md-offset-1
+				%h2
+					Mover stock entre almacenes
+				= form_tag stock_post_path, class: 'form-inline' do
+					= text_field_tag "ID Producto",'', class: 'form-group form-control', placeholder: "ID Producto"
+					= text_field_tag "ID Almacen",'', class: 'form-group form-control', placeholder: "ID Almacen destino"
+					= hidden_field_tag "action", value: 'mover_stock'
+					= submit_tag "Mover", class: 'btn btn-success btn-mini'
+			.col-md-5
+				%h2
+					Mover stock a otra bodega	
+				= form_tag stock_post_path, class: 'form-inline' do
+					= text_field_tag "ID Producto",'', class: 'form-group form-control', placeholder: "ID Producto"
+					= text_field_tag "ID Almacen",'', class: 'form-group form-control', placeholder: "ID Almacen destino"
+					= hidden_field_tag "action", value: 'mover_stock_bodega'
+					= submit_tag "Mover", class: 'btn btn-success btn-mini'
+		.row
+			.col-md-10.col-md-offset-1
+				%h2
+					Despachar Stock
+				= form_tag stock_post_path, class: 'form-inline' do
+					= text_field_tag "ID Producto",'', class: 'form-group form-control', placeholder: "ID Producto"
+					= text_field_tag "Direccion",'', class: 'form-group form-control', placeholder: "Direccion"
+					= text_field_tag "Precio",'', class: 'form-group form-control', placeholder: "Precio"
+					= text_field_tag "ID Pedido",'', class: 'form-group form-control', placeholder: "ID Pedido"
+					= hidden_field_tag "action", value: 'despachar_stock'
+					= submit_tag "Despachar", class: 'btn btn-success btn-mini'
