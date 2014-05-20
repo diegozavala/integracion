@@ -136,5 +136,13 @@ end				r = HTTParty.post(Integra2::STOCK_API_URL+'moveStockBodega',
 
 		return file.num_rows - 4
 	end
+	def write_data_gdoc row, text
+		require 'google_drive'
+
+		session=GoogleDrive.login("integradosuc@gmail.com", "clavesecreta")
+		file= session.spreadsheet_by_key('0As9H3pQDLg79dDJzZkU1TldhQmg5MXdDZFM5R1RCQXc').worksheets[0]
+		file[row,4] = text
+		file.save()
+	end
 
 end
