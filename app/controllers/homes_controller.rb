@@ -5,7 +5,7 @@ class HomesController < ApplicationController
   # GET /homes
   # GET /homes.json
   def index
-    test_ftp
+    ###########test_ftp
     @homes = Home.all
   end
 

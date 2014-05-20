@@ -46,8 +46,6 @@ module ApplicationHelper
 	
 	def mover_stock_cantidad(sku,almacen_dest,cantidad)  
 		productos = JSON.parse(get_stock(Integra2::ALMACEN_OTRO_1,sku,cantidad))
-		puts productos
-		puts productos.length
 		# productos_a_despachar = productos.take(a_despachar)
 		#RESTAR reservas
 		if productos.length<cantidad
@@ -60,7 +58,7 @@ module ApplicationHelper
 				return response
 			end
 		end
-		return JSON.parse({sku: sku.to_s, cantidad: cantidad.to_s}.to_json)
+		return JSON.parse({'SKU' => sku.to_s, cantidad: cantidad.to_s}.to_json)
 	end
 
 	def despachar_stock(producto, direccion, precio, pedido)
