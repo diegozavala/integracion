@@ -4,7 +4,7 @@ class Home < ActiveRecord::Base
 
 
   def test_ftp 
-    
+    error =0
     linea = []
     
     require 'google_drive'
@@ -53,7 +53,7 @@ class Home < ActiveRecord::Base
             pedido = Pedido.create(:fecha => fecha, :hora => hora, :rut => rut, :direccionId => dirId )
       
             hay_stock = []
-            sto = []
+            
             pedi = doc.xpath("//Pedido")
             pedi.each do |p|
               i=0
@@ -77,9 +77,15 @@ class Home < ActiveRecord::Base
                 end
               end
               
-              sto[i] = get_stock("53571c4f682f95b80b7563e6", sku, cant.to_i)
+              sto = JSON.parse(get_stock("53571c4f682f95b80b7563e6", sku.to_s))
+              stock_disp = sto.count
+              puts "test -------------------"
+              puts stock_disp
+              puts sku 
+              puts cant
+              puts sto
 
-              if( hay_stock[i] == 0 and sto[i].count>cant.to_i)
+              if( hay_stock[i] == 0 and stock_disp>cant.to_i)
                 hay_stock[i] = 2
               end
               i+=1
@@ -87,7 +93,7 @@ class Home < ActiveRecord::Base
             
             if hay_stock.find(0)
               #informar quiebre de pedido a dw. ¿Se mandan los productos que si estan???
-              
+              error +=1
               #si hay stock  
             else
             
@@ -102,9 +108,14 @@ class Home < ActiveRecord::Base
                 
                 #pasar stock a despacho
                 precio = get_price_with_sku(c.sku)
+                puts "Test ---------------------------"
+                puts precio
+                sto = JSON.parse(get_stock("53571c4f682f95b80b7563e6", c.sku, c.cantidad.to_i))
+                puts sto
                 c.cantidad.times do |j|
-                  mover_stock_bodega(sto[i][j]["_id"], "53571c4f682f95b80b7563e5")
-                  despachar_stock(sto[i][j]["_id"], direccion, precio, num_pedido)
+                  puts sto[j]["_id"]
+                  mover_stock_bodega(sto[j]["_id"], "53571c4f682f95b80b7563e5")
+                  despachar_stock(sto[j]["_id"], direccion, precio, num_pedido)
                 end
                   
                   
@@ -146,9 +157,10 @@ class Home < ActiveRecord::Base
           
           
           
-        if cont>15
-          # break
+        if cont>10
+          #raise error.to_s
         end
+        
       end
       
       
