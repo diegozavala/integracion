@@ -1199,6 +1199,7 @@ class HomesController < ApplicationController
             pedido = Pedido.create(:fecha => fecha, :hora => hora, :rut => rut, :direccionId => dirId )
       
             hay_stock = []
+            sto = []
             pedi = doc.xpath("//Pedido")
             pedi.each do |p|
               i=0
@@ -1222,41 +1223,45 @@ class HomesController < ApplicationController
                 end
               end
               
-              sto = get_stock("53571c4f682f95b80b7563e6", sku)
+              sto[i] = get_stock("53571c4f682f95b80b7563e6", sku, cant.to_i)
 
-              if( hay_stock[i] == 0 and sto.count>cant.to_i)
+              if( hay_stock[i] == 0 and sto[i].count>cant.to_i)
                 hay_stock[i] = 2
               end
               i+=1
             end
             
+            if hay_stock.find(0)
+              #informar quiebre de pedido a dw. ¿Se mandan los productos que si estan???
+              
+              #si hay stock  
+            else
             
+              i=0
+              direccion = get_shipto(dirId)
+              #averiguar direccion del cliente
             
-            pedido.productos.each do |c|
-              #si es que no hay stock..
-              if hay_stock.find(0)
-                #informar quiebre de pedido a dw. ¿Se mandan los productos que si estan???
+              pedido.productos.each do |c|
+                #si es que no hay stock..
+             
                 
-                #si hay stock  
-              else
-              
-                #averiguar direccion del cliente
-                direccion = get_shipto(dirId)
-                pedido.productos.each do |c|
-                  #pasar stock a despacho
-                  c.cantidad.times do
-                    mover_stock_bodega(c.sku, "53571c4f682f95b80b7563e5")
-                  end
-                  #averiguar precio con el sku
-                  precio = get_price_with_sku(c.sku)
-                  despachar_stock(c.sku, direccion, precio, num_pedido)
+                
+                #pasar stock a despacho
+                precio = get_price_with_sku(c.sku)
+                c.cantidad.times do |j|
+                  mover_stock_bodega(sto[i][j]["_id"], "53571c4f682f95b80b7563e5")
+                  despachar_stock(sto[i][j]["_id"], direccion, precio, num_pedido)
                 end
-              
-                #informar a dw pedido exitoso
-              
-              
-              
+                  
+                  
+                  
               end
+              
+              #informar a dw pedido exitoso
+              
+              
+              i+=1
+            end
             
             
               
@@ -1266,20 +1271,20 @@ class HomesController < ApplicationController
             
             
       
-            end 
-            cont+=1
-          end
+          end 
+          cont+=1
+        end
             
-          #procesar (por cada pedidoProducto)
-          #Ver si el cliente es vip
-          #Si es vip, ver si tiene reserva en gdocs. Si tiene reserva, actualizar el utilizado y pasar al siguiente paso
+        #procesar (por cada pedidoProducto)
+        #Ver si el cliente es vip
+        #Si es vip, ver si tiene reserva en gdocs. Si tiene reserva, actualizar el utilizado y pasar al siguiente paso
             
             
             
-          #Si no es vip, o no tiene reserva, ver si hay stock en gestion de stock. Si hay, descontar lo que se va a comprar y pasar al siguiente paso. Si no hay, pasar al ultimo paso e informar de quiebre al dw
-          #0 no hay, 1 privilegiado, 2 normal
+        #Si no es vip, o no tiene reserva, ver si hay stock en gestion de stock. Si hay, descontar lo que se va a comprar y pasar al siguiente paso. Si no hay, pasar al ultimo paso e informar de quiebre al dw
+        #0 no hay, 1 privilegiado, 2 normal
             
-          #para cada producto del pedido
+        #para cada producto del pedido
             
           
          
@@ -1287,21 +1292,20 @@ class HomesController < ApplicationController
           
           
           
-          if cont>15
-            # break
-          end
+        if cont>15
+          # break
         end
+      end
       
       
       
     
       
-      end
+    end
       
      
       
-    end
-    
-    
   end
+    
+    
 end
