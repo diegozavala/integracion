@@ -64,7 +64,14 @@ module ApplicationHelper
 	#end
 
 	def despachar_stock(producto, direccion, precio, pedido)
-		@request = JSON.parse(RestClient.delete Integra2::STOCK_API_URL+'stock', {:Authorization => generate_auth_hash('DELETE'+producto+direccion+precio.to_s+pedido), :params=>{:productoId=>producto, :direccion=>direccion, :precio=>precio, :pedidoId=>pedido}})
+		#@request = JSON.parse(RestClient.delete Integra2::STOCK_API_URL+'stock', {:Authorization => generate_auth_hash('DELETE'+producto+direccion+precio.to_s+pedido), :params=>{:productoId=>producto, :direccion=>direccion, :precio=>precio, :pedidoId=>pedido}})
+		r = HTTParty.delete(Integra2::STOCK_API_URL+'stock',
+		{ 
+		:body => {"productoId" => producto, "direccion" => direccion, "precio" => precio, "pedidoId"=> pedido},
+		:headers => {'Authorization' => generate_auth_hash('DELETE'+producto+direccion+precio.to_s+pedido)}
+		})
+		puts "Stock despachado => "+r
+		#retorna Producto
 	end
 
 	def generate_auth_hash(action)

@@ -5,6 +5,19 @@ class StockController < ApplicationController
 	def index
 	end
 
+	def post
+		action = params["action"]
+		if(action = 'mover_stock')
+			mover_stock(params["ID Producto"],params["ID Almacen"])
+		elsif(action = 'mover_stock_bodega')
+			mover_stock_bodega(params["ID Producto"],params["ID Almacen"])
+		elsif(action = 'despachar_stock')
+			despachar_stock(params["ID Producto"],params["Direccion"],params["Precio"],params["Id Pedido"])
+		else puts "Accion no válida"
+		end
+		redirect_to stock_almacenes_path
+	end
+	
 	def almacenes
 		#test = generate_auth_hash('POST53571c4f682f95b80b75645b53571c4f682f95b80b7563e6')
 		#sku = 3871447
@@ -15,6 +28,17 @@ class StockController < ApplicationController
 		@request = get_almacenes
 	end
 
+	def almacen
+		@almacen = params[:almacen]
+		@skus_with_stock = get_skus_with_stock(@almacen)
+	end
+
+	def products
+		@sku = params[:sku]
+		@request = get_stock(params[:almacen],@sku)
+	end
+
+	#borrables
 	def move_stock 
 		mover_stock(params["ID Producto"],params["ID Almacen"])
 		redirect_to stock_almacenes_path
@@ -25,13 +49,8 @@ class StockController < ApplicationController
 		redirect_to stock_almacenes_path
 	end
 
-	def almacen
-		@almacen = params[:almacen]
-		@skus_with_stock = get_skus_with_stock(@almacen)
-	end
-
-	def products
-		@sku = params[:sku]
-		@request = get_stock(params[:almacen],@sku)
+	def despachar
+		despachar_stock(params["ID Producto"],params["Direccion"],params["Precio"],params["Id Pedido"])
+		redirect_to stock_almacenes_path
 	end
 end
