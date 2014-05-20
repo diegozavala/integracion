@@ -24,8 +24,6 @@ Integra2::Application.routes.draw do
   #Gestion de stocks
   post 'gestion_de_stocks/almacenes' => 'stock#post', as: 'stock_post'
   get 'gestion_de_stocks/almacenes' => 'stock#almacenes', as: 'stock_almacenes'
-  #post 'gestion_de_stocks/almacenes' => 'stock#move_stock', as: 'stock_mover'
-  #post 'gestion_de_stocks/almacenes' => 'stock#move_stock_bodega', as: 'stock_mover_bodega'
   get 'gestion_de_stocks/almacenes/:almacen' => 'stock#almacen', as: 'stock_almacen'
   get 'gestion_de_stocks/almacenes/:almacen/sku/:sku' => 'stock#products', as: 'stock_products'
 
