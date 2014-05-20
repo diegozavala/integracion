@@ -19,7 +19,9 @@
 
 # Learn more: http://github.com/javan/whenever
 
-every 1.hour do
+set :environment, "development"
+
+every 10.minutes do
   runner "Home.test_ftp"
 end
 
