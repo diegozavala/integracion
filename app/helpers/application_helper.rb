@@ -40,18 +40,18 @@ module ApplicationHelper
 	###		le puse almacen_nuestro...pero eso no va a funcar						###
 	###################################################################################
 
-	def mover_stock_bodega_fuera(sku, almacen, cantidad)
-		if(cantidad < get_stock(almacen_nuestro, sku, limit=nil))
-			for i in 1..cantidad
-				r = HTTParty.post(Integra2::STOCK_API_URL+'moveStockBodega',
-				{ 
-				:body => {"productoId" => producto, "almacenId" => almacen},
-				:headers => {'Authorization' => generate_auth_hash('POST'+producto+almacen)}
-				})
-			end
-		end
-		#retorna Producto
-	end
+	#def mover_stock_bodega_fuera(sku, almacen, cantidad)
+	#	if(cantidad < get_stock(almacen_nuestro, sku, limit=nil))
+	#		for i in 1..cantidad
+	#			r = HTTParty.post(Integra2::STOCK_API_URL+'moveStockBodega',
+	#			{ 
+	#			:body => {"productoId" => producto, "almacenId" => almacen},
+	#			:headers => {'Authorization' => generate_auth_hash('POST'+producto+almacen)}
+	#			})
+	#		end
+	#	end
+	#	#retorna Producto
+	#end
 
 
 
