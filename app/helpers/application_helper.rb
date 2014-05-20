@@ -34,13 +34,15 @@ module ApplicationHelper
 		})
 		#retorna Producto
 	end
+	############################ MIRA ESTA WEA TOY ####################################
+	### 	aca lo estoy haciendo Toy, cambia las weas q te parescan pertinentes 	###
+	###		No se como manejar lo del almacen..hay q revisar todos los almacenes?? 	###
+	###		le puse almacen_nuestro...pero eso no va a funcar						###
+	###################################################################################
 
-	## aca lo estoy haciendo Toy, cambia las weas q te parescan pertinentes ###
-	##  No se como manejar lo del almacen..hay q revisar todos los almacenes?? ##
-	## le puse almacen_nuestro...pero eso no va a funcar##
-	def mover_stock_bodega(sku, almacen, cantidad)
+	def mover_stock_bodega_fuera(sku, almacen, cantidad)
 		if(cantidad < get_stock(almacen_nuestro, sku, limit=nil))
-			for i in 0..cantidad
+			for i in 1..cantidad
 end				r = HTTParty.post(Integra2::STOCK_API_URL+'moveStockBodega',
 				{ 
 				:body => {"productoId" => producto, "almacenId" => almacen},
