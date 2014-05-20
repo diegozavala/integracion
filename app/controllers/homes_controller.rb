@@ -1230,7 +1230,7 @@ class HomesController < ApplicationController
               
               
               if( hay_stock[i] == 0 and stock_disp>cant.to_i)
-                puts "hay stock en bodega"
+                puts "Hay stock en bodega"
                 hay_stock[i] = 2
               end
               i+=1
@@ -1238,7 +1238,7 @@ class HomesController < ApplicationController
             
             if hay_stock.index(0)
               #informar quiebre de pedido a dw. ¿Se mandan los productos que si estan???
-              puts "no hay stock"
+              puts "No hay stock"
               error +=1
               #si hay stock  
             else
@@ -1246,8 +1246,7 @@ class HomesController < ApplicationController
               i=0
               direccion = get_shipto(dirId)
               #averiguar direccion del cliente
-              puts "dir"
-            puts direccion
+              
               pedido.productos.each do |c|
 
                 #pasar stock a despacho
@@ -1260,8 +1259,8 @@ class HomesController < ApplicationController
                 sto = JSON.parse(get_stock('53571c4f682f95b80b7563e6', sku.to_s, pp.cantidad.to_i))
            
                 pp.cantidad.times do |j|
-                  puts sto[j]["_id"]
-                  mover_stock_bodega(sto[j]["_id"], '53571c4f682f95b80b7563e5')
+                  
+                  mover_stock(sto[j]["_id"].to_s, '53571c4f682f95b80b7563e5')
                   despachar_stock(sto[j]["_id"], direccion, precio, num_pedido)
                 end
                   
