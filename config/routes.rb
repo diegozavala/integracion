@@ -1,5 +1,7 @@
 Integra2::Application.routes.draw do
 
+  resources :dashboards
+
   resources :clientes
 
   resources :api_users

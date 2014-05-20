@@ -1,0 +1,21 @@
+<h1>Dashboard</h1>
+<script type="text/javascript" charset="uts-8"> 
+  $(function () {
+  new Highcharts.Chart({
+    chart: { renderTo: 'clientes-charts' },
+    title: { text: 'Pedidos por dia' },
+    xAxis: { type: 'datetime'},
+    yAxis: {
+      title: { text: 'Cantidad pedidos'}
+    },
+    series: [{
+      pointInterval: <%= 1.day * 1000 %>,
+      pointStart: <%= 31536000000*44+950400000 %>,
+      data: <%=@cantidadpedidosdiarios%>
+    }]
+  });
+});
+</script>
+<div id= "clientes-charts" style = "width:560px; height:300px;"></div>
+
+

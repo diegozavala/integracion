@@ -1179,8 +1179,6 @@ class HomesController < ApplicationController
       sftp.dir.foreach("/home/grupo2/Pedidos") do |entry|
         if entry.name.downcase.include? ".xml"
           num_pedido = entry.name[entry.name.index('_')+1..entry.name.index('.')-1]
-          
-          
           FtpPedido.find_or_create_by(nombre_archivo: entry.name, numero_pedido: num_pedido ) do |c|
             #bajo el contenido del archivo y lo guardo en contenido
             c.contenido = sftp.download!("/home/grupo2/Pedidos/"+entry.name)
