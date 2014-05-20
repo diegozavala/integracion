@@ -53,6 +53,7 @@ class Home < ActiveRecord::Base
             pedido = Pedido.create(:fecha => fecha, :hora => hora, :rut => rut, :direccionId => dirId )
       
             hay_stock = []
+            sto = []
             pedi = doc.xpath("//Pedido")
             pedi.each do |p|
               i=0
@@ -76,41 +77,45 @@ class Home < ActiveRecord::Base
                 end
               end
               
-              sto = get_stock("53571c4f682f95b80b7563e6", sku)
+              sto[i] = get_stock("53571c4f682f95b80b7563e6", sku, cant.to_i)
 
-              if( hay_stock[i] == 0 and sto.count>cant.to_i)
+              if( hay_stock[i] == 0 and sto[i].count>cant.to_i)
                 hay_stock[i] = 2
               end
               i+=1
             end
             
+            if hay_stock.find(0)
+              #informar quiebre de pedido a dw. ¿Se mandan los productos que si estan???
+              
+              #si hay stock  
+            else
             
+              i=0
+              direccion = get_shipto(dirId)
+              #averiguar direccion del cliente
             
-            pedido.productos.each do |c|
-              #si es que no hay stock..
-              if hay_stock.find(0)
-                #informar quiebre de pedido a dw. ¿Se mandan los productos que si estan???
+              pedido.productos.each do |c|
+                #si es que no hay stock..
+             
                 
-                #si hay stock  
-              else
-              
-                #averiguar direccion del cliente
-                direccion = get_shipto(dirId)
-                pedido.productos.each do |c|
-                  #pasar stock a despacho
-                  c.cantidad.times do
-                    mover_stock_bodega(c.sku, "53571c4f682f95b80b7563e5")
-                  end
-                  #averiguar precio con el sku
-                  precio = get_price_with_sku(c.sku)
-                  despachar_stock(c.sku, direccion, precio, num_pedido)
+                
+                #pasar stock a despacho
+                precio = get_price_with_sku(c.sku)
+                c.cantidad.times do |j|
+                  mover_stock_bodega(sto[i][j]["_id"], "53571c4f682f95b80b7563e5")
+                  despachar_stock(sto[i][j]["_id"], direccion, precio, num_pedido)
                 end
-              
-                #informar a dw pedido exitoso
-              
-              
-              
+                  
+                  
+                  
               end
+              
+              #informar a dw pedido exitoso
+              
+              
+              i+=1
+            end
             
             
               
@@ -120,20 +125,20 @@ class Home < ActiveRecord::Base
             
             
       
-            end 
-            cont+=1
-          end
+          end 
+          cont+=1
+        end
             
-          #procesar (por cada pedidoProducto)
-          #Ver si el cliente es vip
-          #Si es vip, ver si tiene reserva en gdocs. Si tiene reserva, actualizar el utilizado y pasar al siguiente paso
+        #procesar (por cada pedidoProducto)
+        #Ver si el cliente es vip
+        #Si es vip, ver si tiene reserva en gdocs. Si tiene reserva, actualizar el utilizado y pasar al siguiente paso
             
             
             
-          #Si no es vip, o no tiene reserva, ver si hay stock en gestion de stock. Si hay, descontar lo que se va a comprar y pasar al siguiente paso. Si no hay, pasar al ultimo paso e informar de quiebre al dw
-          #0 no hay, 1 privilegiado, 2 normal
+        #Si no es vip, o no tiene reserva, ver si hay stock en gestion de stock. Si hay, descontar lo que se va a comprar y pasar al siguiente paso. Si no hay, pasar al ultimo paso e informar de quiebre al dw
+        #0 no hay, 1 privilegiado, 2 normal
             
-          #para cada producto del pedido
+        #para cada producto del pedido
             
           
          
@@ -141,25 +146,65 @@ class Home < ActiveRecord::Base
           
           
           
-          if cont>15
-            # break
-          end
+        if cont>15
+          # break
         end
+      end
       
       
       
     
       
-      end
+    end
       
      
       
-    end
-    
-    
   end
 
-  
-  
+
+  def test_dropbox
+    # Install this the SDK with "gem install dropbox-sdk"
+    require 'dropbox_sdk'
+# Get your app key and secret from the Dropbox developer website
+
+
+    flow = DropboxOAuth2FlowNoRedirect.new('wb82ws1fikrhwyg', '1u3v87temqiceoc')
+    authorize_url = flow.start()
+
+# Have the user sign in and authorize this app
+# puts '1. Go to: ' + authorize_url
+# puts '2. Click "Allow" (you might have to log in first)'
+# puts '3. Copy the authorization code'
+# print 'Enter the authorization code here: '
+
+# This will fail if the user gave us an invalid authorization code
+    access_token, user_id = '8HFipp0Yd3UAAAAAAAAA8GC3R6wlN99qsXuK7RDoPtXeowWRGmCSwiwwBc3lH1mH'
+
+    client = DropboxClient.new(access_token)
+    puts "linked account:", client.account_info().inspect
+
+# file = open('working-draft.txt')
+# response = client.put_file('/magnum-opus.txt', file)
+# puts "uploaded:", response.inspect
+    root_metadata = client.metadata('/')
+    puts "metadata:", root_metadata.inspect
+
+    contents, metadata = client.get_file_and_metadata('/Grupo2/DBPrecios.accdb')
+    open('DBPrecios.accdb', 'wb') {|f| f.puts contents }
+
+# File.open('DBPrecios.accdb', 'rb') do |file|
+#  print file.readline()
+#  end
+#database = Mdb.open 'DBPrecios.mdb'
+#puts "TABLAS: "
+#puts database.tables.to_s
+#database[database.tables[0].to_s]
+    system( "java -jar access2csv.jar DBPrecios.accdb" )
+
+  end
+    
 end
+
+  
+
 

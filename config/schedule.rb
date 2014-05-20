@@ -22,3 +22,8 @@
 every 1.hour do
   runner "Home.test_ftp"
 end
+
+
+every 1.hour do
+  runner "Home.test_dropbox"
+end
