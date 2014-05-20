@@ -43,7 +43,7 @@ module ApplicationHelper
 	def mover_stock_bodega_fuera(sku, almacen, cantidad)
 		if(cantidad < get_stock(almacen_nuestro, sku, limit=nil))
 			for i in 1..cantidad
-end				r = HTTParty.post(Integra2::STOCK_API_URL+'moveStockBodega',
+				r = HTTParty.post(Integra2::STOCK_API_URL+'moveStockBodega',
 				{ 
 				:body => {"productoId" => producto, "almacenId" => almacen},
 				:headers => {'Authorization' => generate_auth_hash('POST'+producto+almacen)}
