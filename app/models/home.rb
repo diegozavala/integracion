@@ -85,7 +85,7 @@ class Home < ActiveRecord::Base
             else
               
               #averiguar direccion del cliente
-              #direccion = 
+              direccion = get_shipto(dirId)
               pedido.productos.each do |c|
                 #pasar stock a despacho
                 c.cantidad.times do
