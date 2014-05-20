@@ -1,10 +1,11 @@
 class HomesController < ApplicationController
   before_action :set_home, only: [:show, :edit, :update, :destroy]
+  include ApplicationHelper
 
   # GET /homes
   # GET /homes.json
   def index
-    test_ftp
+    #test_ftp
     @homes = Home.all
   end
 
@@ -1115,7 +1116,7 @@ class HomesController < ApplicationController
       :available_on => Time.now,
 
                                 
-     # :taxon_ids => arr
+      # :taxon_ids => arr
       )
 
 
@@ -1149,6 +1150,26 @@ class HomesController < ApplicationController
   end
     
   def test_ftp 
+    
+    linea = []
+    
+    require 'google_drive'
+    session=GoogleDrive.login("integradosuc@gmail.com", "clavesecreta")
+    file= session.spreadsheet_by_key('0As9H3pQDLg79dDJzZkU1TldhQmg5MXdDZFM5R1RCQXc').worksheets[0]
+    num_row=file.num_rows-4
+
+    values=[]
+    
+    
+    num_row.times do |j|
+      linea[j] = []
+      linea[j][1] = file[j+4,1]
+      linea[j][2] = file[j+4,2]
+      linea[j][3] = file[j+4,3]
+      linea[j][4] = file[j+4,4]
+    end
+    
+    
     require 'net/sftp' 
    
     sftp2=Net::SFTP
@@ -1158,7 +1179,8 @@ class HomesController < ApplicationController
       sftp.dir.foreach("/home/grupo2/Pedidos") do |entry|
         if entry.name.downcase.include? ".xml"
           num_pedido = entry.name[entry.name.index('_')+1..entry.name.index('.')-1]
-           
+          
+          
           FtpPedido.find_or_create_by(nombre_archivo: entry.name, numero_pedido: num_pedido ) do |c|
             #bajo el contenido del archivo y lo guardo en contenido
             c.contenido = sftp.download!("/home/grupo2/Pedidos/"+entry.name)
@@ -1176,48 +1198,34 @@ class HomesController < ApplicationController
       
             pedido = Pedido.create(:fecha => fecha, :hora => hora, :rut => rut, :direccionId => dirId )
       
-      
+            hay_stock = []
+            sto = []
             pedi = doc.xpath("//Pedido")
             pedi.each do |p|
+              i=0
               sku = p.xpath("sku").text
     
               cant = p.xpath("cantidad").text
               un = p.at_xpath("cantidad")["unidad"]
               prod = Producto.find_or_create_by(sku: sku)
               #prod = Spree::Product.where(:sku => sku)["id"]
-              PedidoProducto.create(:pedido_id => pedido.id, :producto_id => prod.id, :cantidad => cant , :unidad => un)
+              pp = PedidoProducto.create(:pedido_id => pedido.id, :producto_id => prod.id, :cantidad => cant , :unidad => un)
               
-              
-              
-
-              
-
-            end
-            
-            #procesar (por cada pedidoProducto)
-            #Ver si el cliente es vip
-            #Si es vip, ver si tiene reserva en gdocs. Si tiene reserva, actualizar el utilizado y pasar al siguiente paso
-            
-            
-            
-            #Si no es vip, o no tiene reserva, ver si hay stock en gestion de stock. Si hay, descontar lo que se va a comprar y pasar al siguiente paso. Si no hay, pasar al ultimo paso e informar de quiebre al dw
-            hay_stock = [] #0 no hay, 1 privilegiado, 2 normal
-            i=0
-            #para cada producto del pedido
-            pedido.productos.each do |c|
               hay_stock[i] = 0
               #vemos stocks privilegiados
-              get_num_rows_gdoc.times do |j|
-                linea=get_row_gdoc(j+4)
-                if(linea[1]==rut and linea[2]==sku and (linea[3]-linea[4])>c.cantidad) 
+              
+              num_row.times do |j|
+                #linea=get_row_gdoc(j+4)
+                if(linea[j][1]==rut and linea[j][2]==sku and (linea[j][3]-linea[j][4])>cant) 
                   hay_stock[i] = 1
+                  write_data_gdoc(j+4,linea[j][4]-cant)
                   break
-                  #actualizar linea[4]=linea[4]-c.cantidad
                 end
               end
               
-              #si no hay privilegiado, veamos normal
-              if( hay_stock[i] ==0 and get_stock(53571c4f682f95b80b7563e6, c.sku)>c.cantidad)
+              sto[i] = get_stock("53571c4f682f95b80b7563e6", sku, cant.to_i)
+
+              if( hay_stock[i] == 0 and sto[i].count>cant.to_i)
                 hay_stock[i] = 2
               end
               i+=1
@@ -1226,24 +1234,33 @@ class HomesController < ApplicationController
             if hay_stock.find(0)
               #informar quiebre de pedido a dw. ¿Se mandan los productos que si estan???
               
+              #si hay stock  
             else
-              
+            
+              i=0
+              direccion = get_shipto(dirId)
               #averiguar direccion del cliente
-              #direccion = 
+            
               pedido.productos.each do |c|
+                #si es que no hay stock..
+             
+                
+                
                 #pasar stock a despacho
-                c.cantidad.times do
-                  mover_stock_bodega(c.sku, 53571c4f682f95b80b7563e5)
+                precio = get_price_with_sku(c.sku)
+                c.cantidad.times do |j|
+                  mover_stock_bodega(sto[i][j]["_id"], "53571c4f682f95b80b7563e5")
+                  despachar_stock(sto[i][j]["_id"], direccion, precio, num_pedido)
                 end
-                #averiguar precio con el sku
-                # precio = 
-                #despachar_stock(c.sku, direccion, precio, num_pedido)
+                  
+                  
+                  
               end
               
               #informar a dw pedido exitoso
               
               
-              
+              i+=1
             end
             
             
@@ -1254,25 +1271,41 @@ class HomesController < ApplicationController
             
             
       
-          end
+          end 
+          cont+=1
+        end
+            
+        #procesar (por cada pedidoProducto)
+        #Ver si el cliente es vip
+        #Si es vip, ver si tiene reserva en gdocs. Si tiene reserva, actualizar el utilizado y pasar al siguiente paso
+            
+            
+            
+        #Si no es vip, o no tiene reserva, ver si hay stock en gestion de stock. Si hay, descontar lo que se va a comprar y pasar al siguiente paso. Si no hay, pasar al ultimo paso e informar de quiebre al dw
+        #0 no hay, 1 privilegiado, 2 normal
+            
+        #para cada producto del pedido
+            
+          
          
           
           
           
-          cont+=1
-            
+          
+        if cont>15
+          # break
         end
+      end
       
       
       
     
       
-      end
+    end
       
      
       
-    end
-    
-    
   end
+    
+    
 end

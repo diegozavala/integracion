@@ -1,4 +1,8 @@
-<h1>Página de Inicio de Integra-dos</h1>
+<div class="row">
+  <div class="col-md-offset-1">
+    <h1>Página de Inicio de Integra-dos</h1>
+  </div>
+</div>
 <%= @status %>
 <table>
   <thead>
@@ -19,13 +23,24 @@
     <% end %>
   </tbody>
 </table>
+<div class="row">
+  <div class="col-md-2 col-md-offset-1">
+    <ul class="nav nav-pills nav-stacked primary">
+      <li><%= link_to 'Store', '/store', class: 'link' %></li>
+      <li><%= link_to 'Gestion de stocks', stock_almacenes_path , class: 'link' %></li>
+      <li><%= link_to 'Dropbox', '/dropbox', class: 'link'%></li>
+      <li><%=link_to 'Clientes', clientes_path , class: 'link'%></li>
+    </ul>
+  </div>
+</div>
+<div class="row">
+  <div class="col-md-offset-2">
+    <h4 id="loading"></h4>
+  </div>
+</div>
 
-<br>
-
-El e-commerce se encuentra aquí: <%= link_to 'Store', '/store' %>
-<br>
-<%= link_to 'Gestion de stocks', stock_path %>
-<br>
-Dropbox aquí: <%= link_to 'Dropbox', '/dropbox' %>
-<br>
-Clientes aquí: <%=link_to 'Clientes', clientes_path%>
+<script>
+  $('.link').click(function(){
+    $('#loading').append('Loading...')
+  });
+</script>
