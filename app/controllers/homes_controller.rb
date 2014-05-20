@@ -1201,8 +1201,9 @@ class HomesController < ApplicationController
             hay_stock = []
             
             pedi = doc.xpath("//Pedido")
+            i=0
             pedi.each do |p|
-              i=0
+              
               sku = p.xpath("sku").text
     
               cant = p.xpath("cantidad").text
@@ -1223,19 +1224,21 @@ class HomesController < ApplicationController
                   break
                 end
               end
+              sku=sku.delete(' ')
+              sto = JSON.parse(get_stock('53571c4f682f95b80b7563e6', sku.to_s))
+              stock_disp = sto.length
               
-              sto = JSON.parse(get_stock("53571c4f682f95b80b7563e6", sku.to_s))
-              stock_disp = sto.count
-              puts "stock disponible"
-              puts sto
+              
               if( hay_stock[i] == 0 and stock_disp>cant.to_i)
+                puts "hay stock en bodega"
                 hay_stock[i] = 2
               end
               i+=1
             end
             
-            if hay_stock.find(0)
+            if hay_stock.index(0)
               #informar quiebre de pedido a dw. ¿Se mandan los productos que si estan???
+              puts "no hay stock"
               error +=1
               #si hay stock  
             else
@@ -1243,19 +1246,22 @@ class HomesController < ApplicationController
               i=0
               direccion = get_shipto(dirId)
               #averiguar direccion del cliente
-            
+              puts "dir"
+            puts direccion
               pedido.productos.each do |c|
 
                 #pasar stock a despacho
-                precio = get_price_with_sku(c.sku)
+                sku = c.sku.to_s.delete(' ')
+                precio = get_price_with_sku(sku)
                 
+                pp = PedidoProducto.find_by(producto_id: c.id, pedido_id: pedido.id)
               
           
-                sto = JSON.parse(get_stock("53571c4f682f95b80b7563e6", c.sku.to_s, c.cantidad.to_i))
+                sto = JSON.parse(get_stock('53571c4f682f95b80b7563e6', sku.to_s, pp.cantidad.to_i))
            
-                c.cantidad.times do |j|
+                pp.cantidad.times do |j|
                   puts sto[j]["_id"]
-                  mover_stock_bodega(sto[j]["_id"], "53571c4f682f95b80b7563e5")
+                  mover_stock_bodega(sto[j]["_id"], '53571c4f682f95b80b7563e5')
                   despachar_stock(sto[j]["_id"], direccion, precio, num_pedido)
                 end
                   
