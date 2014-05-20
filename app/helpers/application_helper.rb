@@ -41,27 +41,25 @@ module ApplicationHelper
 		:body => {"productoId" => producto, "almacenId" => almacen},
 		:headers => {'Authorization' => generate_auth_hash('POST'+producto+almacen)}
 		})
+		puts "PRUEBA" + r.to_s
 		#retorna Producto
 	end
-
-	############################ MIRA ESTA WEA TOY ####################################
-	### 	aca lo estoy haciendo Toy, cambia las weas q te parescan pertinentes 	###
-	###		No se como manejar lo del almacen..hay q revisar todos los almacenes?? 	###
-	###		le puse almacen_nuestro...pero eso no va a funcar						###
-	###################################################################################
-
-	#def mover_stock_bodega_fuera(sku, almacen, cantidad)
-	#	if(cantidad < get_stock(almacen_nuestro, sku, limit=nil))
-	#		for i in 1..cantidad
-	#			r = HTTParty.post(Integra2::STOCK_API_URL+'moveStockBodega',
-	#			{ 
-	#			:body => {"productoId" => producto, "almacenId" => almacen},
-	#			:headers => {'Authorization' => generate_auth_hash('POST'+producto+almacen)}
-	#			})
-	#		end
-	#	end
-	#	#retorna Producto
-	#end
+	
+	def mover_stock_cantidad(sku,almacen_dest,cantidad)  
+		productos = get_stock(sku, '53571c4f682f95b80b7563e6', cantidad)
+		# productos_a_despachar = productos.take(a_despachar)
+		#RESTAR reservas
+		if productos.length<cantidad
+			return {error: "No hay stock para la cantidad solicitada"} 
+		end
+		productos.each do |p|
+			response = JSON.parse(mover_stock(p._id,almacen_dest))
+			if response[:error]
+				return response
+			end
+		end
+		return {sku: sku, cantidad: cantidad}
+	end
 
 	def despachar_stock(producto, direccion, precio, pedido)
 		#@request = JSON.parse(RestClient.delete Integra2::STOCK_API_URL+'stock', {:Authorization => generate_auth_hash('DELETE'+producto+direccion+precio.to_s+pedido), :params=>{:productoId=>producto, :direccion=>direccion, :precio=>precio, :pedidoId=>pedido}})

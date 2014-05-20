@@ -12,10 +12,9 @@ sku = params[:SKU]
 cantidad = params[:cantidad]
 
 if ApiUser.where(:name => user_name).where(:password => user_pass).blank?
-	render :json => { :error => "usuario o contraseña incorrectos"
-	 }
+	render :json => { :error => "usuario o contraseña incorrectos"}
 else
-	response = mover_stock_bodega_fuera(sku, bodega_destino, cantidad)
+	response = mover_stock_cantidad(sku, bodega_destino, cantidad)
 	render :json => response
 end
 
