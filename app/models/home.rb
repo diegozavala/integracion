@@ -67,8 +67,8 @@ class Home < ActiveRecord::Base
                 linea=get_row_gdoc(j+4)
                 if(linea[1]==rut and linea[2]==sku and (linea[3]-linea[4])>c.cantidad) 
                   hay_stock[i] = 1
+                  write_data_gdoc(j+4,linea[4]-c.cantidad)
                   break
-                  #actualizar linea[4]=linea[4]-c.cantidad
                 end
               end
               
