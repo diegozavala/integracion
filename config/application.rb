@@ -11,6 +11,10 @@ module Integra2
   STOCK_API_URL = 'http://bodega-integracion-2014.herokuapp.com/'
   STOCK_PUBLIC_KEY = 'grupo2'
   STOCK_PRIVATE_KEY = 'CvsDU4MT'
+  ALMACEN_DESPACHO = '53571c4f682f95b80b7563e5'
+  ALMACEN_PULMON = '53571c52682f95b80b75c0dc'
+  ALMACEN_RECEPCION = '53571c4f682f95b80b7563e4'
+  ALMACEN_OTRO_1 ='53571c4f682f95b80b7563e6'
 
   class Application < Rails::Application 
     config.to_prepare do

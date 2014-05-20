@@ -1150,7 +1150,7 @@ class HomesController < ApplicationController
   end
     
   def test_ftp 
-    
+    error =0
     linea = []
     
     require 'google_drive'
@@ -1199,10 +1199,11 @@ class HomesController < ApplicationController
             pedido = Pedido.create(:fecha => fecha, :hora => hora, :rut => rut, :direccionId => dirId )
       
             hay_stock = []
-            sto = []
+            
             pedi = doc.xpath("//Pedido")
+            i=0
             pedi.each do |p|
-              i=0
+              
               sku = p.xpath("sku").text
     
               cant = p.xpath("cantidad").text
@@ -1217,40 +1218,50 @@ class HomesController < ApplicationController
               num_row.times do |j|
                 #linea=get_row_gdoc(j+4)
                 if(linea[j][1]==rut and linea[j][2]==sku and (linea[j][3]-linea[j][4])>cant) 
+                  puts "Hay stock en reserva"
                   hay_stock[i] = 1
                   write_data_gdoc(j+4,linea[j][4]-cant)
                   break
                 end
               end
+              sku=sku.delete(' ')
+              sto = JSON.parse(get_stock('53571c4f682f95b80b7563e6', sku.to_s))
+              stock_disp = sto.length
               
-              sto[i] = get_stock("53571c4f682f95b80b7563e6", sku, cant.to_i)
-
-              if( hay_stock[i] == 0 and sto[i].count>cant.to_i)
+              
+              if( hay_stock[i] == 0 and stock_disp>cant.to_i)
+                puts "Hay stock en bodega"
                 hay_stock[i] = 2
               end
               i+=1
             end
             
-            if hay_stock.find(0)
+            if hay_stock.index(0)
               #informar quiebre de pedido a dw. ¿Se mandan los productos que si estan???
-              
+              puts "No hay stock"
+              error +=1
               #si hay stock  
             else
             
               i=0
               direccion = get_shipto(dirId)
               #averiguar direccion del cliente
-            
+              
               pedido.productos.each do |c|
-                #si es que no hay stock..
-             
-                
-                
+
                 #pasar stock a despacho
-                precio = get_price_with_sku(c.sku)
-                c.cantidad.times do |j|
-                  mover_stock_bodega(sto[i][j]["_id"], "53571c4f682f95b80b7563e5")
-                  despachar_stock(sto[i][j]["_id"], direccion, precio, num_pedido)
+                sku = c.sku.to_s.delete(' ')
+                precio = get_price_with_sku(sku)
+                
+                pp = PedidoProducto.find_by(producto_id: c.id, pedido_id: pedido.id)
+              
+          
+                sto = JSON.parse(get_stock('53571c4f682f95b80b7563e6', sku.to_s, pp.cantidad.to_i))
+           
+                pp.cantidad.times do |j|
+                  
+                  mover_stock(sto[j]["_id"].to_s, '53571c4f682f95b80b7563e5')
+                  despachar_stock(sto[j]["_id"], direccion, precio, num_pedido)
                 end
                   
                   
@@ -1292,9 +1303,10 @@ class HomesController < ApplicationController
           
           
           
-        if cont>15
-          # break
+        if cont>10
+         # raise error.to_s
         end
+        
       end
       
       

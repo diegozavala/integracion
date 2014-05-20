@@ -19,9 +19,9 @@ module ApplicationHelper
 
 	def get_stock(almacen, sku, limit=nil)
 		if limit == nil
-			@request = RestClient.get Integra2::STOCK_API_URL+'stock', {:Authorization => generate_auth_hash('GET'+almacen+sku), :params=>{:almacenId=>almacen, :sku=>sku}}
+			RestClient.get Integra2::STOCK_API_URL+'stock', {:Authorization => generate_auth_hash('GET'+almacen+sku), :params=>{:almacenId=>almacen, :sku=>sku}}
 		else
-			@request = RestClient.get Integra2::STOCK_API_URL+'stock', {:Authorization => generate_auth_hash('GET'+almacen+sku), :params=>{:almacenId=>almacen, :sku=>sku, :limit=>limit}}
+			RestClient.get Integra2::STOCK_API_URL+'stock', {:Authorization => generate_auth_hash('GET'+almacen+sku), :params=>{:almacenId=>almacen, :sku=>sku, :limit=>limit}}
 		end
 	end
 
@@ -41,24 +41,24 @@ module ApplicationHelper
 		:body => {"productoId" => producto, "almacenId" => almacen},
 		:headers => {'Authorization' => generate_auth_hash('POST'+producto+almacen)}
 		})
-		puts "PRUEBA" + r.to_s
 		#retorna Producto
 	end
 	
 	def mover_stock_cantidad(sku,almacen_dest,cantidad)  
-		productos = get_stock(sku, '53571c4f682f95b80b7563e6', cantidad)
+		productos = JSON.parse(get_stock(Integra2::ALMACEN_OTRO_1,sku,cantidad))
 		# productos_a_despachar = productos.take(a_despachar)
 		#RESTAR reservas
 		if productos.length<cantidad
-			return {error: "No hay stock para la cantidad solicitada"} 
+			return JSON.parse({error: 'No hay stock para la cantidad solicitada'}.to_json)
 		end
 		productos.each do |p|
-			response = JSON.parse(mover_stock(p._id,almacen_dest))
-			if response[:error]
+			response = mover_stock(p["_id"],almacen_dest)
+			puts response
+			if response["error"]
 				return response
 			end
 		end
-		return {sku: sku, cantidad: cantidad}
+		return JSON.parse({'SKU' => sku.to_s, cantidad: cantidad.to_s}.to_json)
 	end
 
 	def despachar_stock(producto, direccion, precio, pedido)
@@ -68,7 +68,7 @@ module ApplicationHelper
 		:body => {"productoId" => producto, "direccion" => direccion, "precio" => precio, "pedidoId"=> pedido},
 		:headers => {'Authorization' => generate_auth_hash('DELETE'+producto+direccion+precio.to_s+pedido)}
 		})
-		puts "Stock despachado => "+r
+		puts "Stock despachado => "+r.to_s
 		#retorna Producto
 	end
 
