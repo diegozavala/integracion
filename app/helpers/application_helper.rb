@@ -68,6 +68,48 @@ end				r = HTTParty.post(Integra2::STOCK_API_URL+'moveStockBodega',
 		auth = 'UC '+Integra2::STOCK_PUBLIC_KEY+':'+hash
 	end
 
+	def get_shipto(direccionID)
+		user_name = 'grupo2' 
+	    url1 = 'http://integra.ing.puc.cl/vtigerCRM/webservice.php?operation=getchallenge'
+	    url2 = 'http://integra.ing.puc.cl/vtigerCRM/webservice.php?operation=login'
+	    @token = ActiveSupport::JSON.decode(Net::HTTP.get_response(URI.parse(url1+'&username=grupo2')).body)['result']['token'] 
+	    @key =@token+'jxrjMwjnG0ndVpC'
+	    @md5 = Digest::MD5.hexdigest(@key) 
+	    @response = JSON.parse((HTTParty.post url2, :body => { 'operation' => 'login', 'username' => user_name, 'accessKey' => @md5 }).response.body) 
+	    @sessionid=@response['result']['sessionName']
+
+	    @clientes=ActiveSupport::JSON.decode(Net::HTTP.get_response(URI.parse('http://integra.ing.puc.cl/vtigerCRM/webservice.php?operation=query&sessionName='+@sessionid+'&query='+URI.encode('select * from Contacts limit 0,100;'))).body)['result']
+	    (1..15).each do |i|
+	      @auxiliar=ActiveSupport::JSON.decode(Net::HTTP.get_response(URI.parse('http://integra.ing.puc.cl/vtigerCRM/webservice.php?operation=query&sessionName='+@sessionid+'&query='+URI.encode('select * from Contacts limit '+(i*100+1).to_s+','+((i+1)*100).to_s+';'))).body)['result']
+	      @auxiliar.each do |aux|
+	        @clientes << aux
+	      end
+	    end
+
+		return @clientes.find{|instancia| instancia['cf_707'] = direccionID}['otherstreet']
+
+	end
+	def get_companyname(rut)
+		user_name = 'grupo2' 
+	    url1 = 'http://integra.ing.puc.cl/vtigerCRM/webservice.php?operation=getchallenge'
+	    url2 = 'http://integra.ing.puc.cl/vtigerCRM/webservice.php?operation=login'
+	    @token = ActiveSupport::JSON.decode(Net::HTTP.get_response(URI.parse(url1+'&username=grupo2')).body)['result']['token'] 
+	    @key =@token+'jxrjMwjnG0ndVpC'
+	    @md5 = Digest::MD5.hexdigest(@key) 
+	    @response = JSON.parse((HTTParty.post url2, :body => { 'operation' => 'login', 'username' => user_name, 'accessKey' => @md5 }).response.body) 
+	    @sessionid=@response['result']['sessionName']
+
+	    @accounts=ActiveSupport::JSON.decode(Net::HTTP.get_response(URI.parse('http://integra.ing.puc.cl/vtigerCRM/webservice.php?operation=query&sessionName='+@sessionid+'&query='+URI.encode('select * from Accounts limit 0,100;'))).body)['result']
+	    (1..15).each do |i|
+	      @auxiliar=ActiveSupport::JSON.decode(Net::HTTP.get_response(URI.parse('http://integra.ing.puc.cl/vtigerCRM/webservice.php?operation=query&sessionName='+@sessionid+'&query='+URI.encode('select * from Accounts limit '+(i*100+1).to_s+','+((i+1)*100).to_s+';'))).body)['result']
+	      @auxiliar.each do |aux|
+	        @accounts << aux
+	      end
+	    end
+
+		return @accounts.find{|instancia| instancia['cf_705'] = direccionID}['accountname']
+
+	end
 	def get_row_gdoc i
 		require 'google_drive'
 		session=GoogleDrive.login("integradosuc@gmail.com", "clavesecreta")
