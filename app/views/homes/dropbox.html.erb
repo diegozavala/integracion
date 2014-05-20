@@ -37,8 +37,7 @@ open('DBPrecios.accdb', 'wb') {|f| f.puts contents }
 #puts database.tables.to_s
 #database[database.tables[0].to_s]
 system( "java -jar access2csv.jar DBPrecios.accdb" )
-CSV.foreach("Pricing.csv") do |row|
-  puts row.to_s
-end
+
+
 
 %>

@@ -13,9 +13,15 @@
 
 ActiveRecord::Schema.define(version: 20140519221853) do
 
+
   create_table "api_users", force: true do |t|
     t.string   "name"
     t.string   "password"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "as", force: true do |t|
     t.datetime "created_at"
     t.datetime "updated_at"
   end

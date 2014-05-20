@@ -15,7 +15,7 @@ if ApiUser.where(:name => user_name).where(:password => user_pass).blank?
 	render :json => { :error => "usuario o contraseña incorrectos"
 	 }
 else
-	response = 
+	response = mover_stock_bodega_fuera(sku, bodega_destino, cantidad)
 	render :json => response
 end
 

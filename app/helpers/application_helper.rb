@@ -1,6 +1,28 @@
 module ApplicationHelper
 
+<<<<<<< HEAD
+	def get_num_rows_gdoc ()
+		require 'google_drive'
+
+		session=GoogleDrive.login("integradosuc@gmail.com", "clavesecreta")
+		file= session.spreadsheet_by_key('0As9H3pQDLg79dDJzZkU1TldhQmg5MXdDZFM5R1RCQXc').worksheets[0]
+
+		return file.num_rows - 4
+	end
+
 	def get_almacenes
+=======
+  def get_price_with_sku(sku)
+    CSV.foreach("Pricing.csv") do |row|
+      if row[1].to_s == sku.to_s
+        return row[2].to_s
+        break
+      end
+    end
+  end
+
+  def get_almacenes
+>>>>>>> FETCH_HEAD
 		@request = JSON.parse(RestClient.get Integra2::STOCK_API_URL+'almacenes', {:Authorization => generate_auth_hash('GET')})
 	end
 
@@ -34,6 +56,7 @@ module ApplicationHelper
 		})
 		#retorna Producto
 	end
+	
 	############################ MIRA ESTA WEA TOY ####################################
 	### 	aca lo estoy haciendo Toy, cambia las weas q te parescan pertinentes 	###
 	###		No se como manejar lo del almacen..hay q revisar todos los almacenes?? 	###
@@ -52,8 +75,6 @@ module ApplicationHelper
 	#	end
 	#	#retorna Producto
 	#end
-
-
 
 	def despachar_stock(producto, direccion, precio, pedido)
 		@request = JSON.parse(RestClient.delete Integra2::STOCK_API_URL+'stock', {:Authorization => generate_auth_hash('DELETE'+producto+direccion+precio.to_s+pedido), :params=>{:productoId=>producto, :direccion=>direccion, :precio=>precio, :pedidoId=>pedido}})
@@ -130,14 +151,7 @@ module ApplicationHelper
 		file= session.spreadsheet_by_key('0As9H3pQDLg79dDJzZkU1TldhQmg5MXdDZFM5R1RCQXc').worksheets[0]
 		return file[2,2]
 	end
-	def get_num_rows_gdoc
-		require 'google_drive'
-
-		session=GoogleDrive.login("integradosuc@gmail.com", "clavesecreta")
-		file= session.spreadsheet_by_key('0As9H3pQDLg79dDJzZkU1TldhQmg5MXdDZFM5R1RCQXc').worksheets[0]
-
-		return file.num_rows - 4
-	end
+	
 	def write_data_gdoc row, text
 		require 'google_drive'
 

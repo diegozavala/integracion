@@ -3,8 +3,8 @@ class Home < ActiveRecord::Base
   helper :all
 
 
-
   def test_ftp 
+    num_row=get_num_rows_gdoc()
     require 'net/sftp' 
    
     sftp2=Net::SFTP
@@ -32,75 +32,65 @@ class Home < ActiveRecord::Base
       
             pedido = Pedido.create(:fecha => fecha, :hora => hora, :rut => rut, :direccionId => dirId )
       
-      
+            hay_stock = []
             pedi = doc.xpath("//Pedido")
             pedi.each do |p|
+              i=0
               sku = p.xpath("sku").text
     
               cant = p.xpath("cantidad").text
               un = p.at_xpath("cantidad")["unidad"]
               prod = Producto.find_or_create_by(sku: sku)
               #prod = Spree::Product.where(:sku => sku)["id"]
-              PedidoProducto.create(:pedido_id => pedido.id, :producto_id => prod.id, :cantidad => cant , :unidad => un)
+              pp = PedidoProducto.create(:pedido_id => pedido.id, :producto_id => prod.id, :cantidad => cant , :unidad => un)
               
-              
-              
-
-              
-
-            end
-            
-            #procesar (por cada pedidoProducto)
-            #Ver si el cliente es vip
-            #Si es vip, ver si tiene reserva en gdocs. Si tiene reserva, actualizar el utilizado y pasar al siguiente paso
-            
-            
-            
-            #Si no es vip, o no tiene reserva, ver si hay stock en gestion de stock. Si hay, descontar lo que se va a comprar y pasar al siguiente paso. Si no hay, pasar al ultimo paso e informar de quiebre al dw
-            hay_stock = [] #0 no hay, 1 privilegiado, 2 normal
-            i=0
-            #para cada producto del pedido
-            pedido.productos.each do |c|
               hay_stock[i] = 0
               #vemos stocks privilegiados
-              get_num_rows_gdoc.times do |j|
+              
+              num_row.times do |j|
                 linea=get_row_gdoc(j+4)
-                if(linea[1]==rut and linea[2]==sku and (linea[3]-linea[4])>c.cantidad) 
+                if(linea[1]==rut and linea[2]==sku and (linea[3]-linea[4])>cant) 
                   hay_stock[i] = 1
-                  write_data_gdoc(j+4,linea[4]-c.cantidad)
+                  write_data_gdoc(j+4,linea[4]-cant)
                   break
                 end
               end
               
-              #si no hay privilegiado, veamos normal
-              if( hay_stock[i] ==0 and get_stock(53571c4f682f95b80b7563e6, c.sku)>c.cantidad)
+              sto = get_stock("53571c4f682f95b80b7563e6", sku)
+
+              if( hay_stock[i] == 0 and sto.count>cant.to_i)
                 hay_stock[i] = 2
               end
               i+=1
             end
             
-            if hay_stock.find(0)
-              #informar quiebre de pedido a dw. ¿Se mandan los productos que si estan???
+            
+            
+            pedido.productos.each do |c|
+              #si es que no hay stock..
+              if hay_stock.find(0)
+                #informar quiebre de pedido a dw. ¿Se mandan los productos que si estan???
+                
+              #si hay stock  
+              else
               
-            else
-              
-              #averiguar direccion del cliente
-              direccion = get_shipto(dirId)
-              pedido.productos.each do |c|
-                #pasar stock a despacho
-                c.cantidad.times do
-                  mover_stock_bodega(c.sku, 53571c4f682f95b80b7563e5)
+                #averiguar direccion del cliente
+                direccion = get_shipto(dirId)
+                pedido.productos.each do |c|
+                  #pasar stock a despacho
+                  c.cantidad.times do
+                    mover_stock_bodega(c.sku, "53571c4f682f95b80b7563e5")
+                  end
+                  #averiguar precio con el sku
+                  precio = get_price_with_sku(c.sku)
+                  despachar_stock(c.sku, direccion, precio, num_pedido)
                 end
-                #averiguar precio con el sku
-                # precio = 
-                #despachar_stock(c.sku, direccion, precio, num_pedido)
+              
+                #informar a dw pedido exitoso
+              
+              
+              
               end
-              
-              #informar a dw pedido exitoso
-              
-              
-              
-            end
             
             
               
@@ -110,7 +100,22 @@ class Home < ActiveRecord::Base
             
             
       
+            end 
+
           end
+            
+          #procesar (por cada pedidoProducto)
+          #Ver si el cliente es vip
+          #Si es vip, ver si tiene reserva en gdocs. Si tiene reserva, actualizar el utilizado y pasar al siguiente paso
+            
+            
+            
+          #Si no es vip, o no tiene reserva, ver si hay stock en gestion de stock. Si hay, descontar lo que se va a comprar y pasar al siguiente paso. Si no hay, pasar al ultimo paso e informar de quiebre al dw
+          #0 no hay, 1 privilegiado, 2 normal
+            
+          #para cada producto del pedido
+            
+          
          
           
           
