@@ -19,6 +19,8 @@
 
 # Learn more: http://github.com/javan/whenever
 
+set :environment, "development"
+
 every 10.minutes do
   runner "Home.test_ftp"
 end

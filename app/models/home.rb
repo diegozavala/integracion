@@ -93,6 +93,10 @@ class Home < ActiveRecord::Base
             if hay_stock.index(0)
               #informar quiebre de pedido a dw. ¿Se mandan los productos que si estan???
               puts "No hay stock"
+              
+              
+              
+              
               error +=1
               #si hay stock  
             else
