@@ -105,12 +105,7 @@ class Home < ActiveRecord::Base
             
               
             
-            
-            #buscar direccion de despacho en vtiger con la direccionId
-            #buscar el precio en la bd que viene de dropbox
-            #realizar movimientos en bodega (gestion de stock) para dejar el producto en la bodega de despacho
-            #despachar (gestion de stock)
-            #realizar informe de venta/quiebre al dw
+           
             
             
             
