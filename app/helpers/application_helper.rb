@@ -35,6 +35,24 @@ module ApplicationHelper
 		#retorna Producto
 	end
 
+	## aca lo estoy haciendo Toy, cambia las weas q te parescan pertinentes ###
+	##  No se como manejar lo del almacen..hay q revisar todos los almacenes?? ##
+	## le puse almacen_nuestro...pero eso no va a funcar##
+	def mover_stock_bodega(sku, almacen, cantidad)
+		if(cantidad < get_stock(almacen_nuestro, sku, limit=nil))
+			for i in 0..cantidad
+end				r = HTTParty.post(Integra2::STOCK_API_URL+'moveStockBodega',
+				{ 
+				:body => {"productoId" => producto, "almacenId" => almacen},
+				:headers => {'Authorization' => generate_auth_hash('POST'+producto+almacen)}
+				})
+			end
+		end
+		#retorna Producto
+	end
+
+
+
 	def despachar_stock(producto, direccion, precio, pedido)
 		@request = JSON.parse(RestClient.delete Integra2::STOCK_API_URL+'stock', {:Authorization => generate_auth_hash('DELETE'+producto+direccion+precio.to_s+pedido), :params=>{:productoId=>producto, :direccion=>direccion, :precio=>precio, :pedidoId=>pedido}})
 	end
@@ -66,7 +84,7 @@ module ApplicationHelper
 	      end
 	    end
 
-		@request=@clientes.find{|instancia| instancia['cf_707'] = direccionID}['otherstreet']
+		return @clientes.find{|instancia| instancia['cf_707'] = direccionID}['otherstreet']
 
 	end
 	def get_companyname(rut)
@@ -87,7 +105,36 @@ module ApplicationHelper
 	      end
 	    end
 
-		@request=@accounts.find{|instancia| instancia['cf_705'] = direccionID}['accountname']
+		return @accounts.find{|instancia| instancia['cf_705'] = direccionID}['accountname']
 
 	end
+	def get_row_gdoc i
+		require 'google_drive'
+		session=GoogleDrive.login("integradosuc@gmail.com", "clavesecreta")
+		file= session.spreadsheet_by_key('0As9H3pQDLg79dDJzZkU1TldhQmg5MXdDZFM5R1RCQXc').worksheets[0]
+
+		values=[]
+		values << file[i,1]
+		values << file[i,2]
+		values << file[i,3]
+		values << file[i,4]
+
+		return values
+	end
+	def get_date_gdoc
+		require 'google_drive'
+
+		session=GoogleDrive.login("integradosuc@gmail.com", "clavesecreta")
+		file= session.spreadsheet_by_key('0As9H3pQDLg79dDJzZkU1TldhQmg5MXdDZFM5R1RCQXc').worksheets[0]
+		return file[2,2]
+	end
+	def get_num_rows_gdoc
+		require 'google_drive'
+
+		session=GoogleDrive.login("integradosuc@gmail.com", "clavesecreta")
+		file= session.spreadsheet_by_key('0As9H3pQDLg79dDJzZkU1TldhQmg5MXdDZFM5R1RCQXc').worksheets[0]
+
+		return file.num_rows - 4
+	end
+
 end
