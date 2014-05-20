@@ -1,4 +1,4 @@
-<<<<<<< Local Changes
+
 class Home < ActiveRecord::Base
   helper :all
 
@@ -13,8 +13,9 @@ class Home < ActiveRecord::Base
       cont=0
       sftp.dir.foreach("/home/grupo2/Pedidos") do |entry|
         if entry.name.downcase.include? ".xml"
+          num_pedido = entry.name[entry.name.index('_')+1..entry.name.index('.')-1]
            
-          FtpPedido.find_or_create_by(nombre_archivo: entry.name, numero_pedido: entry.name[entry.name.index('_')+1..entry.name.index('.')-1] ) do |c|
+          FtpPedido.find_or_create_by(nombre_archivo: entry.name, numero_pedido: num_pedido ) do |c|
             #bajo el contenido del archivo y lo guardo en contenido
             c.contenido = sftp.download!("/home/grupo2/Pedidos/"+entry.name)
             c.save!
@@ -42,28 +43,70 @@ class Home < ActiveRecord::Base
               #prod = Spree::Product.where(:sku => sku)["id"]
               PedidoProducto.create(:pedido_id => pedido.id, :producto_id => prod.id, :cantidad => cant , :unidad => un)
               
-              #procesar (por cada pedidoProducto)
-              #Ver si el cliente es vip
-              #Si es vip, ver si tiene reserva en gdocs. Si tiene reserva, actualizar el utilizado y pasar al siguiente paso
-              #Si no es vip, o no tiene reserva, ver si hay stock en gestion de stock. Si hay, descontar lo que se va a comprar y pasar al siguiente paso. Si no hay, pasar al ultimo paso e informar de quiebre al dw
-              if(get_stock(almace, sku)>0)
               
-              end
               
-              #buscar direccion de despacho en vtiger con la direccionId
-              #buscar el precio en la bd que viene de dropbox
-              #realizar movimientos en bodega (gestion de stock) para dejar el producto en la bodega de despacho
-              #despachar (gestion de stock)
-              #realizar informe de venta/quiebre al dw
+
               
-<<<<<<< Local Changes
-              if(get_stock(almace, c.sku)<1)
-                hay_stock = false
-                break
-              end
-=======
->>>>>>> External Changes
+
             end
+            
+            #procesar (por cada pedidoProducto)
+            #Ver si el cliente es vip
+            #Si es vip, ver si tiene reserva en gdocs. Si tiene reserva, actualizar el utilizado y pasar al siguiente paso
+            
+            
+            
+            #Si no es vip, o no tiene reserva, ver si hay stock en gestion de stock. Si hay, descontar lo que se va a comprar y pasar al siguiente paso. Si no hay, pasar al ultimo paso e informar de quiebre al dw
+            hay_stock = [] #0 no hay, 1 privilegiado, 2 normal
+            i=0
+            #para cada producto del pedido
+            pedido.productos.each do |c|
+              hay_stock[i] = 0
+              #vemos stocks privilegiados
+              get_num_rows_gdoc.times do |j|
+                linea=get_row_gdoc(j+4)
+                if(linea[1]==rut and linea[2]==sku and (linea[3]-linea[4])>c.cantidad) 
+                  hay_stock[i] = 1
+                  write_data_gdoc(j+4,linea[4]-c.cantidad)
+                  break
+                end
+              end
+              
+              #si no hay privilegiado, veamos normal
+              if( hay_stock[i] ==0 and get_stock(53571c4f682f95b80b7563e6, c.sku)>c.cantidad)
+                hay_stock[i] = 2
+              end
+              i+=1
+            end
+            
+            if hay_stock.find(0)
+              #informar quiebre de pedido a dw. ¿Se mandan los productos que si estan???
+              
+            else
+              
+              #averiguar direccion del cliente
+              #direccion = 
+              pedido.productos.each do |c|
+                #pasar stock a despacho
+                c.cantidad.times do
+                  mover_stock_bodega(c.sku, 53571c4f682f95b80b7563e5)
+                end
+                #averiguar precio con el sku
+                # precio = 
+                #despachar_stock(c.sku, direccion, precio, num_pedido)
+              end
+              
+              #informar a dw pedido exitoso
+              
+              
+              
+            end
+            
+            
+              
+            
+           
+            
             
             
       
@@ -92,5 +135,4 @@ class Home < ActiveRecord::Base
   
   
 end
-=======
->>>>>>> External Changes
+
