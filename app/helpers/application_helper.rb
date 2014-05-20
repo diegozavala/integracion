@@ -1,6 +1,15 @@
 module ApplicationHelper
 
-	def get_almacenes
+  def get_price_with_sku(sku)
+    CSV.foreach("Pricing.csv") do |row|
+      if row[1].to_s == sku.to_s
+        return row[2].to_s
+        break
+      end
+    end
+  end
+
+  def get_almacenes
 		@request = JSON.parse(RestClient.get Integra2::STOCK_API_URL+'almacenes', {:Authorization => generate_auth_hash('GET')})
 	end
 

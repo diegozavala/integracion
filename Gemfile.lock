@@ -145,9 +145,9 @@ GEM
     net-sftp (2.1.2)
       net-ssh (>= 2.6.5)
     net-ssh (2.9.0)
+    netrc (0.7.7)
     nice-ffi (0.4)
       ffi (>= 0.5.0)
-    netrc (0.7.7)
     nokogiri (1.6.1)
       mini_portile (~> 0.5.0)
     orm_adapter (0.5.0)
@@ -308,8 +308,8 @@ DEPENDENCIES
   mdb (~> 0.3.1)
   money (= 6.0.1)
   net-sftp
-  nice-ffi (~> 0.4)
   netrc (~> 0.7.7)
+  nice-ffi (~> 0.4)
   nokogiri
   rails (= 4.0.4)
   rdoc (~> 4.1.1)
