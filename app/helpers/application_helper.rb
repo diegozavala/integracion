@@ -34,6 +34,7 @@ module ApplicationHelper
 		})
 		#retorna Producto
 	end
+	
 	############################ MIRA ESTA WEA TOY ####################################
 	### 	aca lo estoy haciendo Toy, cambia las weas q te parescan pertinentes 	###
 	###		No se como manejar lo del almacen..hay q revisar todos los almacenes?? 	###
@@ -52,8 +53,6 @@ module ApplicationHelper
 	#	end
 	#	#retorna Producto
 	#end
-
-
 
 	def despachar_stock(producto, direccion, precio, pedido)
 		@request = JSON.parse(RestClient.delete Integra2::STOCK_API_URL+'stock', {:Authorization => generate_auth_hash('DELETE'+producto+direccion+precio.to_s+pedido), :params=>{:productoId=>producto, :direccion=>direccion, :precio=>precio, :pedidoId=>pedido}})
