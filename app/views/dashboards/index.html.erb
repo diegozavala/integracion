@@ -2,13 +2,17 @@
 <script type="text/javascript" charset="uts-8"> 
   $(function () {
   new Highcharts.Chart({
-    chart: { renderTo: 'clientes-charts' },
-    title: { text: 'Pedidos por dia' },
-    xAxis: { type: 'datetime'},
-    yAxis: {
-      title: { text: 'Cantidad pedidos'}
+    chart: { 
+      renderTo: 'pedidos-por-dia-charts' 
     },
+    title: { 
+      text: 'Pedidos por dia' 
+  },
+    xAxis: { 
+      type: 'datetime'
+  },
     series: [{
+      name: 'Cantidad pedida',
       pointInterval: <%= 1.day * 1000 %>,
       pointStart: <%= 31536000000*44+950400000 %>,
       data: <%=@cantidadpedidosdiarios%>
@@ -16,6 +20,31 @@
   });
 });
 </script>
-<div id= "clientes-charts" style = "width:560px; height:300px;"></div>
+<div id= "pedidos-por-dia-charts" style = "width:560px; height:300px;"></div>
+<script type="text/javascript" charset="uts-8"> 
+  $(function () {
+  new Highcharts.Chart({
+    chart: { 
+      type: 'bar',
+      renderTo: 'pedidos-por-producto-charts' 
+    },
+    title: { 
+      text: 'Pedidos por producto' 
+    },
+    xAxis: { 
+      categories: <%=@productospedidos%>,
+      title: { 
+        text: 'SKU'
+      }
+    },
+    series: [{
+      name: 'Cantidad pedida',
+      data: <%=@cantidadpedida%>
+    }]
+  });
+});
+</script>
+<div id= "pedidos-por-producto-charts" style = "width:560px; height:300px;"></div>
+
 
 

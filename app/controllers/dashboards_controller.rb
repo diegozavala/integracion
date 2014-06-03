@@ -14,6 +14,20 @@ class DashboardsController < ApplicationController
       @cantidadpedidosdiarios << Pedido.where(:fecha=>d).count
     end
     @dashboards = Dashboard.all
+
+    @unicos = PedidoProducto.all(:group => "producto_id")
+    @productospedidos = []
+    @cantidadpedida = []
+    cantidad = 0
+    @unicos.each do |a|
+      @productospedidos << Producto.find_by_id(a.producto_id).sku
+      @todos = PedidoProducto.where(:producto_id=>a.producto_id)
+      @todos.each do |uno|
+        cantidad = cantidad + uno.cantidad
+      end
+      @cantidadpedida << cantidad
+      cantidad = 0
+    end
   end
 
   # GET /dashboards/1
