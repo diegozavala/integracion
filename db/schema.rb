@@ -20,11 +20,6 @@ ActiveRecord::Schema.define(version: 20140520210327) do
     t.datetime "updated_at"
   end
 
-  create_table "as", force: true do |t|
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
-
   create_table "clientes", force: true do |t|
     t.datetime "created_at"
     t.datetime "updated_at"
