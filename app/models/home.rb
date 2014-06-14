@@ -79,7 +79,9 @@ class Home < ActiveRecord::Base
                 end
               end
               sku=sku.delete(' ')
-              sto = JSON.parse(get_stock('53571c4f682f95b80b7563e6', sku.to_s))
+              #sto = JSON.parse(get_stock('53571c4f682f95b80b7563e6', sku.to_s))
+              
+              sto = JSON.parse(get_stock('5396513be4b0c7adbad816d7', sku.to_s))
               stock_disp = sto.length
               
               
