@@ -1,5 +1,6 @@
 Integra2::Application.routes.draw do
 
+  get "reports/index"
   resources :clientes
 
   resources :api_users
