@@ -61,7 +61,7 @@ class Home < ActiveRecord::Base
             i=0
             #para cada elemento del pedido, vemos si hay stock reservado, normal, en otroas bodegas (se despacha en todo lo anterior), o se quiebra
             pedi.each do |p|
-              
+              puts "adelante"
               sku = p.xpath("sku").text
     
               cant = p.xpath("cantidad").text
@@ -74,7 +74,6 @@ class Home < ActiveRecord::Base
               
               #vemos stocks privilegiados
               num_row.times do |j|
-                #linea=get_row_gdoc(j+4)
                 if(linea[j][1]==rut and linea[j][2]==sku and (linea[j][3]-linea[j][4])>cant) 
                   puts "Hay stock en reserva"
                   hay_stock[i] = 1
@@ -87,9 +86,9 @@ class Home < ActiveRecord::Base
                 end
               end
               sku=sku.delete(' ')
-              #sto = JSON.parse(get_stock('53571c4f682f95b80b7563e6', sku.to_s))
               
-              sto = JSON.parse(get_stock('5396513be4b0c7adbad816d7', sku.to_s))
+              
+              sto = JSON.parse(get_stock('53571c4f682f95b80b7563e6', sku.to_s))
               stock_disp = sto.length
               
               
@@ -118,7 +117,7 @@ class Home < ActiveRecord::Base
     
     
   def despachar(sku, cantidad, direccion, num_pedido)
-    sku = c.sku.to_s.delete(' ')
+    sku = sku.to_s.delete(' ')
     precio = get_price_with_sku(sku)
     
     sto = JSON.parse(get_stock('53571c4f682f95b80b7563e6', sku.to_s, cantidad))
