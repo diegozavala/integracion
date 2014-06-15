@@ -1,5 +1,6 @@
 Integra2::Application.routes.draw do
 
+
   resources :dashboards
 
   resources :clientes
@@ -47,6 +48,11 @@ Integra2::Application.routes.draw do
   #   get 'products/:id/purchase' => 'catalog#purchase', as: :purchase
 root :to => "homes#index"
 get 'dropbox' => 'homes#dropbox'
+
+
+  #DROPBOX
+  get 'tweet'=> 'homes#tweet'
+  get 'rabbit' => 'homes#rabbit'
   # Example resource route (maps HTTP verbs to controller actions automatically):
   #   resources :products
 
