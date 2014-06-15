@@ -72,7 +72,7 @@ gem 'spree_auth_devise', :git => 'https://github.com/spree/spree_auth_devise.git
 gem 'net-sftp'
 
 gem 'whenever'
-
+gem 'bunny'
 
 gem 'httparty'
 
