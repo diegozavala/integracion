@@ -2,7 +2,7 @@ module ApplicationHelper
 
   def get_price_with_sku(sku)
     CSV.foreach("Pricing.csv") do |row|
-      if row[1].to_s == sku.to_s
+      if row[1].to_i == sku.to_i
         return row[2].to_s
         break
       end

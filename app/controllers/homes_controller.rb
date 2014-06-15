@@ -1179,6 +1179,8 @@ class HomesController < ApplicationController
       sftp.dir.foreach("/home/grupo2/Pedidos") do |entry|
         if entry.name.downcase.include? ".xml"
           num_pedido = entry.name[entry.name.index('_')+1..entry.name.index('.')-1]
+          
+          
           FtpPedido.find_or_create_by(nombre_archivo: entry.name, numero_pedido: num_pedido ) do |c|
             #bajo el contenido del archivo y lo guardo en contenido
             c.contenido = sftp.download!("/home/grupo2/Pedidos/"+entry.name)
@@ -1193,6 +1195,9 @@ class HomesController < ApplicationController
             rut = doc.at_xpath("/*/Pedidos/rut").text
             dirId = doc.at_xpath("/*/Pedidos/direccionId").text
             fecha_despacho = doc.at_xpath("/*/Pedidos/fecha").text
+            
+            #averiguar direccion del cliente
+            direccion = get_shipto(dirId)
       
             pedido = Pedido.create(:fecha => fecha, :hora => hora, :rut => rut, :direccionId => dirId )
       
@@ -1200,29 +1205,35 @@ class HomesController < ApplicationController
             
             pedi = doc.xpath("//Pedido")
             i=0
+            #para cada elemento del pedido, vemos si hay stock reservado, normal, en otroas bodegas (se despacha en todo lo anterior), o se quiebra
             pedi.each do |p|
-              
+              puts "adelante"
               sku = p.xpath("sku").text
     
               cant = p.xpath("cantidad").text
               un = p.at_xpath("cantidad")["unidad"]
               prod = Producto.find_or_create_by(sku: sku)
-              #prod = Spree::Product.where(:sku => sku)["id"]
+             
               pp = PedidoProducto.create(:pedido_id => pedido.id, :producto_id => prod.id, :cantidad => cant , :unidad => un)
               
-              hay_stock[i] = 0
-              #vemos stocks privilegiados
+              hay_stock[i] = 0 #0 no hay, 1 privilegiado, 2 bodega
               
+              #vemos stocks privilegiados
               num_row.times do |j|
-                #linea=get_row_gdoc(j+4)
                 if(linea[j][1]==rut and linea[j][2]==sku and (linea[j][3]-linea[j][4])>cant) 
                   puts "Hay stock en reserva"
                   hay_stock[i] = 1
                   write_data_gdoc(j+4,linea[j][4]-cant)
+                  
+                  despachar(sku,cant.to_i, direccion, num_pedido)
+                  registro_dw
+                  
                   break
                 end
               end
               sku=sku.delete(' ')
+              
+              
               sto = JSON.parse(get_stock('53571c4f682f95b80b7563e6', sku.to_s))
               stock_disp = sto.length
               
@@ -1230,93 +1241,41 @@ class HomesController < ApplicationController
               if( hay_stock[i] == 0 and stock_disp>cant.to_i)
                 puts "Hay stock en bodega"
                 hay_stock[i] = 2
-              end
-              i+=1
-            end
-            
-            if hay_stock.index(0)
-              #informar quiebre de pedido a dw. ¿Se mandan los productos que si estan???
-              puts "No hay stock"
-              error +=1
-              #si hay stock  
-            else
-            
-              i=0
-              direccion = get_shipto(dirId)
-              #averiguar direccion del cliente
-              
-              pedido.productos.each do |c|
-
-                #pasar stock a despacho
-                sku = c.sku.to_s.delete(' ')
-                precio = get_price_with_sku(sku)
                 
-                pp = PedidoProducto.find_by(producto_id: c.id, pedido_id: pedido.id)
-              
-          
-                sto = JSON.parse(get_stock('53571c4f682f95b80b7563e6', sku.to_s, pp.cantidad.to_i))
-           
-                pp.cantidad.times do |j|
-                  
-                  mover_stock(sto[j]["_id"].to_s, '53571c4f682f95b80b7563e5')
-                  despachar_stock(sto[j]["_id"], direccion, precio, num_pedido)
-                end
-                  
-                  
-                  
+                despachar(sku,cant.to_i, direccion, num_pedido)
+                registro_dw
+                
+              elsif (hay_stock[i] == 0 )
+                #pedir apis!
+                
+                #si hay, se despacha,y registro en dw
+                #si no hay en otras bodegas, informar quiebre a dw
+                
               end
-              
-              #informar a dw pedido exitoso
-              
-              
               i+=1
             end
-            
-            
-              
-            
-           
-            
-            
-            
-      
           end 
           cont+=1
-        end
-            
-        #procesar (por cada pedidoProducto)
-        #Ver si el cliente es vip
-        #Si es vip, ver si tiene reserva en gdocs. Si tiene reserva, actualizar el utilizado y pasar al siguiente paso
-            
-            
-            
-        #Si no es vip, o no tiene reserva, ver si hay stock en gestion de stock. Si hay, descontar lo que se va a comprar y pasar al siguiente paso. Si no hay, pasar al ultimo paso e informar de quiebre al dw
-        #0 no hay, 1 privilegiado, 2 normal
-            
-        #para cada producto del pedido
-            
-          
-         
-          
-          
-          
-          
-        if cont>10
-         # raise error.to_s
-        end
-        
+        end      
       end
-      
-      
-      
-    
-      
-    end
-      
-     
-      
+    end     
   end
-
+    
+    
+  def despachar(sku, cantidad, direccion, num_pedido)
+    sku = sku.to_s.delete(' ')
+    precio = get_price_with_sku(sku)
+    
+    sto = JSON.parse(get_stock('53571c4f682f95b80b7563e6', sku.to_s, cantidad))
+    
+    cantidad.times do |j|    
+      mover_stock(sto[j]["_id"].to_s, '53571c4f682f95b80b7563e5')
+      despachar_stock(sto[j]["_id"], direccion, precio, num_pedido)
+    end
+  
+  end
+  def registro_dw
+  end
 
     
 end
