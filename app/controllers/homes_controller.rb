@@ -1085,7 +1085,7 @@ class HomesController < ApplicationController
     url_taxon = 'http://integra2.ing.puc.cl/store/api/taxonomies/1/taxons' 
     hash.each do |hash|
      (HTTParty.post url_taxon, 
-     :body => { 'taxon[name]' => hash[0], 'taxon[id]' => hash[1] ,'token' => "7771e9b7bd0676c2d5b4e2f424328b52a82add010ea9b1c2"})
+     :body => { 'taxon[name]' => hash[0], 'taxon[id]' => hash[1] ,'token' => "b915aff05b9b71193094552622fe7e273e848f5979aa8068"})
     end 
 
 
