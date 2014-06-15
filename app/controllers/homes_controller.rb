@@ -1098,7 +1098,7 @@ class HomesController < ApplicationController
       arr=[]
       data['categorias'].each do |cat|
         begin
-          arr<< hash[cat]+1947
+          arr<< hash[cat]+2
 
         rescue => e
           a=a
