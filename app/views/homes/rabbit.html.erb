@@ -1,0 +1,24 @@
+Cola Rabbit:
+
+<%
+require "bunny" # don't forget to put gem "bunny" in your Gemfile
+
+b = Bunny.new ENV['amqp://ukrtynvc:AXr6Up0yW2OEs7UdxRQyLbD11RvYwm4x@hyena.rmq.cloudamqp.com/ukrtynvc']
+b.start # start a communication session with the amqp server
+
+q = b.queue("test1") # declare a queue
+
+# declare default direct exchange which is bound to all queues
+e = b.exchange("")
+
+# publish a message to the exchange which then gets routed to the queue
+e.publish("Hello, everybody!", :key => 'test1')
+
+msg = q.pop[:payload] # get message from the queue
+
+puts "This is the message: " + msg + "\n\n"
+
+b.stop # close the connection
+
+
+%>

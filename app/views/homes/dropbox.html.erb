@@ -39,5 +39,5 @@ open('DBPrecios.accdb', 'wb') {|f| f.puts contents }
 system( "java -jar access2csv.jar DBPrecios.accdb" )
 
 
-
+puts get_price_with_sku('')
 %>

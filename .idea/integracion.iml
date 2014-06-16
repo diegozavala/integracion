@@ -132,6 +132,7 @@
     <orderEntry type="library" scope="PROVIDED" name="activesupport (v4.0.4, RVM: ruby-2.0.0-p451) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="acts_as_list (v0.3.0, RVM: ruby-2.0.0-p451) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="addressable (v2.3.5, RVM: ruby-2.0.0-p451) [gem]" level="application" />
+    <orderEntry type="library" scope="PROVIDED" name="amq-protocol (v1.9.2, RVM: ruby-2.0.0-p451) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="awesome_nested_set (v3.0.0.rc.3, RVM: ruby-2.0.0-p451) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="aws-sdk (v1.27.0, RVM: ruby-2.0.0-p451) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="bcrypt (v3.1.7, RVM: ruby-2.0.0-p451) [gem]" level="application" />
