@@ -1115,7 +1115,8 @@ class HomesController < ApplicationController
       :description => data['descripcion'],
       :sku => data['sku'],
       :available_on => Time.now,
-      :taxon_ids => arr
+      :taxon_ids => arr,
+      :on_hand => 10
       )
       # Add current stock level
       api_products = JSON.parse(get_stock(Integra2::ALMACEN_OTRO,data['sku'], 200))
