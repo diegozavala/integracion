@@ -43,9 +43,43 @@ module ApplicationHelper
 		})
 		#retorna Producto
 	end
-	
-	def mover_stock_cantidad(sku,almacen_dest,cantidad)  
-		productos = JSON.parse(get_stock('53571c4f682f95b80b7563e6',sku,cantidad))
+
+  #METODOS PARA VACIAR ALMACENES DE RECEPCION Y PULMON
+
+  def vaciar
+    vaciar_pulmon
+    vaciar_recepcion
+  end
+
+  def vaciar_pulmon
+    puts "Vaciando pulmon..."
+    skus_pulmon = JSON.parse(get_skus_with_stock(Integra2::ALMACEN_PULMON))
+    puts skus_pulmon.to_s
+    skus_pulmon.each do |sku|
+      mover_stock_cantidad(sku["_id"],'53571c4f682f95b80b7563e6',sku["total"],'pulmon')
+      puts 'A total of '+sku["total"].to_s+' products sku: '+sku["id"].to_s+' where moved'
+    end
+  end
+
+  def vaciar_recepcion
+    puts "Vaciando recepcion..."
+    skus_recepcion = JSON.parse(get_skus_with_stock(Integra2::ALMACEN_RECEPCION))
+    puts skus_recepcion.to_s
+    skus_recepcion.each do |sku|
+      mover_stock_cantidad(sku["_id"],'53571c4f682f95b80b7563e6',sku["total"],'recepcion')
+      puts 'A total of '+sku["total"].to_s+' products sku: '+sku["id"].to_s+' where moved'
+    end
+  end
+
+
+	def mover_stock_cantidad(sku,almacen_dest,cantidad,vaciar=nil)
+		if vaciar == 'recepcion'
+      productos = JSON.parse(get_stock(Integra2::ALMACEN_RECEPCION,sku,cantidad))
+    elsif vaciar == 'pulmon'
+      productos = JSON.parse(get_stock(Integra2::ALMACEN_PULMON,sku,cantidad))
+    else
+      productos = JSON.parse(get_stock('53571c4f682f95b80b7563e6',sku,cantidad))
+    end
 		# productos_a_despachar = productos.take(a_despachar)
 		#RESTAR reservas
 		if productos.length<cantidad.to_i
