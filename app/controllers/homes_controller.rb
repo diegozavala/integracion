@@ -1119,11 +1119,12 @@ class HomesController < ApplicationController
       )
       # Add current stock level
       api_products = JSON.parse(get_stock(Integra2::ALMACEN_OTRO,data['sku'], 200))
-      #product.on_hand
+      
       
       product.save
 
       prod = Spree::Product.last
+      prod.on_hand=10
       prod.images << Spree::Image.create!(:attachment => open('public/imagenes/'+a.to_s+'.png')
       )
       a=a+1
