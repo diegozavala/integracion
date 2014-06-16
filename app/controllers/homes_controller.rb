@@ -1124,9 +1124,10 @@ class HomesController < ApplicationController
       product.save
 
       prod = Spree::Product.last
-      prod.on_hand=10
       prod.images << Spree::Image.create!(:attachment => open('public/imagenes/'+a.to_s+'.png')
       )
+
+      prod.assign_attributes( { variants_attributes: [ { on_hand: 20, price: 22.0 } ] } )
       a=a+1
 
     end
