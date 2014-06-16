@@ -1107,7 +1107,7 @@ class HomesController < ApplicationController
       open('public/imagenes/'+a.to_s+'.png', 'wb') do |file|
         file << open(data['imagen']).read
       end
-      product = Spree::Product.create(
+      product = Spree::Product.create!(
 
       :name => (data['marca']+" / "+ data['modelo']).to_s,
       :price =>  data['precio']['internet'],
@@ -1119,8 +1119,9 @@ class HomesController < ApplicationController
       )
       # Add current stock level
       api_products = JSON.parse(get_stock(Integra2::ALMACEN_OTRO,data['sku'], 200))
-      product.on_hand = api_products.length
+      product.on_hand = 10
       
+      product.save
 
       prod = Spree::Product.last
       prod.images << Spree::Image.create!(:attachment => open('public/imagenes/'+a.to_s+'.png')
