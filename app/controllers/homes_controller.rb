@@ -1082,55 +1082,16 @@ class HomesController < ApplicationController
     end
 
 
-    #url_taxon = 'http://integra2.ing.puc.cl/store/api/taxonomies/2/taxons' 
-    #hash.each do |hash|
-     #(HTTParty.post url_taxon, 
-     #:body => { 'taxon[name]' => hash[0], 'taxon[id]' => hash[1] ,'token' => "b915aff05b9b71193094552622fe7e273e848f5979aa8068"})
-    #end 
+    url_taxon = 'http://integra2.ing.puc.cl/store/api/taxonomies/4/taxons' 
+    hash.each do |hash|
+     (HTTParty.post url_taxon, 
+     :body => { 'taxon[name]' => hash[0], 'taxon[id]' => hash[1] ,'token' => "b915aff05b9b71193094552622fe7e273e848f5979aa8068"})
+    end 
 
 
     
 
-    a=0
-    require 'open-uri'
-    #Spree::Product.destroy_all
-    data.each do |data|
-      arr=[]
-      data['categorias'].each do |cat|
-        begin
-          arr<< hash[cat]+1462
-
-        rescue => e
-          a=a
-        end
-      end
-      open('public/imagenes/'+a.to_s+'.png', 'wb') do |file|
-        file << open(data['imagen']).read
-      end
-      product = Spree::Product.create!(
-
-      :name => (data['marca']+" / "+ data['modelo']).to_s,
-      :price =>  data['precio']['internet'],
-      :shipping_category_id =>1,
-      :description => data['descripcion'],
-      :sku => data['sku'],
-      :available_on => Time.now,
-      :taxon_ids => arr
-      )
-      # Add current stock level
-      api_products = JSON.parse(get_stock(Integra2::ALMACEN_OTRO,data['sku'], 200))
-      product.on_hand = api_products.length
-      
-      product.save
-
-      prod = Spree::Product.last
-      prod.images << Spree::Image.create!(:attachment => open('public/imagenes/'+a.to_s+'.png')
-      )
-      a=a+1
-
-    end
-
- 
+    
 
 
 
