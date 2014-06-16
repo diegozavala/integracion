@@ -1119,7 +1119,7 @@ class HomesController < ApplicationController
       )
       # Add current stock level
       api_products = JSON.parse(get_stock(Integra2::ALMACEN_OTRO,data['sku'], 200))
-      product.on_hand = api_products.length
+      product.total_on_hand = api_products.length
       
       product.save
 
