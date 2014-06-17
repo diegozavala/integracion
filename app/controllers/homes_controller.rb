@@ -1287,12 +1287,14 @@ class HomesController < ApplicationController
     cantidad.times do |j|    
       mover_stock(sto[j]["_id"].to_s, '53571c4f682f95b80b7563e5')
       despachar_stock(sto[j]["_id"], direccion, precio, num_pedido)
+      
     end
-  
+    #bajar stock de spree
   
   
   end
   def registro_dw
+    #poner datos en mongo
   end
 
     
