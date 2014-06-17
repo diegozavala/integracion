@@ -1094,7 +1094,7 @@ class HomesController < ApplicationController
     a=0
     require 'open-uri'
     #Spree::Product.destroy_all
-    data.each do |data|
+    
       arr=[]
       data['categorias'].each do |cat|
         begin
@@ -1130,9 +1130,6 @@ class HomesController < ApplicationController
 
       a=a+1
 
-    end
-
- 
 
 
 
