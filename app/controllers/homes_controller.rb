@@ -1119,10 +1119,8 @@ class HomesController < ApplicationController
       )
       # Add current stock level
       api_products = JSON.parse(get_stock(Integra2::ALMACEN_OTRO,data['sku'], 200))
-     
-      product.variants.create(:sku => data['sku'],
-                          :price =>data['precio']['internet'] ,
-                          :on_hand => 10)
+      
+      product.quantity_on_hand =10
       
       product.save
 
