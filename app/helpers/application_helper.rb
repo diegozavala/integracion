@@ -1,4 +1,4 @@
-module ApplicationHelper
+module ApplicationHelper 
 
   def get_price_with_sku(sku)
     CSV.foreach("Pricing.csv") do |row|
