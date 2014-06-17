@@ -1248,7 +1248,8 @@ class HomesController < ApplicationController
                 
               elsif (hay_stock[i] == 0 )
                 #pedir apis!
-                ApiUser.each do |user|
+                grupos = ApiUser.all.shuffle
+                grupos.each do |user|
                   #asumiendo que todos van a usar el mismo sistema de apis
                   id_grupo = user.name[-1]
                   url_grupo = "http://integra"+id_grupo+".ing.puc.cl//api/pedirProducto"
