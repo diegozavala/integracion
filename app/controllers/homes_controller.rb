@@ -1095,10 +1095,13 @@ class HomesController < ApplicationController
     arturo=0
     require 'open-uri'
     #Spree::Product.destroy_all
-    data.each do |data|=10
-      break
+    data.each do |data|
+
+      
       arturo=arturo+1
-      if arturo =
+      if arturo ==10
+        break
+      end
       arr=[]
       data['categorias'].each do |cat|
         begin
