@@ -1,4 +1,3 @@
-
 class Home < ActiveRecord::Base
   include ApplicationHelper
 

@@ -48,6 +48,7 @@ Integra2::Application.routes.draw do
   #   get 'products/:id/purchase' => 'catalog#purchase', as: :purchase
 root :to => "homes#index"
 get 'dropbox' => 'homes#dropbox'
+get 'test_ftp' => 'homes#test_ftp'
 
 
   #DROPBOX
