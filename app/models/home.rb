@@ -1,9 +1,8 @@
-
 class Home < ActiveRecord::Base
   include ApplicationHelper
 
 
-  def test_ftp 
+  def self.test_ftp 
     error =0
     linea = []
     
@@ -133,7 +132,7 @@ class Home < ActiveRecord::Base
     #desarrollar!!
   end
 
-  def test_dropbox
+  def self.test_dropbox
     # Install this the SDK with "gem install dropbox-sdk"
     require 'dropbox_sdk'
 # Get your app key and secret from the Dropbox developer website
