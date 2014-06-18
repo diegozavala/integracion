@@ -1,4 +1,39 @@
-<p id="notice"><%= notice %></p>
+<h1>DataWarehouse</h1>
+<table>
+  <thead>
+    <tr>
+      <th>Rut Cliente</th>
+      <th>Nombre Cliente</th>
+      <th>Fecha</th>
+      <th>Sku</th>
+      <th>Producto</th>
+      <th>Cantidad</th>
+      <th>Rut organizacion</th>
+      <th>Nombre organizacion</th>
+      <th>Direccion Despacho</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @dw.each do |dw| %>
+      <tr>
+        <td><%= dw[:rut] %></td>
+        <td><%= dw[:cliente] %></td>
+        <td><%= dw[:fecha] %></td>
+        <td><%= dw[:sku] %></td>
+        <td><%= dw[:producto] %></td>
+        <td><%= dw[:cantidad] %></td>
+        <td><%= dw[:rutorganizacion] %></td>
+        <td><%= dw[:nombreorganizacion] %></td>
+        <td><%= dw[:direccion] %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+<br>
+<%= link_to 'Volver', dashboards_path %>
+<br>
 
-<%= link_to 'Edit', edit_dashboard_path(@dashboard) %> |
-<%= link_to 'Back', dashboards_path %>
+
+
+
+
