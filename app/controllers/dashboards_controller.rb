@@ -1,5 +1,4 @@
-    require 'mongo'
-    include Mongo
+
 class DashboardsController < ApplicationController
   before_action :set_dashboard, only: [:show, :edit, :update, :destroy]
 
@@ -38,10 +37,10 @@ class DashboardsController < ApplicationController
   # GET /dashboards/1.json
   def show
     host = ENV['MONGO_RUBY_DRIVER_HOST'] || 'localhost'
-    port = ENV['MONGO_RUBY_DRIVER_PORT'] || MongoClient::DEFAULT_PORT
+    port = ENV['MONGO_RUBY_DRIVER_PORT'] || Mongo::MongoClient::DEFAULT_PORT
 
     puts "Connecting to #{host}:#{port}"
-    mongo_client = MongoClient.new(host, port)
+    mongo_client = Mongo::MongoClient.new(host, port)
     db = mongo_client.db('integra2-mongodb')
     coll = db.collection('datawarehouse')
     @dw = []
@@ -61,10 +60,10 @@ class DashboardsController < ApplicationController
   # GET /dashboards/new
   def new
     host = ENV['MONGO_RUBY_DRIVER_HOST'] || 'localhost'
-    port = ENV['MONGO_RUBY_DRIVER_PORT'] || MongoClient::DEFAULT_PORT
+    port = ENV['MONGO_RUBY_DRIVER_PORT'] || Mongo::MongoClient::DEFAULT_PORT
 
     puts "Connecting to #{host}:#{port}"
-    mongo_client = MongoClient.new(host, port)
+    mongo_client = Mongo::MongoClient.new(host, port)
     db = mongo_client.db('integra2-mongodb')
     db.drop_collection("datawarehouse")
     db.create_collection('datawarehouse', :capped => false)
