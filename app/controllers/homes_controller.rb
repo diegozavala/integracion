@@ -1248,7 +1248,26 @@ class HomesController < ApplicationController
                 
               elsif (hay_stock[i] == 0 )
                 #pedir apis!
-                
+                grupos = ApiUser.all.shuffle
+                grupos.each do |user|
+                  #asumiendo que todos van a usar el mismo sistema de apis
+                  id_grupo = user.name[-1]
+                  url_grupo = "http://integra"+id_grupo+".ing.puc.cl//api/pedirProducto"
+                  #falta definir SKU y cantidad
+                  r = HTTParty.post(url_grupo, {
+                      :body => {"usuario" => user.name, "password" => user.password,
+                                "almacen_id" => "5396513be4b0c7adbad816d7", "SKU" => "xx", "cantidad" => "cantidad_que_necesito"
+                    }
+                  })
+                  unless r["error"]
+                    #revisar si lo que me dio el grupo (r["cantidad"]) es suficiente, de ser asi hago break, de lo contrario
+                    # actualizo la cantidad que necesito y sigo con el siguiente grupo
+                    #if r["cantidad"] >= cantidad que necesito
+                      #break
+                    #else
+                      #cantidad_que_necesito=cantidad_que_necesito - r["cantidad"]
+                  end
+                end
                 #si hay, se despacha,y registro en dw
                 #si no hay en otras bodegas, informar quiebre a dw
                 
@@ -1293,8 +1312,24 @@ class HomesController < ApplicationController
   
   
   end
-  def registro_dw
-    #poner datos en mongo
+  def registro_dw(rutcliente,nombrecliente,fecha,sku,nombreproducto,cantidad,rutorganizacion,nombreorganizacion,direccion)
+    host = ENV['MONGO_RUBY_DRIVER_HOST'] || 'localhost'
+    port = ENV['MONGO_RUBY_DRIVER_PORT'] || MongoClient::DEFAULT_PORT
+
+    puts "Connecting to #{host}:#{port}"
+    db = MongoClient.new(host, port).db('integra2-mongodb')
+    coll = db.collection('datawarehouse')
+    coll.insert(
+      'rutcliente' => rutcliente,
+      'nombrecliente'=>nombrecliente,
+      'fecha'=>fecha,
+      'sku'=>sku,
+      'producto'=>nombreproducto,
+      'cantidad'=>cantidad,
+      'rutorganizacion'=>rutorganizacion,
+      'nombreorganizacion'=>nombreorganizacion,
+      'direccion'=>direccion
+      )
   end
 
     
