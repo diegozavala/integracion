@@ -1,9 +1,12 @@
+    require 'mongo'
+    include Mongo
 class DashboardsController < ApplicationController
   before_action :set_dashboard, only: [:show, :edit, :update, :destroy]
 
   # GET /dashboards
   # GET /dashboards.json
   def index
+
     @pedido = Pedido.all
     @cantidadpedidosdiarios = []
     
@@ -28,16 +31,43 @@ class DashboardsController < ApplicationController
       @cantidadpedida << cantidad
       cantidad = 0
     end
+
   end
 
   # GET /dashboards/1
   # GET /dashboards/1.json
   def show
+    host = ENV['MONGO_RUBY_DRIVER_HOST'] || 'localhost'
+    port = ENV['MONGO_RUBY_DRIVER_PORT'] || MongoClient::DEFAULT_PORT
+
+    puts "Connecting to #{host}:#{port}"
+    mongo_client = MongoClient.new(host, port)
+    db = mongo_client.db('integra2-mongodb')
+    coll = db.collection('datawarehouse')
+    @dw = []
+    coll.find().each do |col|
+      @dw << {:rut=>col['rutcliente'],
+      :cliente=>col['nombrecliente'],
+      :fecha=>col['fecha'],
+      :sku=>col['sku'],
+      :producto=>col['producto'],
+      :cantidad=>col['cantidad'],
+      :rutorganizacion=>col['rutorganizacion'],
+      :nombreorganizacion=>col['nombreorganizacion'],
+      :direccion=>col['direccion']}
+    end
   end
 
   # GET /dashboards/new
   def new
-    @dashboard = Dashboard.new
+    host = ENV['MONGO_RUBY_DRIVER_HOST'] || 'localhost'
+    port = ENV['MONGO_RUBY_DRIVER_PORT'] || MongoClient::DEFAULT_PORT
+
+    puts "Connecting to #{host}:#{port}"
+    mongo_client = MongoClient.new(host, port)
+    db = mongo_client.db('integra2-mongodb')
+    db.drop_collection("datawarehouse")
+    db.create_collection('datawarehouse', :capped => false)
   end
 
   # GET /dashboards/1/edit
@@ -87,7 +117,7 @@ class DashboardsController < ApplicationController
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_dashboard
-      @dashboard = Dashboard.find(params[:id])
+      @dashboard = Dashboard.all
     end
 
     # Never trust parameters from the scary internet, only allow the white list through.

@@ -1,4 +1,9 @@
 <h1>Dashboard</h1>
+<%= link_to 'Borrar DataWarehouse', new_dashboard_path() %> 
+<br>
+<%= link_to 'Revisar DataWarehouse', dashboard_path(:id=>1) %> 
+<h3>Graficos</h3>
+
 <script type="text/javascript" charset="uts-8"> 
   $(function () {
   new Highcharts.Chart({
@@ -6,7 +11,7 @@
       renderTo: 'pedidos-por-dia-charts' 
     },
     title: { 
-      text: 'Pedidos por dia' 
+      text: 'Pedidos por cada dia' 
   },
     xAxis: { 
       type: 'datetime'
@@ -45,6 +50,8 @@
 });
 </script>
 <div id= "pedidos-por-producto-charts" style = "width:560px; height:300px;"></div>
+
+
 
 
 

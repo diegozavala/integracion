@@ -1287,7 +1287,24 @@ class HomesController < ApplicationController
   
   
   end
-  def registro_dw
+  def registro_dw(rutcliente,nombrecliente,fecha,sku,nombreproducto,cantidad,rutorganizacion,nombreorganizacion,direccion)
+    host = ENV['MONGO_RUBY_DRIVER_HOST'] || 'localhost'
+    port = ENV['MONGO_RUBY_DRIVER_PORT'] || MongoClient::DEFAULT_PORT
+
+    puts "Connecting to #{host}:#{port}"
+    db = MongoClient.new(host, port).db('integra2-mongodb')
+    coll = db.collection('datawarehouse')
+    coll.insert(
+      'rutcliente' => rutcliente,
+      'nombrecliente'=>nombrecliente,
+      'fecha'=>fecha,
+      'sku'=>sku,
+      'producto'=>nombreproducto,
+      'cantidad'=>cantidad,
+      'rutorganizacion'=>rutorganizacion,
+      'nombreorganizacion'=>nombreorganizacion,
+      'direccion'=>direccion
+      )
   end
 
     
