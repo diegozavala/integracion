@@ -1328,7 +1328,7 @@ class HomesController < ApplicationController
       'cantidad'=>cantidad,
       'rutorganizacion'=>rutorganizacion,
       'nombreorganizacion'=>nombreorganizacion,
-      'direccion'=>direccion
+      'direccion'=>direccion,
       'quiebre'=>quiebre
       )
   end
