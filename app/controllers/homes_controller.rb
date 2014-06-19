@@ -1253,19 +1253,19 @@ class HomesController < ApplicationController
                   #asumiendo que todos van a usar el mismo sistema de apis
                   id_grupo = user.name[-1]
                   url_grupo = "http://integra"+id_grupo+".ing.puc.cl//api/pedirProducto"
-                  #falta definir SKU y cantidad
+                  
                   r = HTTParty.post(url_grupo, {
                       :body => {"usuario" => user.name, "password" => user.password,
-                                "almacen_id" => "5396513be4b0c7adbad816d7", "SKU" => "xx", "cantidad" => "cantidad_que_necesito"
+                                "almacen_id" => "5396513be4b0c7adbad816d7", "SKU" => sku, "cantidad" => cant.to_i
                     }
                   })
                   unless r["error"]
-                    #revisar si lo que me dio el grupo (r["cantidad"]) es suficiente, de ser asi hago break, de lo contrario
-                    # actualizo la cantidad que necesito y sigo con el siguiente grupo
+                    #TODO: revisar si lo que me dio el grupo (r["cantidad"]) es suficiente, de ser asi hago break, de lo contrario actualizo la cantidad que necesito y sigo con el siguiente grupo - la cantidad que necesito esta en cant (o en cant.to_i)
                     #if r["cantidad"] >= cantidad que necesito
                       #break
                     #else
                       #cantidad_que_necesito=cantidad_que_necesito - r["cantidad"]
+                    #end
                   end
                 end
                 #si hay, se despacha,y registro en dw
