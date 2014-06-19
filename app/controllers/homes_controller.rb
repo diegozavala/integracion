@@ -64,6 +64,7 @@ class HomesController < ApplicationController
   end
   
   def create_prod
+    @info =1
     Spree::Product.destroy_all
     jsonArray = '[{ "sku" : "3548644", "marca" : "Apple", "modelo" : "iPad Retina 9\" 32GB Wi-Fi", "precio" : { "normal" : 369990, "internet" : 329990 }, "categorias" : ["Regalos","Por Eventos"], "descripcion" : "<p class=\"destacadoNegro\">El iPad cuenta con una increble pantalla Retina, cmaras iSight y FaceTime, el nuevo chip A6X, y conexin wireless ultrarrpida. Adems, tiene acceso a ms de 275,000 apps en el App Store, para que puedas hacer ms cosas que nunca.</p> <h2>CARACTERSTICAS DEL PRODUCTO</h2> <ul><li>Pantalla Retina de 9.7 pulgadas</li><li>Chip A6X con grficos quad core</li><li>Cmara iSight de 5 megapixeles con grabacin de</li><li>videos en HD de 1080p</li><li>Cmara FaceTime HD</li><li>Hasta 10 horas de duracin de batera2</li><li>Wi-Fi (802.11a/b/g/n) integrada</li><li>Ms de 275,000 apps en el App Store1</li><li>iOS 6 e iCloud</li></ul>", "imagen" : "http://integra.ing.puc.cl/IMAGENESTI/3548644.jpeg"},
     { "sku" : "3478040", "marca" : "Be Feelosophy", "modelo" : "Crema de Manos Aromatherapy Sleep Well 100 ml", "precio" : { "normal" : 0, "internet" : 4900 }, "categorias" : ["Belleza","Marcas Belleza","Mavala","Zoya","Amano","Be Feelosophy"], "descripcion" : "<h2>CARACTERSTICAS DEL PRODUCTO</h2> <ul><li>Marca: Be Feelosophy </li><li>Contenido: 100 ml </li><li>Tipo de piel: Todos </li><li>Crema de manos aromatherapy sleep well </li><li>Aceites esenciales 100% Naturales </li><li>Aceites esenciales de lavanda y sndalo </li><li>El aceite esencial de lavanda calma la ansiedad y relaja ayudando a mejorar el sueo </li><li>El aceite esencial de sndalo tiene un efecto calmante por lo cual ha sido tradicionalmente usado en la meditacin </li><li>Disfruta de una suavidad aterciopelada duradera </li><li>Esta crema hidratante de manos para todos los das es la mejor manera para mantener tus manos suaves y flexibles </li><li>Aplicar una cantidad suficiente en la mano y masajear suavemente hasta que se absorba <l>Sentirs inmediatamente los efectos humectantes y su uso diario ayudar a proteger sus manos contra la sequedad </l></li></ul>", "imagen" : "http://integra.ing.puc.cl/IMAGENESTI/3478040.jpeg"},
@@ -1125,9 +1126,9 @@ class HomesController < ApplicationController
       )
       # Add current stock level
       api_products = JSON.parse(get_stock(Integra2::ALMACEN_OTRO,data['sku'], 200))
-      
-      s=Spree::StockItem.find_by_variant_id(product.master.id)
-      s.adjust_count_on_hand(3)
+      Spree::StockItem.destroy_all
+      s=Spree::StockItem.find_by_variant_id(product.id)
+      s.adjust_count_on_hand(10)
       
     
       prod = Spree::Product.last
