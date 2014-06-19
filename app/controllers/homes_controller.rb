@@ -1092,16 +1092,9 @@ class HomesController < ApplicationController
     
 
     a=0
-    arturo=0
     require 'open-uri'
     #Spree::Product.destroy_all
     data.each do |data|
-
-      
-      arturo=arturo+1
-      if arturo ==10
-        break
-      end
       arr=[]
       data['categorias'].each do |cat|
         begin
@@ -1126,9 +1119,9 @@ class HomesController < ApplicationController
       )
       # Add current stock level
       api_products = JSON.parse(get_stock(Integra2::ALMACEN_OTRO,data['sku'], 200))
-      #Spree::StockItem.destroy_all
-    #  s=Spree::StockItem.find_by_variant_id(product.id)
-     # s.adjust_count_on_hand(10)
+     
+     s=Spree::StockItem.find_by_variant_id(product.id)
+     s.adjust_count_on_hand(10)
       
     
       prod = Spree::Product.last
