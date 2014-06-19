@@ -1107,6 +1107,7 @@ class HomesController < ApplicationController
       open('public/imagenes/'+a.to_s+'.png', 'wb') do |file|
         file << open(data['imagen']).read
       end
+      begin
       product = Spree::Product.create(
 
       :name => (data['marca']+" / "+ data['modelo']).to_s,
@@ -1127,8 +1128,10 @@ class HomesController < ApplicationController
       prod = Spree::Product.last
       prod.images << Spree::Image.create!(:attachment => open('public/imagenes/'+a.to_s+'.png')
       )
-
-      a=a+1
+       rescue => e
+                a=a
+              end
+            a=a+1
 
     end
 
