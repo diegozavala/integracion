@@ -83,3 +83,7 @@ gem 'google_drive'
 
 gem 'twitter'
 
+gem 'mongo'
+
+gem 'bson_ext'
+
