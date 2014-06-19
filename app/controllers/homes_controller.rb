@@ -1128,7 +1128,7 @@ class HomesController < ApplicationController
       
       s=Spree::StockItem.find_by_variant_id(product.id)
       @info=api_products.count
-      s.adjust_count_on_hand(api_products.count)
+      s.adjust_count_on_hand(3)
       
     
       prod = Spree::Product.last
