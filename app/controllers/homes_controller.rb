@@ -1128,7 +1128,8 @@ class HomesController < ApplicationController
       api_products = JSON.parse(get_stock(Integra2::ALMACEN_OTRO,data['sku'], 200))
       
       s=Spree::StockItem.find_by_variant_id(product.id)
-      s.adjust_count_on_hand(api_products.length)
+      @info=api_products.count
+      s.adjust_count_on_hand(api_products.count)
       
     
       prod = Spree::Product.last
