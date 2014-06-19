@@ -1127,11 +1127,10 @@ class HomesController < ApplicationController
       # Add current stock level
       api_products = JSON.parse(get_stock(Integra2::ALMACEN_OTRO,data['sku'], 200))
       
+      s=Spree::StockItem.find_by_variant(product.id)
+      s.adjust_count_on_hand(10)
       
-      
-      if !Spree::Stock::Quantifier.new(product).can_supply?(10)
-        break
-      end 
+    
       prod = Spree::Product.last
       prod.images << Spree::Image.create!(:attachment => open('public/imagenes/'+a.to_s+'.png')
       )
@@ -1253,14 +1252,14 @@ class HomesController < ApplicationController
                   #asumiendo que todos van a usar el mismo sistema de apis
                   id_grupo = user.name[-1]
                   url_grupo = "http://integra"+id_grupo+".ing.puc.cl//api/pedirProducto"
-                  #TODO: falta definir SKU y cantidad
+                  
                   r = HTTParty.post(url_grupo, {
                       :body => {"usuario" => user.name, "password" => user.password,
-                                "almacen_id" => "5396513be4b0c7adbad816d7", "SKU" => "xx", "cantidad" => "cantidad_que_necesito"
+                                "almacen_id" => "5396513be4b0c7adbad816d7", "SKU" => sku, "cantidad" => cant.to_i
                     }
                   })
                   unless r["error"]
-                    #TODO: revisar si lo que me dio el grupo (r["cantidad"]) es suficiente, de ser asi hago break, de lo contrario actualizo la cantidad que necesito y sigo con el siguiente grupo
+                    #TODO: revisar si lo que me dio el grupo (r["cantidad"]) es suficiente, de ser asi hago break, de lo contrario actualizo la cantidad que necesito y sigo con el siguiente grupo - la cantidad que necesito esta en cant (o en cant.to_i)
                     #if r["cantidad"] >= cantidad que necesito
                       #break
                     #else
@@ -1312,7 +1311,7 @@ class HomesController < ApplicationController
   
   
   end
-  def registro_dw(rutcliente,nombrecliente,fecha,sku,nombreproducto,cantidad,rutorganizacion,nombreorganizacion,direccion)
+  def registro_dw(rutcliente,nombrecliente,fecha,sku,nombreproducto,cantidad,rutorganizacion,nombreorganizacion,direccion, quiebre)
     host = ENV['MONGO_RUBY_DRIVER_HOST'] || 'localhost'
     port = ENV['MONGO_RUBY_DRIVER_PORT'] || MongoClient::DEFAULT_PORT
 
@@ -1329,6 +1328,7 @@ class HomesController < ApplicationController
       'rutorganizacion'=>rutorganizacion,
       'nombreorganizacion'=>nombreorganizacion,
       'direccion'=>direccion
+      'quiebre'=>quiebre
       )
   end
 
