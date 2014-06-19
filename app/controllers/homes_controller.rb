@@ -1092,16 +1092,9 @@ class HomesController < ApplicationController
     
 
     a=0
-    arturo=0
     require 'open-uri'
     #Spree::Product.destroy_all
     data.each do |data|
-
-      
-      arturo=arturo+1
-      if arturo ==10
-        break
-      end
       arr=[]
       data['categorias'].each do |cat|
         begin
@@ -1114,7 +1107,8 @@ class HomesController < ApplicationController
       open('public/imagenes/'+a.to_s+'.png', 'wb') do |file|
         file << open(data['imagen']).read
       end
-      product = Spree::Product.create!(
+      begin
+      product = Spree::Product.create(
 
       :name => (data['marca']+" / "+ data['modelo']).to_s,
       :price =>  data['precio']['internet'],
@@ -1126,17 +1120,18 @@ class HomesController < ApplicationController
       )
       # Add current stock level
       api_products = JSON.parse(get_stock(Integra2::ALMACEN_OTRO,data['sku'], 200))
+     
+     s=Spree::StockItem.find_by_variant_id(product.master.id)
+     s.adjust_count_on_hand(api_products.length)
       
-      
-      
-      if !Spree::Stock::Quantifier.new(product).can_supply?(10)
-        break
-      end 
+    
       prod = Spree::Product.last
       prod.images << Spree::Image.create!(:attachment => open('public/imagenes/'+a.to_s+'.png')
       )
-
-      a=a+1
+       rescue => e
+                a=a
+              end
+            a=a+1
 
     end
 

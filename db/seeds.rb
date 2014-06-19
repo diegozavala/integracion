@@ -20,3 +20,6 @@ api_users = ApiUser.create([{name: 'grupo2' , password: 'b0399d2029f64d445bd131f
   {name: 'grupo6' , password: 'ebdf1bdb858ced98b4adef024c3ec86fbdc141c9'},
 	{name: 'grupo7' , password: 'a502ccca911d5c5f2a617de180cbcdc0626d6204'},
 	{name: 'grupo8' , password: 'jvLuwdum9GupBZm/vtHZHpWZSCY=\n'}])
+
+Spree::Core::Engine.load_seed if defined?(Spree::Core)
+Spree::Auth::Engine.load_seed if defined?(Spree::Auth)
