@@ -1107,7 +1107,7 @@ class HomesController < ApplicationController
       open('public/imagenes/'+a.to_s+'.png', 'wb') do |file|
         file << open(data['imagen']).read
       end
-      product = Spree::Product.create!(
+      product = Spree::Product.create(
 
       :name => (data['marca']+" / "+ data['modelo']).to_s,
       :price =>  data['precio']['internet'],
