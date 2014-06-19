@@ -53,7 +53,8 @@ class DashboardsController < ApplicationController
       :cantidad=>col['cantidad'],
       :rutorganizacion=>col['rutorganizacion'],
       :nombreorganizacion=>col['nombreorganizacion'],
-      :direccion=>col['direccion']}
+      :direccion=>col['direccion'],
+      :quiebre=>col['quiebre']}
     end
   end
 

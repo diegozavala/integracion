@@ -1312,7 +1312,7 @@ class HomesController < ApplicationController
   
   
   end
-  def registro_dw(rutcliente,nombrecliente,fecha,sku,nombreproducto,cantidad,rutorganizacion,nombreorganizacion,direccion)
+  def registro_dw(rutcliente,nombrecliente,fecha,sku,nombreproducto,cantidad,rutorganizacion,nombreorganizacion,direccion, quiebre)
     host = ENV['MONGO_RUBY_DRIVER_HOST'] || 'localhost'
     port = ENV['MONGO_RUBY_DRIVER_PORT'] || MongoClient::DEFAULT_PORT
 
@@ -1329,6 +1329,7 @@ class HomesController < ApplicationController
       'rutorganizacion'=>rutorganizacion,
       'nombreorganizacion'=>nombreorganizacion,
       'direccion'=>direccion
+      'quiebre'=>quiebre
       )
   end
 
