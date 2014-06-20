@@ -21,7 +21,7 @@ Spree::Order.class_eval do
   def finalize_with_discount_stock!
   a=1
   end
-  alias_method_chain :finalize!, :discount_stock
+  
 
   
 
