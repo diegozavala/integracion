@@ -23,11 +23,7 @@ Spree::Order.class_eval do
 
   def finalize_with_notify_shops!
   
-  ################################################
-  ## ACA TOY HAY Q METER EL DESCUENTO DE STOCK   #
-  ##                                             #
-  ################################################
-  products=Spree::Order.last.products
+  a=1
 
   end
   alias_method_chain :finalize!, :notify_shops
