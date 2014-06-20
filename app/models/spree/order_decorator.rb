@@ -27,7 +27,7 @@ Spree::Order.class_eval do
   ## ACA TOY HAY Q METER EL DESCUENTO DE STOCK   #
   ##                                             #
   ################################################
-  products=Spree::Order.last.products
+
 
   end
   alias_method_chain :finalize!, :discount_stock
