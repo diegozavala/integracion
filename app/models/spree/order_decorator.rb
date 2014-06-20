@@ -29,7 +29,7 @@ Spree::Order.class_eval do
   ################################################
   order.products
   end
-  alias_method_chain :finalize!, :notify_shops
+  alias_method_chain :finalize!
 
   
 
