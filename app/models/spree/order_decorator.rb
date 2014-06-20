@@ -5,6 +5,8 @@ Spree::Order.class_eval do
     go_to_state :confirm, :if => lambda { |order| order.confirmation_required? }
     go_to_state :complete, :do => discount_stock
 
+    after_transition :to => :complete,:do => :notify_shops_new_order
+
 
   end
 
@@ -19,6 +21,16 @@ Spree::Order.class_eval do
   end
   def discount_stock
     break
+  end
+
+  def finalize_with_notify_shops!
+  finalize_without_notify_shops!
+  notify_shops_new_order
+  end
+  alias_method_chain :finalize!, :notify_shops
+
+  def notify_shops_new_order
+    a=1
   end
 
 end
