@@ -2,6 +2,7 @@
 <table>
   <thead>
     <tr>
+      <th>Numero Pedido</th>
       <th>Nombre Cliente</th>
       <th>Fecha</th>
       <th>Sku</th>
@@ -16,6 +17,7 @@
   <tbody>
     <% @dw.each do |dw| %>
       <tr>
+        <td><%= dw[:numeropedido] %></td>
         <td><%= dw[:cliente] %></td>
         <td><%= dw[:fecha] %></td>
         <td><%= dw[:sku] %></td>

@@ -45,7 +45,9 @@ class DashboardsController < ApplicationController
     coll = db.collection('datawarehouse')
     @dw = []
     coll.find().each do |col|
-      @dw << {:cliente=>col['nombrecliente'],
+      @dw << {
+      :numeropedido=>col['numeropedido']
+      :cliente=>col['nombrecliente'],
       :fecha=>col['fecha'],
       :sku=>col['sku'],
       :producto=>col['producto'],
