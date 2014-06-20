@@ -29,8 +29,6 @@ Spree::Order.class_eval do
   ################################################
   products=Spree::Order.last.products
 
-  
-
   end
   alias_method_chain :finalize!, :discount_stock
 
