@@ -21,16 +21,7 @@ Spree::Order.class_eval do
     return true
   end
 
-  def finalize_with_discount_stock!
-  
-  ################################################
-  ## ACA TOY HAY Q METER EL DESCUENTO DE STOCK   #
-  ##                                             #
-  ################################################
-  products=Spree::Order.last.products
 
-  end
-  alias_method_chain :finalize!, :discount_stock
 
   
 
