@@ -7,6 +7,8 @@ Spree::Order.class_eval do
 
 
 
+
+
   end
 
   # If true, causes the payment step to happen during the checkout process
@@ -17,9 +19,6 @@ Spree::Order.class_eval do
   # If true, causes the confirmation step to happen during the checkout process
   def confirmation_required?
     return true
-  end
-  def discount_stock
-    break
   end
 
   def finalize_with_notify_shops!
