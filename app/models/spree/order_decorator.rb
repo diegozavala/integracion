@@ -1,7 +1,7 @@
 Spree::Order.class_eval do
   checkout_flow do
-   go_to_state :address
-    go_to_state :payment, :if => lambda { |order| order.payment_required? }
+    go_to_state :address
+   # go_to_state :payment, :if => lambda { |order| order.payment_required? }
     go_to_state :confirm, :if => lambda { |order| order.confirmation_required? }
     go_to_state :complete
 
@@ -21,12 +21,10 @@ Spree::Order.class_eval do
     return true
   end
 
-  def finalize_with_notify_shops!
-  
+  def finalize_with_discount_stock!
   a=1
-
   end
-  alias_method_chain :finalize!, :notify_shops
+  alias_method_chain :finalize!, :discount_stock
 
   
 
