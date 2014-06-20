@@ -136,7 +136,7 @@ module ApplicationHelper
 		return @clientes.find{|instancia| instancia['cf_707'] = direccionID}['otherstreet']
 	end
 
-	def get_clientname(rut)
+	def get_clientname(direccionID)
 		user_name = 'grupo2' 
 	    url1 = 'http://integra.ing.puc.cl/vtigerCRM/webservice.php?operation=getchallenge'
 	    url2 = 'http://integra.ing.puc.cl/vtigerCRM/webservice.php?operation=login'
@@ -146,16 +146,17 @@ module ApplicationHelper
 	    @response = JSON.parse((HTTParty.post url2, :body => { 'operation' => 'login', 'username' => user_name, 'accessKey' => @md5 }).response.body) 
 	    @sessionid=@response['result']['sessionName']
 
-	    @accounts=ActiveSupport::JSON.decode(Net::HTTP.get_response(URI.parse('http://integra.ing.puc.cl/vtigerCRM/webservice.php?operation=query&sessionName='+@sessionid+'&query='+URI.encode('select * from Accounts limit 0,100;'))).body)['result']
-	    (1..10).each do |i|
-	      @auxiliar=ActiveSupport::JSON.decode(Net::HTTP.get_response(URI.parse('http://integra.ing.puc.cl/vtigerCRM/webservice.php?operation=query&sessionName='+@sessionid+'&query='+URI.encode('select * from Accounts limit '+(i*100+1).to_s+','+((i+1)*100).to_s+';'))).body)['result']
+	    @clientes=ActiveSupport::JSON.decode(Net::HTTP.get_response(URI.parse('http://integra.ing.puc.cl/vtigerCRM/webservice.php?operation=query&sessionName='+@sessionid+'&query='+URI.encode('select * from Contacts limit 0,100;'))).body)['result']
+	    (1..15).each do |i|
+	      @auxiliar=ActiveSupport::JSON.decode(Net::HTTP.get_response(URI.parse('http://integra.ing.puc.cl/vtigerCRM/webservice.php?operation=query&sessionName='+@sessionid+'&query='+URI.encode('select * from Contacts limit '+(i*100+1).to_s+','+((i+1)*100).to_s+';'))).body)['result']
 	      @auxiliar.each do |aux|
-	        @accounts << aux
+	        @clientes << aux
 	      end
 	    end
-
-		return @accounts.find{|instancia| instancia['cf_705'] = rut}['accountname']
-
+	    nombre = @clientes.find{|instancia| instancia['cf_707'] = direccionID}['firstname']
+	    apellido = @clientes.find{|instancia| instancia['cf_707'] = direccionID}['lastname']
+	    nombreyapellido = nombre.to_s+ ' '+apellido.to_s
+		return nombreyapellido
 	end
 	def get_companyname(rut)
 		user_name = 'grupo2' 

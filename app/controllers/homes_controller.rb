@@ -1315,7 +1315,6 @@ class HomesController < ApplicationController
     db = MongoClient.new(host, port).db('integra2-mongodb')
     coll = db.collection('datawarehouse')
     coll.insert(
-      'rutcliente' => rutcliente,
       'nombrecliente'=>nombrecliente,
       'fecha'=>fecha,
       'sku'=>sku,
