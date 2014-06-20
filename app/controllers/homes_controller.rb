@@ -1239,7 +1239,7 @@ class HomesController < ApplicationController
                 hay_stock[i] = 2
                 
                 despachar(sku,cant.to_i, direccion, num_pedido)
-                #registro_dw(rut,nombrecliente,fecha_despacho,sku,nombreproducto,cantidad,rutorganizacion,nombreorganizacion,direccion, quiebre)
+                #registro_dw(rut,get_clientname(rut),fecha_despacho,sku,nombreproducto,cant,rutorganizacion,nombreorganizacion,direccion, quiebre)
                 
               elsif (hay_stock[i] == 0 )
                 #pedir apis!
