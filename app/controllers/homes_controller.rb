@@ -1124,13 +1124,13 @@ class HomesController < ApplicationController
      s=Spree::StockItem.find_by_variant_id(product.master.id)
      s.adjust_count_on_hand(api_products.length)
       
-    
+    rescue => e
+                a=a
+              end
       prod = Spree::Product.last
       prod.images << Spree::Image.create!(:attachment => open('public/imagenes/'+a.to_s+'.png')
       )
-       rescue => e
-                a=a
-              end
+       
             a=a+1
 
     end
