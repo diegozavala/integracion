@@ -72,10 +72,10 @@ module ApplicationHelper
   end
 
 
-	def mover_stock_cantidad(sku,almacen_dest,cantidad,vaciar=nil)
-		if vaciar == 'recepcion'
+	def mover_stock_cantidad(sku,almacen_dest,cantidad,modo=nil)
+		if modo == 'recepcion'
       productos = JSON.parse(get_stock(Integra2::ALMACEN_RECEPCION,sku,cantidad))
-    elsif vaciar == 'pulmon'
+    elsif modo == 'pulmon'
       productos = JSON.parse(get_stock(Integra2::ALMACEN_PULMON,sku,cantidad))
     else
       productos = JSON.parse(get_stock('53571c4f682f95b80b7563e6',sku,cantidad))
@@ -86,8 +86,12 @@ module ApplicationHelper
 			return JSON.parse({error: 'No hay stock para la cantidad solicitada'}.to_json)
 		end
 		productos.each do |p|
-			response = mover_stock(p["_id"],almacen_dest)
-			puts response
+      if modo == 'api'
+			  response = mover_stock_bodega(p["_id"],almacen_dest)
+      else
+        response = mover_stock(p["_id"],almacen_dest)
+      end
+      puts response
 			if response["error"]
 				return response
 			end
