@@ -1,5 +1,3 @@
-include ApplicationHelper
-
 Spree::Order.class_eval do
   checkout_flow do
     go_to_state :address
@@ -18,22 +16,21 @@ Spree::Order.class_eval do
     return false
   end
 
- 
 
-  def finalize_with_discount_stock!
-    discount_stock
-  end
+def finalize_with_drop_ship!
+    finalize_without_drop_ship!
 
-  alias_method_chain :finalize!, :discount_stock
-
-  def discount_stock
-     order = Spree::Order.last
+    order = Spree::Order.last
     address = Spree::Address.find(order.bill_address_id)
     products = order.products
     products.each do |product|
       despachar_stock(product.id, address.address1, product.price, order.number)
     end
-  end 
+    
+  end
+  alias_method_chain :finalize!, :drop_ship
+
+
   
 
 end
