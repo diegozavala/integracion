@@ -17,8 +17,7 @@ false
 
  
 
-def finalize_with_drop_ship!
-    finalize_without_drop_ship!
+def complete_order 
      order = Spree::Order.last
     address = Spree::Address.find(order.bill_address_id)
     products = order.products
