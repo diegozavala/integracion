@@ -3,7 +3,7 @@ Spree::Order.class_eval do
     go_to_state :address
    # go_to_state :payment, :if => lambda { |order| order.payment_required? }
     go_to_state :confirm
-    before_transition :to => :complete ,:do => :discount_stock
+    Spree::Order.state_machine.before_transition :to => :complete ,:do => :discount_stock
 
     go_to_state :complete
 
