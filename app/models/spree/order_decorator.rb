@@ -1,4 +1,5 @@
 Spree::Order.class_eval do
+      include ApplicationHelper
   checkout_flow do
     go_to_state :address
     go_to_state :payment, :if => lambda { |order| order.payment_required? }
@@ -22,7 +23,7 @@ Spree::Order.class_eval do
  
 
 def discount_stock
-    include ApplicationHelper
+
 
     order = Spree::Order.last
     address = Spree::Address.find(order.bill_address_id)
