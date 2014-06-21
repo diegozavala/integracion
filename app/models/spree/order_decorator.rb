@@ -1,4 +1,4 @@
-state_machine :initial => 'address' do 
+Order.state_machine :initial => 'address' do 
         after_transition :to => 'complete', :do => :complete_order 
         event :next do 
             transition :to => 'confirm', :from => 'address' 
