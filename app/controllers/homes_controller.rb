@@ -1105,14 +1105,58 @@ class HomesController < ApplicationController
     end
 
 
-    url_taxon = 'http://integra2.ing.puc.cl/store/api/taxonomies/8/taxons' 
-    hash.each do |hash|
-     (HTTParty.post url_taxon, 
-     :body => { 'taxon[name]' => hash[0], 'taxon[id]' => hash[1] ,'token' => "7771e9b7bd0676c2d5b4e2f424328b52a82add010ea9b1c2"})
-    end 
+    #url_taxon = 'http://integra2.ing.puc.cl/store/api/taxonomies/4/taxons' 
+    #hash.each do |hash|
+    # (HTTParty.post url_taxon, 
+    # :body => { 'taxon[name]' => hash[0], 'taxon[id]' => hash[1] ,'token' => "b915aff05b9b71193094552622fe7e273e848f5979aa8068"})
+   # end 
 
 
     
+
+    a=0
+    require 'open-uri'
+    #Spree::Product.destroy_all
+    data.each do |data|
+      arr=[]
+      data['categorias'].each do |cat|
+        begin
+          arr<< hash[cat]+1953
+
+        rescue => e
+          a=a
+        end
+      end
+      open('public/imagenes/'+a.to_s+'.png', 'wb') do |file|
+        file << open(data['imagen']).read
+      end
+      begin
+      product = Spree::Product.create(
+
+      :name => (data['marca']+" / "+ data['modelo']).to_s,
+      :price =>  data['precio']['internet'],
+      :shipping_category_id =>1,
+      :description => data['descripcion'],
+      :sku => data['sku'],
+      :available_on => Time.now,
+      :taxon_ids => arr
+      )
+      # Add current stock level
+      api_products = JSON.parse(get_stock(Integra2::ALMACEN_OTRO,data['sku'], 200))
+     
+     s=Spree::StockItem.find_by_variant_id(product.master.id)
+     s.adjust_count_on_hand(api_products.length)
+      
+    rescue => e
+                a=a
+              end
+      prod = Spree::Product.last
+      prod.images << Spree::Image.create!(:attachment => open('public/imagenes/'+a.to_s+'.png')
+      )
+       
+            a=a+1
+
+    end
 
  
 
@@ -1124,18 +1168,6 @@ class HomesController < ApplicationController
 
   end
 
-
-  private
-  # Use callbacks to share common setup or constraints between actions.
-  def set_home
-    @home = Home.find(params[:id])
-  end
-
-  # Never trust parameters from the scary internet, only allow the white list through.
-  def home_params
-    params[:home]
-  end
-    
   def test_ftp 
     error =0
     linea = []
@@ -1230,11 +1262,30 @@ class HomesController < ApplicationController
                 hay_stock[i] = 2
                 
                 despachar(sku,cant.to_i, direccion, num_pedido)
-                registro_dw
+                #registro_dw(rut,get_clientname(rut),fecha_despacho,sku,nombreproducto,cant,rutorganizacion,nombreorganizacion,direccion, quiebre)
                 
               elsif (hay_stock[i] == 0 )
                 #pedir apis!
-                
+                grupos = ApiUser.all.shuffle
+                grupos.each do |user|
+                  #asumiendo que todos van a usar el mismo sistema de apis
+                  id_grupo = user.name[-1]
+                  url_grupo = "http://integra"+id_grupo+".ing.puc.cl//api/pedirProducto"
+                  
+                  r = HTTParty.post(url_grupo, {
+                      :body => {"usuario" => user.name, "password" => user.password,
+                                "almacen_id" => "5396513be4b0c7adbad816d7", "SKU" => sku, "cantidad" => cant.to_i
+                    }
+                  })
+                  unless r["error"]
+                    #TODO: revisar si lo que me dio el grupo (r["cantidad"]) es suficiente, de ser asi hago break, de lo contrario actualizo la cantidad que necesito y sigo con el siguiente grupo - la cantidad que necesito esta en cant (o en cant.to_i)
+                    #if r["cantidad"] >= cantidad que necesito
+                      #break
+                    #else
+                      #cantidad_que_necesito=cantidad_que_necesito - r["cantidad"]
+                    #end
+                  end
+                end
                 #si hay, se despacha,y registro en dw
                 #si no hay en otras bodegas, informar quiebre a dw
                 
@@ -1247,9 +1298,24 @@ class HomesController < ApplicationController
       end
     end     
   end
+  
+  
+  private
+  # Use callbacks to share common setup or constraints between actions.
+  def set_home
+    @home = Home.find(params[:id])
+  end
+
+  # Never trust parameters from the scary internet, only allow the white list through.
+  def home_params
+    params[:home]
+  end
+    
+ 
     
     
   def despachar(sku, cantidad, direccion, num_pedido)
+  
     sku = sku.to_s.delete(' ')
     precio = get_price_with_sku(sku)
     
@@ -1258,10 +1324,31 @@ class HomesController < ApplicationController
     cantidad.times do |j|    
       mover_stock(sto[j]["_id"].to_s, '53571c4f682f95b80b7563e5')
       despachar_stock(sto[j]["_id"], direccion, precio, num_pedido)
+      
     end
+    #bajar stock de spree
+  
   
   end
-  def registro_dw
+  def registro_dw(numeropedido,nombrecliente,fecha,sku,nombreproducto,cantidad,rutorganizacion,nombreorganizacion,direccion, quiebre)
+    host = ENV['MONGO_RUBY_DRIVER_HOST'] || 'localhost'
+    port = ENV['MONGO_RUBY_DRIVER_PORT'] || MongoClient::DEFAULT_PORT
+
+    puts "Connecting to #{host}:#{port}"
+    db = MongoClient.new(host, port).db('integra2-mongodb')
+    coll = db.collection('datawarehouse')
+    coll.insert(
+      'numeropedido'=>numeropedido,
+      'nombrecliente'=>nombrecliente,
+      'fecha'=>fecha,
+      'sku'=>sku,
+      'producto'=>nombreproducto,
+      'cantidad'=>cantidad,
+      'rutorganizacion'=>rutorganizacion,
+      'nombreorganizacion'=>nombreorganizacion,
+      'direccion'=>direccion,
+      'quiebre'=>quiebre
+      )
   end
 
 

@@ -14,9 +14,22 @@ module Integra2
   ALMACEN_DESPACHO = '53571c4f682f95b80b7563e5'
   ALMACEN_PULMON = '53571c52682f95b80b75c0dc'
   ALMACEN_RECEPCION = '5396513be4b0c7adbad816d7'
-  ALMACEN_OTRO_1 = '53571c4f682f95b80b7563e6'
+  ALMACEN_OTRO = '53571c4f682f95b80b7563e6'
 
-  class Application < Rails::Application 
+  class Application < Rails::Application
+    
+    config.to_prepare do
+      # Load application's model / class decorators
+      Dir.glob(File.join(File.dirname(__FILE__), "../app/**/*_decorator*.rb")) do |c|
+        Rails.configuration.cache_classes ? require(c) : load(c)
+      end
+
+      # Load application's view overrides
+      Dir.glob(File.join(File.dirname(__FILE__), "../app/overrides/*.rb")) do |c|
+        Rails.configuration.cache_classes ? require(c) : load(c)
+      end
+    end
+ 
     config.to_prepare do
       # Load application's model / class decorators
       Dir.glob(File.join(File.dirname(__FILE__), "../app/**/*_decorator*.rb")) do |c|

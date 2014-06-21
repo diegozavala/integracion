@@ -1,4 +1,4 @@
-module ApplicationHelper
+module ApplicationHelper 
 
   def get_price_with_sku(sku)
     CSV.foreach("Pricing.csv") do |row|
@@ -43,17 +43,56 @@ module ApplicationHelper
 		})
 		#retorna Producto
 	end
-	
-	def mover_stock_cantidad(sku,almacen_dest,cantidad)  
-		productos = JSON.parse(get_stock('53571c4f682f95b80b7563e6',sku,cantidad))
+
+  #METODOS PARA VACIAR ALMACENES DE RECEPCION Y PULMON
+
+  def vaciar
+    vaciar_pulmon
+    vaciar_recepcion
+  end
+
+  def vaciar_pulmon
+    puts "Vaciando pulmon..."
+    skus_pulmon = JSON.parse(get_skus_with_stock(Integra2::ALMACEN_PULMON))
+    puts skus_pulmon.to_s
+    skus_pulmon.each do |sku|
+      mover_stock_cantidad(sku["_id"],'53571c4f682f95b80b7563e6',sku["total"],'pulmon')
+      puts 'A total of '+sku["total"].to_s+' products sku: '+sku["id"].to_s+' where moved'
+    end
+  end
+
+  def vaciar_recepcion
+    puts "Vaciando recepcion..."
+    skus_recepcion = JSON.parse(get_skus_with_stock(Integra2::ALMACEN_RECEPCION))
+    puts skus_recepcion.to_s
+    skus_recepcion.each do |sku|
+      mover_stock_cantidad(sku["_id"],'53571c4f682f95b80b7563e6',sku["total"],'recepcion')
+      puts 'A total of '+sku["total"].to_s+' products sku: '+sku["id"].to_s+' where moved'
+    end
+  end
+
+
+	def mover_stock_cantidad(sku,almacen_dest,cantidad,modo=nil)
+		if modo == 'recepcion'
+      productos = JSON.parse(get_stock(Integra2::ALMACEN_RECEPCION,sku,cantidad))
+    elsif modo == 'pulmon'
+      productos = JSON.parse(get_stock(Integra2::ALMACEN_PULMON,sku,cantidad))
+    else
+      productos = JSON.parse(get_stock('53571c4f682f95b80b7563e6',sku,cantidad))
+    end
 		# productos_a_despachar = productos.take(a_despachar)
 		#RESTAR reservas
 		if productos.length<cantidad.to_i
 			return JSON.parse({error: 'No hay stock para la cantidad solicitada'}.to_json)
 		end
 		productos.each do |p|
-			response = mover_stock(p["_id"],almacen_dest)
-			puts response
+      if modo == 'api'
+        response = mover_stock(p["_id"],Integra2::ALMACEN_DESPACHO)
+			  response = mover_stock_bodega(p["_id"],almacen_dest)
+      else
+        response = mover_stock(p["_id"],almacen_dest)
+      end
+      puts response
 			if response["error"]
 				return response
 			end
@@ -100,7 +139,29 @@ module ApplicationHelper
 	    end
 
 		return @clientes.find{|instancia| instancia['cf_707'] = direccionID}['otherstreet']
+	end
 
+	def get_clientname(direccionID)
+		user_name = 'grupo2' 
+	    url1 = 'http://integra.ing.puc.cl/vtigerCRM/webservice.php?operation=getchallenge'
+	    url2 = 'http://integra.ing.puc.cl/vtigerCRM/webservice.php?operation=login'
+	    @token = ActiveSupport::JSON.decode(Net::HTTP.get_response(URI.parse(url1+'&username=grupo2')).body)['result']['token'] 
+	    @key =@token+'jxrjMwjnG0ndVpC'
+	    @md5 = Digest::MD5.hexdigest(@key) 
+	    @response = JSON.parse((HTTParty.post url2, :body => { 'operation' => 'login', 'username' => user_name, 'accessKey' => @md5 }).response.body) 
+	    @sessionid=@response['result']['sessionName']
+
+	    @clientes=ActiveSupport::JSON.decode(Net::HTTP.get_response(URI.parse('http://integra.ing.puc.cl/vtigerCRM/webservice.php?operation=query&sessionName='+@sessionid+'&query='+URI.encode('select * from Contacts limit 0,100;'))).body)['result']
+	    (1..15).each do |i|
+	      @auxiliar=ActiveSupport::JSON.decode(Net::HTTP.get_response(URI.parse('http://integra.ing.puc.cl/vtigerCRM/webservice.php?operation=query&sessionName='+@sessionid+'&query='+URI.encode('select * from Contacts limit '+(i*100+1).to_s+','+((i+1)*100).to_s+';'))).body)['result']
+	      @auxiliar.each do |aux|
+	        @clientes << aux
+	      end
+	    end
+	    nombre = @clientes.find{|instancia| instancia['cf_707'] = direccionID}['firstname']
+	    apellido = @clientes.find{|instancia| instancia['cf_707'] = direccionID}['lastname']
+	    nombreyapellido = nombre.to_s+ ' '+apellido.to_s
+		return nombreyapellido
 	end
 	def get_companyname(rut)
 		user_name = 'grupo2' 
