@@ -1250,7 +1250,7 @@ class HomesController < ApplicationController
                   url_grupo = "http://integra"+id_grupo+".ing.puc.cl//api/pedirProducto"
                   
                   r = HTTParty.post(url_grupo, {
-                      :body => {"usuario" => user.name, "password" => user.password,
+                      :body => {"usuario" => "grupo2", "password" => "b0399d2029f64d445bd131ffaa399a42d2f8e7dc",
                                 "almacen_id" => "5396513be4b0c7adbad816d7", "SKU" => sku, "cantidad" => cant.to_i
                     }
                   })
