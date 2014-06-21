@@ -1,15 +1,14 @@
 Spree::Order.class_eval do
-  checkout_flow do
-    go_to_state :address
-    #go_to_state :payment, :if => lambda { |order| order.payment_required? }
-    #go_to_state :confirm
-    go_to_state :complete
-
-
-
-
-
-  end
+  
+  state_machine :initial => 'address' do 
+        after_transition :to => 'complete', :do => :complete_order 
+        event :next do 
+            transition :to => 'confirm', :from => 'address' 
+            transition :to => 'complete', :from => 'confirm' 
+            transition :to => 'payment', :from => 'delivery', :if=> 
+false 
+        end 
+    end 
 
   # If true, causes the payment step to happen during the checkout process
   def payment_required?
@@ -26,9 +25,7 @@ def finalize_with_drop_ship!
     products.each do |product|
       despachar_stock(product.id, address.address1, product.price, order.number)
     end
-    break
   end
-  alias_method_chain :finalize!, :drop_ship
 
   
 
