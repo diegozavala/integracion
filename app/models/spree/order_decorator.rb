@@ -26,6 +26,7 @@ def finalize_with_drop_ship!
     products.each do |product|
       despachar_stock(product.id, address.address1, product.price, order.number)
     end
+    break
   end
   alias_method_chain :finalize!, :drop_ship
 
