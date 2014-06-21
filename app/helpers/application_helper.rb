@@ -105,7 +105,7 @@ module ApplicationHelper
 		r = HTTParty.delete(Integra2::STOCK_API_URL+'stock',
 		{ 
 		:body => {"productoId" => producto, "direccion" => direccion, "precio" => precio, "pedidoId"=> pedido},
-		:headers => {'Authorization' => generate_auth_hash('DELETE'+producto+direccion+precio.to_s+pedido)}
+		:headers => {'Authorization' => generate_auth_hash('DELETE'+producto.to_s+direccion+precio.to_s+pedido.to_s)}
 		})
 		puts "Stock despachado => "+r.to_s
 		#retorna Producto

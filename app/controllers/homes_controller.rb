@@ -1236,7 +1236,27 @@ class HomesController < ApplicationController
                 
               elsif (hay_stock[i] == 0 )
                 #pedir apis!
-                
+
+                grupos = ApiUser.all.shuffle
+                grupos.each do |user|
+                  #asumiendo que todos van a usar el mismo sistema de apis
+                  id_grupo = user.name[-1]
+                  url_grupo = "http://integra"+id_grupo+".ing.puc.cl//api/pedirProducto"
+                  
+                  r = HTTParty.post(url_grupo, {
+                      :body => {"usuario" => "grupo2", "password" => "b0399d2029f64d445bd131ffaa399a42d2f8e7dc",
+                                "almacen_id" => "5396513be4b0c7adbad816d7", "SKU" => sku, "cantidad" => cant.to_i
+                    }
+                  })
+                  unless r["error"]
+                    #TODO: revisar si lo que me dio el grupo (r["cantidad"]) es suficiente, de ser asi hago break, de lo contrario actualizo la cantidad que necesito y sigo con el siguiente grupo - la cantidad que necesito esta en cant (o en cant.to_i)
+                    #if r["cantidad"] >= cantidad que necesito
+                      #break
+                    #else
+                      #cantidad_que_necesito=cantidad_que_necesito - r["cantidad"]
+                    #end
+                  end
+                end
                 #si hay, se despacha,y registro en dw
                 #si no hay en otras bodegas, informar quiebre a dw
                 
