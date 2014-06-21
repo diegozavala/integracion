@@ -27,7 +27,7 @@ Spree::Order.class_eval do
   alias_method_chain :finalize!, :discount_stock
 
   def discount_stock
-     order = Spree::Orders.last
+     order = Spree::Order.last
     address = Spree::Addresses.find(order.bill_address_id)
     products = order.products
     products.each do |product|
