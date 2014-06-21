@@ -5,8 +5,6 @@ Spree::Order.class_eval do
         event :next do 
             transition :to => 'confirm', :from => 'address' 
             transition :to => 'complete', :from => 'confirm' 
-            transition :to => 'payment', :from => 'delivery', :if=> 
-false 
         end 
     end 
 
