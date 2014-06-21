@@ -11,7 +11,7 @@ Spree::Order.class_eval do
 
   end
 
-  Spree::Order.state_machine.after_transition :from => :complete,
+  Spree::Order.state_machine.after_transition :from => :confirm,
                                           :do => :discount_stock
 
   # If true, causes the payment step to happen during the checkout process
