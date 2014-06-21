@@ -21,16 +21,19 @@ Spree::Order.class_eval do
  
 
   def finalize_with_discount_stock!
-    order = Spree::Orders.last
+    discount_stock
+  end
+
+  alias_method_chain :finalize!, :discount_stock
+
+  def discount_stock
+     order = Spree::Orders.last
     address = Spree::Addresses.find(order.bill_address_id)
     products = order.products
     products.each do |product|
       despachar_stock(product.id, address, product.price, order.number)
     end
-  end
-
-  alias_method_chain :finalize!, :notify_shops
-
+  end 
   
 
 end
