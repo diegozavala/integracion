@@ -87,6 +87,7 @@ module ApplicationHelper
 		end
 		productos.each do |p|
       if modo == 'api'
+        response = mover_stock(p["_id"],Integra2::ALMACEN_DESPACHO)
 			  response = mover_stock_bodega(p["_id"],almacen_dest)
       else
         response = mover_stock(p["_id"],almacen_dest)
