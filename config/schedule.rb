@@ -29,3 +29,7 @@ end
 every 1.hour do
   runner "Home.test_dropbox"
 end
+
+every 1.hour do
+  runner "Home.get_reposicion"
+end
