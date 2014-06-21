@@ -1,12 +1,14 @@
-Spree::Order.class_eval do
-  
-  state_machine :initial => 'address' do 
+state_machine :initial => 'address' do 
         after_transition :to => 'complete', :do => :complete_order 
         event :next do 
             transition :to => 'confirm', :from => 'address' 
             transition :to => 'complete', :from => 'confirm' 
         end 
     end 
+
+Spree::Order.class_eval do
+  
+  
 
   # If true, causes the payment step to happen during the checkout process
   def payment_required?
