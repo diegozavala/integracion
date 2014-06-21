@@ -53,7 +53,7 @@ get 'dropbox' => 'homes#dropbox'
   #DROPBOX
   get 'tweet'=> 'homes#tweet'
   get 'rabbit' => 'homes#rabbit'
-  # Example resource route (maps HTTP verbs to controller actions automatically):
+  #  # Example resource route (maps HTTP verbs to controller actions automatically):
   #   resources :products
 
   # Example resource route with options:

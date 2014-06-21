@@ -9,6 +9,29 @@ class HomesController < ApplicationController
     @homes = Home.all
   end
 
+
+
+  def rabbit
+    require "bunny" # don't forget to put gem "bunny" in your Gemfile
+
+    b = Bunny.new('amqp://ukrtynvc:AXr6Up0yW2OEs7UdxRQyLbD11RvYwm4x@hyena.rmq.cloudamqp.com/ukrtynvc')
+    b.start # start a communication session with the amqp server
+
+    q = b.queue("ofertas",:auto_delete => true) # declare a queue
+
+# declare default direct exchange which is bound to all queues
+    e = b.exchange("")
+
+    msg = q.pop # get message from the queue
+
+    puts "This is the message: " + msg.last.to_s + "\n\n"
+
+    b.stop # close the connection
+
+    ApplicationHelpervaciar_recepcion
+
+  end
+
   # GET /homes/1
   # GET /homes/1.json
   def show
@@ -1240,6 +1263,7 @@ class HomesController < ApplicationController
   end
   def registro_dw
   end
+
 
     
 end
