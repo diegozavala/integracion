@@ -1222,7 +1222,7 @@ class HomesController < ApplicationController
                   write_data_gdoc(j+4,linea[j][4]-cant)
                   
                   despachar(sku,cant.to_i, direccion, num_pedido)
-                  registro_dw
+                   registro_dw(num_pedido,get_clientname(dirID),fecha,sku,Spree::Variant.get_variant_by_sku(sku).name,cant,rut,get_companyname(rut),direccion, false)
                   
                   break
                 end
@@ -1304,7 +1304,9 @@ class HomesController < ApplicationController
       
     end
     #bajar stock de spree
-  
+    p=Spree::Variant.find_variant_by_sku(sku)
+    s=Spree::StockItem.find_by_variant_id(p.master.id)
+    s.adjust_count_on_hand(0-cantidad)
   
   end
   def registro_dw(numeropedido,nombrecliente,fecha,sku,nombreproducto,cantidad,rutorganizacion,nombreorganizacion,direccion, quiebre)
