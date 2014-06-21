@@ -22,6 +22,8 @@ Spree::Order.class_eval do
  
 
 def discount_stock
+    include ApplicationHelper
+
     order = Spree::Order.last
     address = Spree::Address.find(order.bill_address_id)
     products = order.products
