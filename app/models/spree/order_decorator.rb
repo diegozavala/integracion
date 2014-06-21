@@ -11,6 +11,12 @@ Spree::Order.class_eval do
 
   end
 
+  # If true, causes the payment step to happen during the checkout process
+  def payment_required?
+    return false
+  end
+
+ 
 
 def finalize_with_drop_ship!
     finalize_without_drop_ship!
@@ -22,6 +28,7 @@ def finalize_with_drop_ship!
     end
   end
   alias_method_chain :finalize!, :drop_ship
+
   
 
 end
