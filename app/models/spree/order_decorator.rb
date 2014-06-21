@@ -1,29 +1,35 @@
-# customize the checkout state machine
-Order.state_machines[:state] = StateMachine::Machine.new(Order, :initial => 'cart', :use_transactions => false) do
-  event :next do
-    transition :from => 'cart', :to => 'address'
-    transition :from => 'address', :to => 'complete'
+Spree::Order.class_eval do
+  checkout_flow do
+    go_to_state :address
+    go_to_state :payment, :if => lambda { |order| order.payment_required? }
+    go_to_state :confirm
+    go_to_state :complete
+
+
+
+
+
   end
 
-  event :cancel do
-    transition :to => 'canceled', :if => :allow_cancel?
-  end
-  event :return do
-    transition :to => 'returned', :from => 'awaiting_return'
-  end
-  event :resume do
-    transition :to => 'resumed', :from => 'canceled', :if => :allow_resume?
-  end
-  event :authorize_return do
-    transition :to => 'awaiting_return'
+  Spree::Order.state_machine.after_transition :from => :complete,
+                                          :do => :discount_stock
+
+  # If true, causes the payment step to happen during the checkout process
+  def payment_required?
+    return false
   end
 
-  after_transition :to => 'complete', :do => :finalize!
-  after_transition :to => 'canceled', :do => :after_cancel
-end
+ 
 
-Order.class_eval do
-  def payment?
-    false
+def discount_stock
+     order = Spree::Order.last
+    address = Spree::Address.find(order.bill_address_id)
+    products = order.products
+    products.each do |product|
+      despachar_stock(product.id, address.address1, product.price, order.number)
+    end
   end
+
+  
+
 end
