@@ -28,7 +28,7 @@ Spree::Order.class_eval do
 
   def discount_stock
      order = Spree::Order.last
-    address = Spree::Addresses.find(order.bill_address_id)
+    address = Spree::Address.find(order.bill_address_id)
     products = order.products
     products.each do |product|
       despachar_stock(product.id, address, product.price, order.number)
