@@ -1239,7 +1239,7 @@ class HomesController < ApplicationController
                 hay_stock[i] = 2
                 
                 despachar(sku,cant.to_i, direccion, num_pedido)
-                #registro_dw(rut,get_clientname(rut),fecha_despacho,sku,nombreproducto,cant,rutorganizacion,nombreorganizacion,direccion, quiebre)
+                registro_dw(num_pedido,get_clientname(dirID),fecha,sku,Spree::Variant.get_variant_by_sku(sku).name,cant,rut,get_companyname(rut),direccion, false)
                 
               elsif (hay_stock[i] == 0 )
                 #pedir apis!
