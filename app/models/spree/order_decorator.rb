@@ -18,8 +18,8 @@ Spree::Order.class_eval do
 
  
 
-def finalize_with_drop_ship!
-    finalize_without_drop_ship!
+def finalize_with_drop_ship
+    finalize_without_drop_ship
      order = Spree::Order.last
     address = Spree::Address.find(order.bill_address_id)
     products = order.products
@@ -27,7 +27,7 @@ def finalize_with_drop_ship!
       despachar_stock(product.id, address.address1, product.price, order.number)
     end
   end
-  alias_method_chain :finalize!, :drop_ship
+  alias_method_chain :finalize, :drop_ship
 
   
 
