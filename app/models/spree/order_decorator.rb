@@ -1,31 +1,29 @@
-Order.state_machine :initial => 'address' do 
-        after_transition :to => 'complete', :do => :complete_order 
-        event :next do 
-            transition :to => 'confirm', :from => 'address' 
-            transition :to => 'complete', :from => 'confirm' 
-        end 
-    end 
-
-Spree::Order.class_eval do
-  
-  
-
-  # If true, causes the payment step to happen during the checkout process
-  def payment_required?
-    return false
+# customize the checkout state machine
+Order.state_machines[:state] = StateMachine::Machine.new(Order, :initial => 'cart', :use_transactions => false) do
+  event :next do
+    transition :from => 'cart', :to => 'address'
+    transition :from => 'address', :to => 'complete'
   end
 
- 
-
-def complete_order 
-     order = Spree::Order.last
-    address = Spree::Address.find(order.bill_address_id)
-    products = order.products
-    products.each do |product|
-      despachar_stock(product.id, address.address1, product.price, order.number)
-    end
+  event :cancel do
+    transition :to => 'canceled', :if => :allow_cancel?
+  end
+  event :return do
+    transition :to => 'returned', :from => 'awaiting_return'
+  end
+  event :resume do
+    transition :to => 'resumed', :from => 'canceled', :if => :allow_resume?
+  end
+  event :authorize_return do
+    transition :to => 'awaiting_return'
   end
 
-  
+  after_transition :to => 'complete', :do => :finalize!
+  after_transition :to => 'canceled', :do => :after_cancel
+end
 
+Order.class_eval do
+  def payment?
+    false
+  end
 end
