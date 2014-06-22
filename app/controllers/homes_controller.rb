@@ -1346,7 +1346,34 @@ class HomesController < ApplicationController
                         end
                       end
                     when 3
+                      password="grupo2"
+                      url_grupo =  "http://integra3.ing.puc.cl/api/pedirProducto"
+                       r = HTTParty.post(url_grupo, {
+                          :body => {"usuario" => usuario, "password" => password,
+                                    "almacenId" => recepcion, "sku" => sku, "cant" => cant.to_i
+                          }
+                      })
+                      if r["amountSent"]>0
+                        if r["amountSent"]>= cant
+                          break
+                        else
+                          cant=cant - r["cantidad"]
+                        end
+                      end
                     when 4
+                      url_grupo =  "http://integra4.ing.puc.cl/api/pedirProducto"
+                       r = HTTParty.post(url_grupo, {
+                          :body => {"usuario" => usuario, "password" => password,
+                                    "almacenId" => recepcion, "sku" => sku, "cant" => cant.to_i
+                          }
+                      })
+                      if r["amountSent"]>0
+                        if r["amountSent"]>= cant
+                          break
+                        else
+                          cant=cant - r["cantidad"]
+                        end
+                      end
                     when 5
                       url_grupo = "http://integra5.ing.puc.cl/api/v1/pedirProducto"
                       r = HTTParty.post(url_grupo, {
@@ -1364,7 +1391,7 @@ class HomesController < ApplicationController
                     when 6
                     when 7
                     when 8
-                      url_grupo = "http://integra8.ing.puc.cl//api/pedirProducto"
+                      url_grupo = "http://integra8.ing.puc.cl/api/pedirProducto"
 
                       r = HTTParty.post(url_grupo, {
                           :body => {"usuario" => usuario, "password" => "b0399d2029f64d445bd131ffaa399a42d2f8e7dc",
