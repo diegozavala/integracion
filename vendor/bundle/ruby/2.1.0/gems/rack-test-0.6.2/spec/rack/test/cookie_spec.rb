@@ -56,7 +56,7 @@ describe Rack::Test::Session do
       last_request.cookies.should == {}
     end
 
-    it "persists cookies across requests that don't return any cookie headers" do
+    it "persists cookies across features that don't return any cookie headers" do
       get "/cookies/set", "value" => "1"
       get "/void"
       get "/cookies/show"

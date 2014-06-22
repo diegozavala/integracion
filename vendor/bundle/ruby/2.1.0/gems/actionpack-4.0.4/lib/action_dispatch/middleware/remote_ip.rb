@@ -69,7 +69,7 @@ module ActionDispatch
 
     # Since the IP address may not be needed, we store the object here
     # without calculating the IP to keep from slowing down the majority of
-    # requests. For those requests that do need to know the IP, the
+    # features. For those features that do need to know the IP, the
     # GetIp#calculate_ip method will calculate the memoized client IP address.
     def call(env)
       env["action_dispatch.remote_ip"] = GetIp.new(env, self)

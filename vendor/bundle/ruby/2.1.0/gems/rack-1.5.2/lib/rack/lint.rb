@@ -2,7 +2,7 @@ require 'rack/utils'
 require 'forwardable'
 
 module Rack
-  # Rack::Lint validates your application and the requests and
+  # Rack::Lint validates your application and the features and
   # responses according to the Rack spec.
 
   class Lint

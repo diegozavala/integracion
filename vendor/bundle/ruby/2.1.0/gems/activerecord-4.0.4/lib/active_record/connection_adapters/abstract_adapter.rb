@@ -364,7 +364,7 @@ module ActiveRecord
         # this should be overridden by concrete adapters
       end
 
-      # Returns true if its required to reload the connection between requests for development mode.
+      # Returns true if its required to reload the connection between features for development mode.
       # This is not the case for Ruby/MySQL and it's not necessary for any adapters except SQLite.
       def requires_reloading?
         false

@@ -297,7 +297,7 @@ module ActionController
   # test a single controller action per test method. This should not be confused with
   # integration tests (see ActionDispatch::IntegrationTest), which are more like
   # "stories" that can involve multiple controllers and multiple actions (i.e. multiple
-  # different HTTP requests).
+  # different HTTP features).
   #
   # == Basic example
   #
@@ -463,7 +463,7 @@ module ActionController
       # - +session+: A hash of parameters to store in the session. This may be +nil+.
       # - +flash+: A hash of parameters to store in the flash. This may be +nil+.
       #
-      # You can also simulate POST, PATCH, PUT, DELETE, HEAD, and OPTIONS requests with
+      # You can also simulate POST, PATCH, PUT, DELETE, HEAD, and OPTIONS features with
       # +post+, +patch+, +put+, +delete+, +head+, and +options+.
       #
       # Note that the request method is not verified. The different methods are

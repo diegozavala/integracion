@@ -9107,7 +9107,7 @@ jQuery.extend({
 		// We can fire global events as of now if asked to
 		fireGlobals = s.global;
 
-		// Watch for a new set of requests
+		// Watch for a new set of features
 		if ( fireGlobals && jQuery.active++ === 0 ) {
 			jQuery.event.trigger("ajaxStart");
 		}
@@ -9122,7 +9122,7 @@ jQuery.extend({
 		// and/or If-None-Match header later on
 		cacheURL = s.url;
 
-		// More options handling for requests with no content
+		// More options handling for features with no content
 		if ( !s.hasContent ) {
 
 			// If data is available, append data to url
@@ -9595,7 +9595,7 @@ var xhrId = 0,
 	xhrSupported = jQuery.ajaxSettings.xhr();
 
 // Support: IE<10
-// Open requests must be manually aborted on unload (#5280)
+// Open features must be manually aborted on unload (#5280)
 if ( window.ActiveXObject ) {
 	jQuery( window ).on( "unload", function() {
 		for ( var key in xhrCallbacks ) {
@@ -9639,10 +9639,10 @@ if ( xhrSupported ) {
 					}
 
 					// X-Requested-With header
-					// For cross-domain requests, seeing as conditions for a preflight are
+					// For cross-domain features, seeing as conditions for a preflight are
 					// akin to a jigsaw puzzle, we simply never set it to be sure.
 					// (it can always be set on a per-request basis or even using ajaxSetup)
-					// For same-domain requests, won't change header if already provided.
+					// For same-domain features, won't change header if already provided.
 					if ( !options.crossDomain && !headers["X-Requested-With"] ) {
 						headers["X-Requested-With"] = "XMLHttpRequest";
 					}
@@ -9693,7 +9693,7 @@ if ( xhrSupported ) {
 								}
 
 								// Firefox throws an exception when accessing
-								// statusText for faulty cross-domain requests
+								// statusText for faulty cross-domain features
 								try {
 									statusText = xhr.statusText;
 								} catch( e ) {
@@ -9790,7 +9790,7 @@ jQuery.ajaxPrefilter( "script", function( s ) {
 // Bind script tag hack transport
 jQuery.ajaxTransport( "script", function(s) {
 
-	// This transport only deals with cross domain requests
+	// This transport only deals with cross domain features
 	if ( s.crossDomain ) {
 
 		var script,
@@ -9863,7 +9863,7 @@ jQuery.ajaxSetup({
 	}
 });
 
-// Detect, normalize options and install callbacks for jsonp requests
+// Detect, normalize options and install callbacks for jsonp features
 jQuery.ajaxPrefilter( "json jsonp", function( s, originalSettings, jqXHR ) {
 
 	var callbackName, overwritten, responseContainer,

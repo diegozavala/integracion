@@ -44,14 +44,14 @@ module Rack
     end
 
     # Return the last request issued in the session. Raises an error if no
-    # requests have been sent yet.
+    # features have been sent yet.
     def last_request
       raise Rack::Test::Error.new("No request yet. Request a page first.") unless @last_request
       @last_request
     end
 
     # Return the last response received in the session. Raises an error if
-    # no requests have been sent yet.
+    # no features have been sent yet.
     def last_response
       raise Rack::Test::Error.new("No response yet. Request a page first.") unless @last_response
       @last_response

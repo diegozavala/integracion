@@ -221,7 +221,7 @@ module ActionDispatch
     end
 
     # Read the request \body. This is useful for web services that need to
-    # work with raw requests directly.
+    # work with raw features directly.
     def raw_post
       unless @env.include? 'RAW_POST_DATA'
         raw_post_body = body

@@ -17,7 +17,7 @@ module ActionController #:nodoc:
       #
       #   respond_to :html, :xml, :json
       #
-      # Specifies that all actions in the controller respond to requests
+      # Specifies that all actions in the controller respond to features
       # for <tt>:html</tt>, <tt>:xml</tt> and <tt>:json</tt>.
       #
       # To specify on per-action basis, use <tt>:only</tt> and
@@ -219,7 +219,7 @@ module ActionController #:nodoc:
     # depends on the selected format:
     #
     # * for an html response - if the request method is +get+, an exception
-    #   is raised but for other requests such as +post+ the response
+    #   is raised but for other features such as +post+ the response
     #   depends on whether the resource has any validation errors (i.e.
     #   assuming that an attempt has been made to save the resource,
     #   e.g. by a +create+ action) -
@@ -257,7 +257,7 @@ module ActionController #:nodoc:
     #
     # * for a javascript request - if the template isn't found, an exception is
     #   raised.
-    # * for other requests - i.e. data formats such as xml, json, csv etc, if
+    # * for other features - i.e. data formats such as xml, json, csv etc, if
     #   the resource passed to +respond_with+ responds to <code>to_<format></code>,
     #   the method attempts to render the resource in the requested format
     #   directly, e.g. for an xml request, the response is equivalent to calling 
@@ -267,12 +267,12 @@ module ActionController #:nodoc:
     #
     # As outlined above, the +resources+ argument passed to +respond_with+
     # can play two roles. It can be used to generate the redirect url
-    # for successful html requests (e.g. for +create+ actions when
+    # for successful html features (e.g. for +create+ actions when
     # no template exists), while for formats other than html and javascript
     # it is the object that gets rendered, by being converted directly to the
     # required format (again assuming no template exists).
     #
-    # For redirecting successful html requests, +respond_with+ also supports
+    # For redirecting successful html features, +respond_with+ also supports
     # the use of nested resources, which are supplied in the same way as
     # in <code>form_for</code> and <code>polymorphic_url</code>. For example -
     #
@@ -374,7 +374,7 @@ module ActionController #:nodoc:
     end
 
     # A container for responses available from the current controller for
-    # requests for different mime-types sent to a particular action.
+    # features for different mime-types sent to a particular action.
     #
     # The public controller methods +respond_with+ and +respond_to+ may be called
     # with a block that is used to define responses to different mime-types, e.g.

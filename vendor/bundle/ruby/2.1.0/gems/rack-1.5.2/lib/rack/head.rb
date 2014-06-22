@@ -1,8 +1,8 @@
 module Rack
 
 class Head
-  # Rack::Head returns an empty body for all HEAD requests. It leaves
-  # all other requests unchanged.
+  # Rack::Head returns an empty body for all HEAD features. It leaves
+  # all other features unchanged.
   def initialize(app)
     @app = app
   end

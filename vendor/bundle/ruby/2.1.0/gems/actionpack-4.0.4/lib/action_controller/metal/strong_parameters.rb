@@ -383,9 +383,9 @@ module ActionController
       #
 
       # This is a white list of permitted scalar types that includes the ones
-      # supported in XML and JSON requests.
+      # supported in XML and JSON features.
       #
-      # This list is in particular used to filter ordinary requests, String goes
+      # This list is in particular used to filter ordinary features, String goes
       # as first element to quickly short-circuit the common case.
       #
       # If you modify this collection please update the API of +permit+ above.
