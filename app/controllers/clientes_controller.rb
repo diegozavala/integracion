@@ -28,6 +28,7 @@ class ClientesController < ApplicationController
         @accounts << aux
       end
     end
+
   end
 
   # GET /clientes/1
