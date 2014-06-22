@@ -1389,6 +1389,20 @@ class HomesController < ApplicationController
                         end
                       end
                     when 6
+                      password="2"
+                      url_grupo ="http://integra6.ing.puc.cl/apiGrupo/pedido"
+                      r = HTTParty.post(url_grupo, {
+                          :body => {"usuario" => usuario, "password" => "b0399d2029f64d445bd131ffaa399a42d2f8e7dc",
+                                    "almacen_id" => recepcion, "SKU" => sku, "cantidad" => cant.to_i
+                          }
+                      })
+                      unless r["error"]
+                        if r["cantidad"] >= cant
+                          break
+                        else
+                          cant=cant - r["cantidad"]
+                        end
+                      end
                     when 7
                     when 8
                       url_grupo = "http://integra8.ing.puc.cl/api/pedirProducto"
