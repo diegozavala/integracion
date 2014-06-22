@@ -45,6 +45,17 @@ class Offer < ActiveRecord::Base
           o.active = true
           msg = "OFERTA! El producto "+o.sku.to_s+" a solo $"+o.price.to_s+" desde "+o.start.to_s+" hasta el "+o.end.to_s+" #ofertagrupo2"
           send_tweet_offer(msg)
+         
+
+          
+          product=Spree::Variant.where(sku: o.sku).first
+
+          precio_aux=  product.price
+          product.price = o.price
+          o.price= precio_aux
+
+
+
         end
       end
     end
@@ -57,6 +68,13 @@ class Offer < ActiveRecord::Base
         if (Date.today()> o.end)
           #Si la fecha de termino pasó
           o.active = false
+
+
+          # habria q guardar el 
+        
+          product=Spree::Variant.where(sku: o.sku).first
+          product.price = o.price
+
           #volver a cambiar los precios!
 
           ##DESTRUIR OFERTA???
