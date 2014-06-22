@@ -41,3 +41,7 @@ end
 every 5.hours do
   runner "Offer.check_active"
 end
+
+every 5.hours do
+  runner "Offer.get_offers"
+end

@@ -28,16 +28,44 @@ class HomesController < ApplicationController
     hash = JSON[msg.last]
     sku =hash['sku']
     precio =hash['precio']
-    fin =hash['fin']
     sec = (hash['inicio'].to_s.to_f / 1000).to_s
-    inicio = Date.strptime(sec, '%s')
+    #inicio = Date.strptime(sec, '%s')
+    inicio = Date.today()
+    sec2 = (hash['fin'].to_s.to_f / 1000).to_s
+    fin = Date.strptime(sec2, '%s')
+
+    @offer = Offer.new(:sku => sku.to_s,:price => precio.to_i,:start => inicio,:end => fin,:active => false)
+## Ver si creo Activa o Inactiva las oferta.... Cambiar Dates
+    @offer.save
+
     puts msg.last.to_s
-    puts inicio
+    puts inicio.to_s
+    puts fin.to_s
     e.publish(msg.last.to_s, :key => 'ofertas')
 ## crear oferta con estos parametros!
     b.stop # close the connection
 
+    Offer.all.each do |o|
+      if !o.active
+        if (Date.today() >= o.start && o.end>Date.today())
+          #Si la fecha
+          o.active = true
+          msg = "OFERTA! El producto "+o.sku.to_s+" a solo $"+o.price.to_s+" desde "+o.start.to_s+" hasta el "+o.end.to_s
+          client = Twitter::REST::Client.new do |config|
+            config.consumer_key        = "VMskMaBDtwH11TFXvVlnrGdSr"
+            config.consumer_secret     = "lILUxZ3rFEs6FamFUiRN6NISeGOTCGNuKP6w7h1Z3tg2YsyVK9"
+            config.access_token        = "2567568456-ojoAMV8ui23FGYkXvFU6TTj4NLbhprZMQQ1u5v4"
+            config.access_token_secret = "nefBA9qDiKcphnIfsiZqcaYzcBzTMxsAnLs3zHCLN987M"
+          end
 
+#Ademas actualizar en caso de que sean ofertas
+          client.update(msg)
+        else
+          puts "NOOOOOO"
+        end
+
+      end
+    end
 
 
 
