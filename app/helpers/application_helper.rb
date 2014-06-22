@@ -181,7 +181,7 @@ module ApplicationHelper
 	      end
 	    end
 
-		return @accounts.find{|instancia| instancia['cf_705'] == rut.to_s}['accountname']
+		return rut
 
 	end
 	def get_row_gdoc i
