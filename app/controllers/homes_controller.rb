@@ -1212,17 +1212,7 @@ class HomesController < ApplicationController
   end
 
 
-  private
-  # Use callbacks to share common setup or constraints between actions.
-  def set_home
-    @home = Home.find(params[:id])
-  end
 
-  # Never trust parameters from the scary internet, only allow the white list through.
-  def home_params
-    params[:home]
-  end
-    
   def test_ftp 
     error =0
     linea = []
@@ -1398,6 +1388,20 @@ class HomesController < ApplicationController
       end
     end     
   end
+  
+  
+  private
+  # Use callbacks to share common setup or constraints between actions.
+  def set_home
+    @home = Home.find(params[:id])
+  end
+
+  # Never trust parameters from the scary internet, only allow the white list through.
+  def home_params
+    params[:home]
+  end
+    
+  
     
     
   def despachar(sku, cantidad, direccion, num_pedido)
