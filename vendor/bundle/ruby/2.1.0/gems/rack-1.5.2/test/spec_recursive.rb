@@ -43,7 +43,7 @@ describe Rack::Recursive do
     res.body.should.equal "App2App1"
   end
 
-  should "raise error on requests not below the app" do
+  should "raise error on features not below the app" do
     app = Rack::URLMap.new("/app1" => @app1,
                            "/app" => recursive("/1" => @app1,
                                                "/2" => @app2))

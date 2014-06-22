@@ -65,7 +65,7 @@ describe Rack::ConditionalGet do
     response.body.should.be.empty
   end
 
-  should "not affect non-GET/HEAD requests" do
+  should "not affect non-GET/HEAD features" do
     app = conditional_get(lambda { |env|
       [200, {'Etag'=>'1234', 'Content-Type' => 'text/plain'}, ['TEST']] })
 
@@ -76,7 +76,7 @@ describe Rack::ConditionalGet do
     response.body.should.equal 'TEST'
   end
 
-  should "not affect non-200 requests" do
+  should "not affect non-200 features" do
     app = conditional_get(lambda { |env|
       [302, {'Etag'=>'1234', 'Content-Type' => 'text/plain'}, ['TEST']] })
 
@@ -87,7 +87,7 @@ describe Rack::ConditionalGet do
     response.body.should.equal 'TEST'
   end
 
-  should "not affect requests with malformed HTTP_IF_NONE_MATCH" do
+  should "not affect features with malformed HTTP_IF_NONE_MATCH" do
     bad_timestamp = Time.now.strftime('%Y-%m-%d %H:%M:%S %z')
     app = conditional_get(lambda { |env|
       [200,{'Last-Modified'=>(Time.now - 3600).httpdate, 'Content-Type' => 'text/plain'}, ['TEST']] })

@@ -3,7 +3,7 @@ source 'https://rubygems.org'
 #haml
 gem 'haml', '~> 4.0.5'
 
-#for API requests
+#for API features
 gem 'rest-client', '~> 1.6.7'
 gem 'netrc', '~> 0.7.7'
 gem 'rdoc', '~> 4.1.1'

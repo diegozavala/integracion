@@ -26,7 +26,7 @@ module ActionDispatch
       # object's <tt>@response</tt> instance variable will point to the same
       # response object.
       #
-      # You can also perform POST, PATCH, PUT, DELETE, and HEAD requests with
+      # You can also perform POST, PATCH, PUT, DELETE, and HEAD features with
       # +#post+, +#patch+, +#put+, +#delete+, and +#head+.
       def get(path, parameters = nil, headers_or_env = nil)
         process :get, path, parameters, headers_or_env
@@ -126,7 +126,7 @@ module ActionDispatch
       end
     end
 
-    # An instance of this class represents a set of requests and responses
+    # An instance of this class represents a set of features and responses
     # performed sequentially by a test process. Because you can instantiate
     # multiple sessions and run them side-by-side, you can also mimic (to some
     # limited extent) multiple simultaneous users interacting with your system.
@@ -175,7 +175,7 @@ module ActionDispatch
       # A reference to the response instance used by the last request.
       attr_reader :response
 
-      # A running counter of the number of requests processed.
+      # A running counter of the number of features processed.
       attr_accessor :request_count
 
       include ActionDispatch::Routing::UrlFor

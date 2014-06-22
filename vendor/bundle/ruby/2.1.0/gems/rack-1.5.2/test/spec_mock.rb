@@ -136,7 +136,7 @@ describe Rack::MockRequest do
     env["REQUEST_METHOD"].should.equal "GET"
   end
 
-  should "accept params and build query string for GET requests" do
+  should "accept params and build query string for GET features" do
     res = Rack::MockRequest.new(app).get("/foo?baz=2", :params => {:foo => {:bar => "1"}})
     env = YAML.load(res.body)
     env["REQUEST_METHOD"].should.equal "GET"
@@ -146,7 +146,7 @@ describe Rack::MockRequest do
     env["mock.postdata"].should.equal ""
   end
 
-  should "accept raw input in params for GET requests" do
+  should "accept raw input in params for GET features" do
     res = Rack::MockRequest.new(app).get("/foo?baz=2", :params => "foo[bar]=1")
     env = YAML.load(res.body)
     env["REQUEST_METHOD"].should.equal "GET"
@@ -156,7 +156,7 @@ describe Rack::MockRequest do
     env["mock.postdata"].should.equal ""
   end
 
-  should "accept params and build url encoded params for POST requests" do
+  should "accept params and build url encoded params for POST features" do
     res = Rack::MockRequest.new(app).post("/foo", :params => {:foo => {:bar => "1"}})
     env = YAML.load(res.body)
     env["REQUEST_METHOD"].should.equal "POST"
@@ -166,7 +166,7 @@ describe Rack::MockRequest do
     env["mock.postdata"].should.equal "foo[bar]=1"
   end
 
-  should "accept raw input in params for POST requests" do
+  should "accept raw input in params for POST features" do
     res = Rack::MockRequest.new(app).post("/foo", :params => "foo[bar]=1")
     env = YAML.load(res.body)
     env["REQUEST_METHOD"].should.equal "POST"
@@ -176,7 +176,7 @@ describe Rack::MockRequest do
     env["mock.postdata"].should.equal "foo[bar]=1"
   end
 
-  should "accept params and build multipart encoded params for POST requests" do
+  should "accept params and build multipart encoded params for POST features" do
     files = Rack::Multipart::UploadedFile.new(File.join(File.dirname(__FILE__), "multipart", "file1.txt"))
     res = Rack::MockRequest.new(app).post("/foo", :params => { "submit-name" => "Larry", "files" => files })
     env = YAML.load(res.body)

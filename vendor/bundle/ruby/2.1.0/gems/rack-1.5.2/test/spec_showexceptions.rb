@@ -26,7 +26,7 @@ describe Rack::ShowExceptions do
     res.should =~ /ShowExceptions/
   end
 
-  it "responds with plain text on AJAX requests accepting anything but HTML" do
+  it "responds with plain text on AJAX features accepting anything but HTML" do
     res = nil
 
     req = Rack::MockRequest.new(
@@ -47,7 +47,7 @@ describe Rack::ShowExceptions do
     res.body.should.include __FILE__
   end
 
-  it "responds with HTML on AJAX requests accepting HTML" do
+  it "responds with HTML on AJAX features accepting HTML" do
     res = nil
 
     req = Rack::MockRequest.new(

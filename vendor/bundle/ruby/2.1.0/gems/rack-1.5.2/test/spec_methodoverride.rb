@@ -9,21 +9,21 @@ describe Rack::MethodOverride do
     }))
   end
   
-  should "not affect GET requests" do
+  should "not affect GET features" do
     env = Rack::MockRequest.env_for("/?_method=delete", :method => "GET")
     app.call env
 
     env["REQUEST_METHOD"].should.equal "GET"
   end
 
-  should "modify REQUEST_METHOD for POST requests when _method parameter is set" do
+  should "modify REQUEST_METHOD for POST features when _method parameter is set" do
     env = Rack::MockRequest.env_for("/", :method => "POST", :input => "_method=put")
     app.call env
 
     env["REQUEST_METHOD"].should.equal "PUT"
   end
 
-  should "modify REQUEST_METHOD for POST requests when X-HTTP-Method-Override is set" do
+  should "modify REQUEST_METHOD for POST features when X-HTTP-Method-Override is set" do
     env = Rack::MockRequest.env_for("/",
             :method => "POST",
             "HTTP_X_HTTP_METHOD_OVERRIDE" => "PATCH"

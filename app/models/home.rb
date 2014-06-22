@@ -1,5 +1,28 @@
 class Home < ActiveRecord::Base
-  
+
+  def get_reposicion
+    require "bunny" # don't forget to put gem "bunny" in your Gemfile
+
+    b = Bunny.new('amqp://ukrtynvc:AXr6Up0yW2OEs7UdxRQyLbD11RvYwm4x@hyena.rmq.cloudamqp.com/ukrtynvc')
+    b.start # start a communication session with the amqp server
+
+    q = b.queue("reposicion",:auto_delete => true) # declare a queue
+
+# declare default direct exchange which is bound to all queues
+    e = b.exchange("")
+
+    list = []
+    msg = q.pop # get message from the queue
+    while msg.last.to_s != ""
+      list.append(msg.last.to_s)
+      msg = q.pop
+    end
+    puts "This is the message: " + msg.last.to_s + "\n\n"
+
+    b.stop # close the connection
+
+    vaciar_recepcion # el almacen de recepcion!
+  end
 
 
   def self.test_dropbox
@@ -44,19 +67,7 @@ class Home < ActiveRecord::Base
   end
 
 
-  def send_tweet(message)
-    require 'twitter'
 
-    client = Twitter::REST::Client.new do |config|
-      config.consumer_key        = "VMskMaBDtwH11TFXvVlnrGdSr"
-      config.consumer_secret     = "lILUxZ3rFEs6FamFUiRN6NISeGOTCGNuKP6w7h1Z3tg2YsyVK9"
-      config.access_token        = "2567568456-ojoAMV8ui23FGYkXvFU6TTj4NLbhprZMQQ1u5v4"
-      config.access_token_secret = "nefBA9qDiKcphnIfsiZqcaYzcBzTMxsAnLs3zHCLN987M"
-    end
-
-    client.update(message)
-    # message debe ser producto, duracion de oferta, precio y un link. Esto cada vez que se reciba un mensaje
-  end
 end
 
 

@@ -35,7 +35,7 @@ module ActionView
     # host, which means your assets often have to wait for other assets to finish
     # downloading. You can alleviate this by using a <tt>%d</tt> wildcard in the
     # +asset_host+. For example, "assets%d.example.com". If that wildcard is
-    # present Rails distributes asset requests among the corresponding four hosts
+    # present Rails distributes asset features among the corresponding four hosts
     # "assets0.example.com", ..., "assets3.example.com". With this trick browsers
     # will open eight simultaneous connections rather than two.
     #
@@ -85,7 +85,7 @@ module ActionView
     # Alternatively you may ask for a second parameter +request+. That one is
     # particularly useful for serving assets from an SSL-protected page. The
     # example proc below disables asset hosting for HTTPS connections, while
-    # still sending assets for plain HTTP requests from asset hosts. If you don't
+    # still sending assets for plain HTTP features from asset hosts. If you don't
     # have SSL certificates for each of the asset hosts this technique allows you
     # to avoid warnings in the client about mixed media.
     #

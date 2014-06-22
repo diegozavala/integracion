@@ -164,7 +164,7 @@ describe Rack::File do
     heads['Access-Control-Allow-Origin'].should.equal nil
   end
 
-  should "only support GET and HEAD requests" do
+  should "only support GET and HEAD features" do
     req = Rack::MockRequest.new(file(DOCROOT))
 
     forbidden = %w[post put patch delete]
@@ -182,7 +182,7 @@ describe Rack::File do
     end
   end
 
-  should "set Content-Length correctly for HEAD requests" do
+  should "set Content-Length correctly for HEAD features" do
     req = Rack::MockRequest.new(Rack::Lint.new(Rack::File.new(DOCROOT)))
     res = req.head "/cgi/test"
     res.should.be.successful

@@ -72,10 +72,10 @@ module ApplicationHelper
   end
 
 
-	def mover_stock_cantidad(sku,almacen_dest,cantidad,vaciar=nil)
-		if vaciar == 'recepcion'
+	def mover_stock_cantidad(sku,almacen_dest,cantidad,modo=nil)
+		if modo == 'recepcion'
       productos = JSON.parse(get_stock(Integra2::ALMACEN_RECEPCION,sku,cantidad))
-    elsif vaciar == 'pulmon'
+    elsif modo == 'pulmon'
       productos = JSON.parse(get_stock(Integra2::ALMACEN_PULMON,sku,cantidad))
     else
       productos = JSON.parse(get_stock('53571c4f682f95b80b7563e6',sku,cantidad))
@@ -86,8 +86,13 @@ module ApplicationHelper
 			return JSON.parse({error: 'No hay stock para la cantidad solicitada'}.to_json)
 		end
 		productos.each do |p|
-			response = mover_stock(p["_id"],almacen_dest)
-			puts response
+      if modo == 'api'
+        response = mover_stock(p["_id"],Integra2::ALMACEN_DESPACHO)
+			  response = mover_stock_bodega(p["_id"],almacen_dest)
+      else
+        response = mover_stock(p["_id"],almacen_dest)
+      end
+      puts response
 			if response["error"]
 				return response
 			end
@@ -100,7 +105,7 @@ module ApplicationHelper
 		r = HTTParty.delete(Integra2::STOCK_API_URL+'stock',
 		{ 
 		:body => {"productoId" => producto, "direccion" => direccion, "precio" => precio, "pedidoId"=> pedido},
-		:headers => {'Authorization' => generate_auth_hash('DELETE'+producto+direccion+precio.to_s+pedido)}
+		:headers => {'Authorization' => generate_auth_hash('DELETE'+producto.to_s+direccion+precio.to_s+pedido.to_s)}
 		})
 		puts "Stock despachado => "+r.to_s
 		#retorna Producto
@@ -214,6 +219,77 @@ module ApplicationHelper
 		file= session.spreadsheet_by_key('0As9H3pQDLg79dDJzZkU1TldhQmg5MXdDZFM5R1RCQXc').worksheets[0]
 		file[row,4] = text
 		file.save()
-	end
+  end
+
+
+  def get_offers
+    require "bunny" # don't forget to put gem "bunny" in your Gemfile
+
+    b = Bunny.new('amqp://ukrtynvc:AXr6Up0yW2OEs7UdxRQyLbD11RvYwm4x@hyena.rmq.cloudamqp.com/ukrtynvc')
+    b.start # start a communication session with the amqp server
+
+    q = b.queue("ofertas",:auto_delete => true) # declare a queue
+
+# declare default direct exchange which is bound to all queues
+    e = b.exchange("")
+
+    list = []
+    msg = q.pop # get message from the queue
+    while msg.last.to_s != ""
+      list.append(msg.last)
+      msg = q.pop
+    end
+
+    b.stop # close the connection
+
+  end
+
+  def send_tweet_offer(msg)
+
+    require 'json'
+
+    hash = JSON[msg]
+    sku = hash["sku"]
+    precio = hash["precio"]
+    inicio = hash["inicio"]
+    fin = hash["fin"]
+    client = Twitter::REST::Client.new do |config|
+      config.consumer_key        = "VMskMaBDtwH11TFXvVlnrGdSr"
+      config.consumer_secret     = "lILUxZ3rFEs6FamFUiRN6NISeGOTCGNuKP6w7h1Z3tg2YsyVK9"
+      config.access_token        = "2567568456-ojoAMV8ui23FGYkXvFU6TTj4NLbhprZMQQ1u5v4"
+      config.access_token_secret = "nefBA9qDiKcphnIfsiZqcaYzcBzTMxsAnLs3zHCLN987M"
+    end
+
+#Ademas actualizar en caso de que sean ofertas
+    client.update("OFERTA! El producto "+sku.to_s+" a solo $"+precio.to_s+" desde "+inicio.to_s+" hasta el "+fin.to_s)
+      # message debe ser producto, duracion de oferta, precio y un link. Esto cada vez que se reciba un mensaje
+
+
+
+  end
+
+  def get_reposicion
+    require "bunny" # don't forget to put gem "bunny" in your Gemfile
+
+    b = Bunny.new('amqp://ukrtynvc:AXr6Up0yW2OEs7UdxRQyLbD11RvYwm4x@hyena.rmq.cloudamqp.com/ukrtynvc')
+    b.start # start a communication session with the amqp server
+
+    q = b.queue("reposicion",:auto_delete => true) # declare a queue
+
+# declare default direct exchange which is bound to all queues
+    e = b.exchange("")
+
+    list = []
+    msg = q.pop # get message from the queue
+    while msg.last.to_s != ""
+      list.append(msg.last.to_s)
+      msg = q.pop
+    end
+    puts "This is the message: " + msg.last.to_s + "\n\n"
+
+    b.stop # close the connection
+
+    vaciar_recepcion # el almacen de recepcion!
+  end
 
 end

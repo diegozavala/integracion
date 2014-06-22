@@ -1,7 +1,7 @@
 require 'active_support/json'
 
 module ActionController #:nodoc:
-  # Responsible for exposing a resource to different mime requests,
+  # Responsible for exposing a resource to different mime features,
   # usually depending on the HTTP verb. The responder is triggered when
   # <code>respond_with</code> is called. The simplest case to study is a GET request:
   #
@@ -53,7 +53,7 @@ module ActionController #:nodoc:
   #     end
   #   end
   #
-  # The same happens for PATCH/PUT and DELETE requests.
+  # The same happens for PATCH/PUT and DELETE features.
   #
   # === Nested resources
   #
@@ -238,7 +238,7 @@ module ActionController #:nodoc:
     #
     #   display @user, status: :ok
     #
-    # For XML requests it's equivalent to:
+    # For XML features it's equivalent to:
     #
     #   render xml: @user, status: :ok
     #
@@ -265,7 +265,7 @@ module ActionController #:nodoc:
       resource.respond_to?(:errors) && !resource.errors.empty?
     end
 
-    # By default, render the <code>:edit</code> action for HTML requests with errors, unless
+    # By default, render the <code>:edit</code> action for HTML features with errors, unless
     # the verb was POST.
     #
     def default_action

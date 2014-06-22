@@ -9,6 +9,68 @@ class HomesController < ApplicationController
     @homes = Home.all
   end
 
+
+
+  def rabbit
+    require "bunny" # don't forget to put gem "bunny" in your Gemfile
+
+    b = Bunny.new('amqp://ukrtynvc:AXr6Up0yW2OEs7UdxRQyLbD11RvYwm4x@hyena.rmq.cloudamqp.com/ukrtynvc')
+    b.start # start a communication session with the amqp server
+
+    q = b.queue("ofertas",:auto_delete => true) # declare a queue
+
+# declare default direct exchange which is bound to all queues
+    e = b.exchange("")
+    msg = q.pop # get message from the queue
+    require 'json'
+    require 'date'
+
+    hash = JSON[msg.last]
+    sku =hash['sku']
+    precio =hash['precio']
+    sec = (hash['inicio'].to_s.to_f / 1000).to_s
+    #inicio = Date.strptime(sec, '%s')
+    inicio = Date.today()
+    sec2 = (hash['fin'].to_s.to_f / 1000).to_s
+    fin = Date.strptime(sec2, '%s')
+
+    @offer = Offer.new(:sku => sku.to_s,:price => precio.to_i,:start => inicio,:end => fin,:active => false)
+## Ver si creo Activa o Inactiva las oferta.... Cambiar Dates
+    @offer.save
+
+    puts msg.last.to_s
+    puts inicio.to_s
+    puts fin.to_s
+    e.publish(msg.last.to_s, :key => 'ofertas')
+## crear oferta con estos parametros!
+    b.stop # close the connection
+
+    Offer.all.each do |o|
+      if !o.active
+        if (Date.today() >= o.start && o.end>Date.today())
+          #Si la fecha
+          o.active = true
+          msg = "OFERTA! El producto "+o.sku.to_s+" a solo $"+o.price.to_s+" desde "+o.start.to_s+" hasta el "+o.end.to_s
+          client = Twitter::REST::Client.new do |config|
+            config.consumer_key        = "VMskMaBDtwH11TFXvVlnrGdSr"
+            config.consumer_secret     = "lILUxZ3rFEs6FamFUiRN6NISeGOTCGNuKP6w7h1Z3tg2YsyVK9"
+            config.access_token        = "2567568456-ojoAMV8ui23FGYkXvFU6TTj4NLbhprZMQQ1u5v4"
+            config.access_token_secret = "nefBA9qDiKcphnIfsiZqcaYzcBzTMxsAnLs3zHCLN987M"
+          end
+
+#Ademas actualizar en caso de que sean ofertas
+          client.update(msg)
+        else
+          puts "NOOOOOO"
+        end
+
+      end
+    end
+
+
+
+  end
+
   # GET /homes/1
   # GET /homes/1.json
   def show
@@ -1082,15 +1144,11 @@ class HomesController < ApplicationController
     end
 
 
-    #url_taxon = 'http://integra2.ing.puc.cl/store/api/taxonomies/4/taxons' 
+    #url_taxon = 'http://integra2.ing.puc.cl/store/api/taxonomies/8/taxons' 
     #hash.each do |hash|
     # (HTTParty.post url_taxon, 
-    # :body => { 'taxon[name]' => hash[0], 'taxon[id]' => hash[1] ,'token' => "b915aff05b9b71193094552622fe7e273e848f5979aa8068"})
-   # end 
-
-
-    
-
+    # :body => { 'taxon[name]' => hash[0], 'taxon[id]' => hash[1] ,'token' => "7771e9b7bd0676c2d5b4e2f424328b52a82add010ea9b1c2"})
+    #end 
     a=0
     require 'open-uri'
     #Spree::Product.destroy_all
@@ -1141,9 +1199,19 @@ class HomesController < ApplicationController
 
 
 
+    
+
+ 
+
+
+
+
+
 
 
   end
+
+
 
   def test_ftp 
     error =0
@@ -1222,7 +1290,7 @@ class HomesController < ApplicationController
                   write_data_gdoc(j+4,linea[j][4]-cant)
                   
                   despachar(sku,cant.to_i, direccion, num_pedido)
-                  registro_dw
+                   registro_dw(num_pedido,get_clientname(dirId),fecha,sku,Spree::Variant.where(sku: sku).name,cant,rut,get_companyname(rut),direccion, false)
                   
                   break
                 end
@@ -1239,28 +1307,73 @@ class HomesController < ApplicationController
                 hay_stock[i] = 2
                 
                 despachar(sku,cant.to_i, direccion, num_pedido)
-                #registro_dw(rut,nombrecliente,fecha_despacho,sku,nombreproducto,cantidad,rutorganizacion,nombreorganizacion,direccion, quiebre)
+
+                registro_dw(num_pedido,get_clientname(dirId),fecha,sku,Spree::Variant.where(sku: sku).name,cant,rut,get_companyname(rut),direccion, false)
                 
               elsif (hay_stock[i] == 0 )
                 #pedir apis!
+                usuario = "grupo2"
+                password = "qwertyuiop"
+                recepcion = "5396513be4b0c7adbad816d7"
                 grupos = ApiUser.all.shuffle
                 grupos.each do |user|
                   #asumiendo que todos van a usar el mismo sistema de apis
                   id_grupo = user.name[-1]
-                  url_grupo = "http://integra"+id_grupo+".ing.puc.cl//api/pedirProducto"
-                  
-                  r = HTTParty.post(url_grupo, {
-                      :body => {"usuario" => user.name, "password" => user.password,
-                                "almacen_id" => "5396513be4b0c7adbad816d7", "SKU" => sku, "cantidad" => cant.to_i
-                    }
-                  })
-                  unless r["error"]
-                    #TODO: revisar si lo que me dio el grupo (r["cantidad"]) es suficiente, de ser asi hago break, de lo contrario actualizo la cantidad que necesito y sigo con el siguiente grupo - la cantidad que necesito esta en cant (o en cant.to_i)
-                    #if r["cantidad"] >= cantidad que necesito
-                      #break
-                    #else
-                      #cantidad_que_necesito=cantidad_que_necesito - r["cantidad"]
-                    #end
+                  case id_grupo
+                    when 1
+                      #TODO este grupo no tiene bien guardada uestra contraseña, tener ojo pr si la arreglan para cambiarlo aqui (le falta la u a qwertyuiop)
+                      url_grupo =  "http://integra1.ing.puc.cl/ecommerce/api/v1/pedirProducto"
+                      r = HTTParty.post(url_grupo, {
+                          :body => {"usuario" => "Grupo2", "password" => qwertyiop,
+                                    "almacenId" => recepcion, "sku" => sku, "cant" => cant.to_i
+                          }
+                      })
+                      if r["amountSent"]>0
+                        if r["amountSent"]>= cant
+                          break
+                        else
+                          cant=cant - r["cantidad"]
+                        end
+                      end
+                    when 3
+                    when 4
+                    when 5
+                      url_grupo = "http://integra5.ing.puc.cl/api/v1/pedirProducto"
+                      r = HTTParty.post(url_grupo, {
+                          :body => {"usuario" => usuario, "password" => "b0399d2029f64d445bd131ffaa399a42d2f8e7dc",
+                                    "almacen_id" => recepcion, "SKU" => sku, "cantidad" => cant.to_i
+                          }
+                      })
+                      unless r["error"]
+                        if r["cantidad"] >= cant
+                          break
+                        else
+                          cant=cant - r["cantidad"]
+                        end
+                      end
+                    when 6
+                    when 7
+                    when 8
+                      url_grupo = "http://integra8.ing.puc.cl//api/pedirProducto"
+
+                      r = HTTParty.post(url_grupo, {
+                          :body => {"usuario" => usuario, "password" => "b0399d2029f64d445bd131ffaa399a42d2f8e7dc",
+                                    "almacen_id" => recepcion, "SKU" => sku, "cantidad" => cant.to_i
+                          }
+                      })
+                      unless r["error"]
+                        if r["cantidad"] >= cant
+                          break
+                        else
+                          cant=cant - r["cantidad"]
+                        end
+                      end
+                    when 9
+                      url_grupo = "http://integra9.ing.puc.cl/api/pedirProducto/grupo2/"+password+"/"+sku.to_s
+                      r = HTTParty.post(url_grupo, {
+                          :body => {"almacenId" => recepcion, "cantidad" => cant.to_i}
+                      })
+                      #TODO falta saber que retorna esta api. Además api tira error interno
                   end
                 end
                 #si hay, se despacha,y registro en dw
@@ -1288,11 +1401,10 @@ class HomesController < ApplicationController
     params[:home]
   end
     
- 
+  
     
     
   def despachar(sku, cantidad, direccion, num_pedido)
-  
     sku = sku.to_s.delete(' ')
     precio = get_price_with_sku(sku)
     
@@ -1301,12 +1413,15 @@ class HomesController < ApplicationController
     cantidad.times do |j|    
       mover_stock(sto[j]["_id"].to_s, '53571c4f682f95b80b7563e5')
       despachar_stock(sto[j]["_id"], direccion, precio, num_pedido)
-      
     end
+
     #bajar stock de spree
-  
-  
+    p=Spree::Variant.where(sku: sku)
+    s=Spree::StockItem.find_by_variant_id(p[0].id)
+    s.adjust_count_on_hand(0-cantidad)
+
   end
+
   def registro_dw(numeropedido,nombrecliente,fecha,sku,nombreproducto,cantidad,rutorganizacion,nombreorganizacion,direccion, quiebre)
     host = ENV['MONGO_RUBY_DRIVER_HOST'] || 'localhost'
     port = ENV['MONGO_RUBY_DRIVER_PORT'] || Mongo::MongoClient::DEFAULT_PORT
@@ -1315,18 +1430,19 @@ class HomesController < ApplicationController
     db = Mongo::MongoClient.new(host, port).db('integra2-mongodb')
     coll = db.collection('datawarehouse')
     coll.insert(
-      'numeropedido'=>numeropedido,
-      'nombrecliente'=>nombrecliente,
-      'fecha'=>fecha,
-      'sku'=>sku,
-      'producto'=>nombreproducto,
-      'cantidad'=>cantidad,
-      'rutorganizacion'=>rutorganizacion,
-      'nombreorganizacion'=>nombreorganizacion,
-      'direccion'=>direccion,
-      'quiebre'=>quiebre
-      )
+        'numeropedido'=>numeropedido,
+        'nombrecliente'=>nombrecliente,
+        'fecha'=>fecha,
+        'sku'=>sku,
+        'producto'=>nombreproducto,
+        'cantidad'=>cantidad,
+        'rutorganizacion'=>rutorganizacion,
+        'nombreorganizacion'=>nombreorganizacion,
+        'direccion'=>direccion,
+        'quiebre'=>quiebre
+    )
   end
+
 
     
 end
