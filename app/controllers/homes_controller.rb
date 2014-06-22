@@ -1416,7 +1416,7 @@ class HomesController < ApplicationController
     end
 
     #bajar stock de spree
-    p=Spree::Variant.find_variant_by_sku(sku)
+    p=Spree::Variant.where(sku: sku)
     s=Spree::StockItem.find_by_variant_id(p.master.id)
     s.adjust_count_on_hand(0-cantidad)
 
