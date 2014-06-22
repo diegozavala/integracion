@@ -181,7 +181,7 @@ module ApplicationHelper
 	      end
 	    end
 
-		return rut
+		return "sss"+rut
 
 	end
 	def get_row_gdoc i
