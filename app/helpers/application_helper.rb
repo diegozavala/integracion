@@ -176,7 +176,7 @@ module ApplicationHelper
 	      end
 	    end
 
-		return @accounts.find{|instancia| instancia['cf_705'] = direccionID}['accountname']
+		return @accounts.find{|instancia| instancia['cf_705'] = rut}['accountname']
 
 	end
 	def get_row_gdoc i

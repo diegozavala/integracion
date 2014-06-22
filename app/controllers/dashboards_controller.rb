@@ -46,7 +46,7 @@ class DashboardsController < ApplicationController
     @dw = []
     coll.find().each do |col|
       @dw << {
-      :numeropedido=>col['numeropedido']
+      :numeropedido=>col['numeropedido'],
       :cliente=>col['nombrecliente'],
       :fecha=>col['fecha'],
       :sku=>col['sku'],
