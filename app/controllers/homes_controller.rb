@@ -21,15 +21,24 @@ class HomesController < ApplicationController
 
 # declare default direct exchange which is bound to all queues
     e = b.exchange("")
-
-    list = []
     msg = q.pop # get message from the queue
-    while msg.last.to_s != ""
-      list.append(msg.last)
-      msg = q.pop
-    end
+    require 'json'
+    require 'date'
 
+    hash = JSON[msg.last]
+    sku =hash['sku']
+    precio =hash['precio']
+    fin =hash['fin']
+    sec = (hash['inicio'].to_s.to_f / 1000).to_s
+    inicio = Date.strptime(sec, '%s')
+    puts msg.last.to_s
+    puts inicio
+    e.publish(msg.last.to_s, :key => 'ofertas')
+## crear oferta con estos parametros!
     b.stop # close the connection
+
+
+
 
 
   end
