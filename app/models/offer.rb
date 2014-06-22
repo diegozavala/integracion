@@ -43,7 +43,7 @@ class Offer < ActiveRecord::Base
         if (Date.today() >= o.start && o.end>Date.today())
           #Si la fecha
           o.active = true
-          msg = "OFERTA! El producto "+o.sku.to_s+" a solo $"+o.price.to_s+" desde "+o.start.to_s+" hasta el "+o.end.to_s
+          msg = "OFERTA! El producto "+o.sku.to_s+" a solo $"+o.price.to_s+" desde "+o.start.to_s+" hasta el "+o.end.to_s+" #ofertagrupo2"
           send_tweet_offer(msg)
         end
       end
@@ -54,7 +54,7 @@ class Offer < ActiveRecord::Base
     #verifico si el periodo de oferta ya terminó
     Offer.all.each do |o|
       if o.active
-        if (Date.today()>= o.end)
+        if (Date.today()> o.end)
           #Si la fecha de termino pasó
           o.active = false
           #volver a cambiar los precios!
