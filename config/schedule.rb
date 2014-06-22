@@ -21,11 +21,6 @@
 
 set :environment, "development"
 
-every 10.minutes do
-  runner "Home.test_ftp"
-end
-
-
 every 2.hours do
   runner "Home.test_dropbox"
 end
