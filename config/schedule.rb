@@ -26,10 +26,18 @@ every 10.minutes do
 end
 
 
-every 1.hour do
+every 2.hours do
   runner "Home.test_dropbox"
 end
 
-every 1.hour do
+every 2.hours do
   runner "Home.get_reposicion"
+end
+
+every 5.hours do
+  runner "Offer.check_inactive"
+end
+
+every 5.hours do
+  runner "Offer.check_active"
 end
