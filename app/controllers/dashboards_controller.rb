@@ -12,7 +12,7 @@ class DashboardsController < ApplicationController
     @from_date = Date.new(2014, 1, 1)
     to_date   = Date.new(2014, 12, 31)
 
-   
+
   end
 
   # GET /dashboards/1
