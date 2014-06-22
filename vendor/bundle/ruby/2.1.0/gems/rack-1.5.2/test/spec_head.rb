@@ -15,7 +15,7 @@ describe Rack::Head do
     return response, body
   end
 
-  should "pass GET, POST, PUT, DELETE, OPTIONS, TRACE requests" do
+  should "pass GET, POST, PUT, DELETE, OPTIONS, TRACE features" do
     %w[GET POST PUT DELETE OPTIONS TRACE].each do |type|
       resp, _ = test_response("REQUEST_METHOD" => type)
 
@@ -25,7 +25,7 @@ describe Rack::Head do
     end
   end
 
-  should "remove body from HEAD requests" do
+  should "remove body from HEAD features" do
     resp, _ = test_response("REQUEST_METHOD" => "HEAD")
 
     resp[0].should.equal(200)

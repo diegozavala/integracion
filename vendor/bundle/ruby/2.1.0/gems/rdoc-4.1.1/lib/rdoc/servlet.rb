@@ -40,7 +40,7 @@ class RDoc::Servlet < WEBrick::HTTPServlet::AbstractServlet
 
   ##
   # Creates an instance of this servlet that shares cached data between
-  # requests.
+  # features.
 
   def self.get_instance server, *options # :nodoc:
     stores = @server_stores[server]

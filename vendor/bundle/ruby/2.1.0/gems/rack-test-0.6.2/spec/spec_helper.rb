@@ -23,7 +23,7 @@ RSpec.configure do |config|
 end
 
 shared_examples_for "any #verb methods" do
-  it "requests the URL using VERB" do
+  it "features the URL using VERB" do
     send(verb, "/")
 
     check last_request.env["REQUEST_METHOD"].should == verb.upcase

@@ -1243,24 +1243,68 @@ class HomesController < ApplicationController
                 
               elsif (hay_stock[i] == 0 )
                 #pedir apis!
+                usuario = "grupo2"
+                password = "qwertyuiop"
+                recepcion = "5396513be4b0c7adbad816d7"
                 grupos = ApiUser.all.shuffle
                 grupos.each do |user|
                   #asumiendo que todos van a usar el mismo sistema de apis
                   id_grupo = user.name[-1]
-                  url_grupo = "http://integra"+id_grupo+".ing.puc.cl//api/pedirProducto"
-                  
-                  r = HTTParty.post(url_grupo, {
-                      :body => {"usuario" => "grupo2", "password" => "b0399d2029f64d445bd131ffaa399a42d2f8e7dc",
-                                "almacen_id" => "5396513be4b0c7adbad816d7", "SKU" => sku, "cantidad" => cant.to_i
-                    }
-                  })
-                  unless r["error"]
-                    #TODO: revisar si lo que me dio el grupo (r["cantidad"]) es suficiente, de ser asi hago break, de lo contrario actualizo la cantidad que necesito y sigo con el siguiente grupo - la cantidad que necesito esta en cant (o en cant.to_i)
-                    #if r["cantidad"] >= cantidad que necesito
-                      #break
-                    #else
-                      #cantidad_que_necesito=cantidad_que_necesito - r["cantidad"]
-                    #end
+                  case id_grupo
+                    when 1
+                      #TODO este grupo no tiene bien guardada uestra contraseña, tener ojo pr si la arreglan para cambiarlo aqui (le falta la u a qwertyuiop)
+                      url_grupo =  "http://integra1.ing.puc.cl/ecommerce/api/v1/pedirProducto"
+                      r = HTTParty.post(url_grupo, {
+                          :body => {"usuario" => "Grupo2", "password" => qwertyiop,
+                                    "almacenId" => recepcion, "sku" => sku, "cant" => cant.to_i
+                          }
+                      })
+                      if r["amountSent"]>0
+                        if r["amountSent"]>= cant
+                          break
+                        else
+                          cant=cant - r["cantidad"]
+                        end
+                      end
+                    when 3
+                    when 4
+                    when 5
+                      url_grupo = "http://integra5.ing.puc.cl/api/v1/pedirProducto"
+                      r = HTTParty.post(url_grupo, {
+                          :body => {"usuario" => usuario, "password" => "b0399d2029f64d445bd131ffaa399a42d2f8e7dc",
+                                    "almacen_id" => recepcion, "SKU" => sku, "cantidad" => cant.to_i
+                          }
+                      })
+                      unless r["error"]
+                        if r["cantidad"] >= cant
+                          break
+                        else
+                          cant=cant - r["cantidad"]
+                        end
+                      end
+                    when 6
+                    when 7
+                    when 8
+                      url_grupo = "http://integra8.ing.puc.cl//api/pedirProducto"
+
+                      r = HTTParty.post(url_grupo, {
+                          :body => {"usuario" => usuario, "password" => "b0399d2029f64d445bd131ffaa399a42d2f8e7dc",
+                                    "almacen_id" => recepcion, "SKU" => sku, "cantidad" => cant.to_i
+                          }
+                      })
+                      unless r["error"]
+                        if r["cantidad"] >= cant
+                          break
+                        else
+                          cant=cant - r["cantidad"]
+                        end
+                      end
+                    when 9
+                      url_grupo = "http://integra9.ing.puc.cl/api/pedirProducto/grupo2/"+password+"/"+sku.to_s
+                      r = HTTParty.post(url_grupo, {
+                          :body => {"almacenId" => recepcion, "cantidad" => cant.to_i}
+                      })
+                      #TODO falta saber que retorna esta api. Además api tira error interno
                   end
                 end
                 #si hay, se despacha,y registro en dw

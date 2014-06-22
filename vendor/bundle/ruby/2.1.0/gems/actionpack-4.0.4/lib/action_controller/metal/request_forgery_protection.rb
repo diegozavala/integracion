@@ -9,12 +9,12 @@ module ActionController #:nodoc:
   # by including a token in the rendered html for your application. This token is
   # stored as a random string in the session, to which an attacker does not have
   # access. When a request reaches your application, \Rails verifies the received
-  # token with the token in the session. Only HTML and JavaScript requests are checked,
+  # token with the token in the session. Only HTML and JavaScript features are checked,
   # so this will not protect your XML API (presumably you'll have a different
-  # authentication scheme there anyway). Also, GET requests are not protected as these
+  # authentication scheme there anyway). Also, GET features are not protected as these
   # should be idempotent.
   #
-  # It's important to remember that XML or JSON requests are also affected and if
+  # It's important to remember that XML or JSON features are also affected and if
   # you're building an API you'll need something like:
   #
   #   class ApplicationController < ActionController::Base
@@ -63,7 +63,7 @@ module ActionController #:nodoc:
     end
 
     module ClassMethods
-      # Turn on request forgery protection. Bear in mind that only non-GET, HTML/JavaScript requests are checked.
+      # Turn on request forgery protection. Bear in mind that only non-GET, HTML/JavaScript features are checked.
       #
       #   class FooController < ApplicationController
       #     protect_from_forgery except: :index
@@ -173,7 +173,7 @@ module ActionController #:nodoc:
         forgery_protection_strategy.new(self).handle_unverified_request
       end
 
-      # The actual before_action that is used. Modify this to change how you handle unverified requests.
+      # The actual before_action that is used. Modify this to change how you handle unverified features.
       def verify_authenticity_token
         unless verified_request?
           logger.warn "Can't verify CSRF token authenticity" if logger

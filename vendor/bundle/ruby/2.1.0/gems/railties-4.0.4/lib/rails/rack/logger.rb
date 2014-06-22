@@ -26,7 +26,7 @@ module Rails
     protected
 
       def call_app(request, env)
-        # Put some space between requests in development logs.
+        # Put some space between features in development logs.
         if development?
           logger.debug ''
           logger.debug ''

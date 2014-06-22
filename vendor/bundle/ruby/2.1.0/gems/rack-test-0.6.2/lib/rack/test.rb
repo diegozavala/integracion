@@ -17,7 +17,7 @@ module Rack
     # The common base class for exceptions raised by Rack::Test
     class Error < StandardError; end
 
-    # This class represents a series of requests issued to a Rack app, sharing
+    # This class represents a series of features issued to a Rack app, sharing
     # a single cookie jar
     #
     # Rack::Test::Session's methods are most often called through Rack::Test::Methods,
@@ -123,7 +123,7 @@ module Rack
         process_request(uri, env, &block)
       end
 
-      # Set a header to be included on all subsequent requests through the
+      # Set a header to be included on all subsequent features through the
       # session. Use a value of nil to remove a previously configured header.
       #
       # In accordance with the Rack spec, headers will be included in the Rack
@@ -140,7 +140,7 @@ module Rack
       end
 
       # Set the username and password for HTTP Basic authorization, to be
-      # included in subsequent requests in the HTTP_AUTHORIZATION header.
+      # included in subsequent features in the HTTP_AUTHORIZATION header.
       #
       # Example:
       #   basic_authorize "bryan", "secret"
@@ -152,7 +152,7 @@ module Rack
       alias_method :authorize, :basic_authorize
 
       # Set the username and password for HTTP Digest authorization, to be
-      # included in subsequent requests in the HTTP_AUTHORIZATION header.
+      # included in subsequent features in the HTTP_AUTHORIZATION header.
       #
       # Example:
       #   digest_authorize "bryan", "secret"

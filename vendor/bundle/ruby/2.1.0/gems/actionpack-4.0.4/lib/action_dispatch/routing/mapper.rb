@@ -681,7 +681,7 @@ module ActionDispatch
         #     resources :posts
         #   end
         #
-        #   # prefix the posts resource's requests with '/admin'
+        #   # prefix the posts resource's features with '/admin'
         #   scope path: "/admin" do
         #     resources :posts
         #   end

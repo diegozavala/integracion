@@ -14,7 +14,7 @@ describe Rack::Test::Session do
   end
 
   describe "#request" do
-    it "requests the URI using GET by default" do
+    it "features the URI using GET by default" do
       request "/"
       last_request.should be_get
       last_response.should be_ok
@@ -107,7 +107,7 @@ describe Rack::Test::Session do
       last_request.env["PATH_INFO"].should == "/foo"
     end
 
-    it "accepts params and builds query strings for GET requests" do
+    it "accepts params and builds query strings for GET features" do
       request "/foo?baz=2", :params => {:foo => {:bar => "1"}}
       last_request.GET.should == { "baz" => "2", "foo" => { "bar" => "1" }}
     end
@@ -117,7 +117,7 @@ describe Rack::Test::Session do
       last_request.GET.should == { "bar" => "3" }
     end
 
-    it "accepts raw input in params for GET requests" do
+    it "accepts raw input in params for GET features" do
       request "/foo?baz=2", :params => "foo[bar]=1"
       last_request.GET.should == { "baz" => "2", "foo" => { "bar" => "1" }}
     end
@@ -127,12 +127,12 @@ describe Rack::Test::Session do
       last_request.query_string.should == "a=1&b=2&c=3&e=4&d=5"
     end
 
-    it "accepts params and builds url encoded params for POST requests" do
+    it "accepts params and builds url encoded params for POST features" do
       request "/foo", :method => :post, :params => {:foo => {:bar => "1"}}
       last_request.env["rack.input"].read.should == "foo[bar]=1"
     end
 
-    it "accepts raw input in params for POST requests" do
+    it "accepts raw input in params for POST features" do
       request "/foo", :method => :post, :params => "foo[bar]=1"
       last_request.env["rack.input"].read.should == "foo[bar]=1"
     end
@@ -236,28 +236,28 @@ describe Rack::Test::Session do
   end
 
   describe "#header" do
-    it "sets a header to be sent with requests" do
+    it "sets a header to be sent with features" do
       header "User-Agent", "Firefox"
       request "/"
 
       last_request.env["HTTP_USER_AGENT"].should == "Firefox"
     end
 
-    it "sets a Content-Type to be sent with requests" do
+    it "sets a Content-Type to be sent with features" do
       header "Content-Type", "application/json"
       request "/"
 
       last_request.env["CONTENT_TYPE"].should == "application/json"
     end
 
-    it "sets a Host to be sent with requests" do
+    it "sets a Host to be sent with features" do
       header "Host", "www.example.ua"
       request "/"
 
       last_request.env["HTTP_HOST"].should == "www.example.ua"
     end
 
-    it "persists across multiple requests" do
+    it "persists across multiple features" do
       header "User-Agent", "Firefox"
       request "/"
       request "/"
@@ -297,7 +297,7 @@ describe Rack::Test::Session do
       last_request.env["HTTP_AUTHORIZATION"].should == "Basic YnJ5YW46c2VjcmV0\n"
     end
 
-    it "includes the header for subsequent requests" do
+    it "includes the header for subsequent features" do
       basic_authorize "bryan", "secret"
       request "/"
       request "/"
@@ -344,7 +344,7 @@ describe Rack::Test::Session do
       last_request.env["PATH_INFO"].should == "/"
     end
 
-    it "raises an error if no requests have been issued" do
+    it "raises an error if no features have been issued" do
       lambda {
         last_request
       }.should raise_error(Rack::Test::Error)
@@ -357,7 +357,7 @@ describe Rack::Test::Session do
       last_response["Content-Type"].should == "text/html;charset=utf-8"
     end
 
-    it "raises an error if no requests have been issued" do
+    it "raises an error if no features have been issued" do
       lambda {
         last_response
       }.should raise_error

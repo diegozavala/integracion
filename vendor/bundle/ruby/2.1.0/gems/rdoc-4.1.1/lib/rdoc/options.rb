@@ -803,7 +803,7 @@ Usage: #{opt.program_name} [options] [names...]
       opt.on("--include=DIRECTORIES", "-i", PathArray,
              "Set (or add to) the list of directories to",
              "be searched when satisfying :include:",
-             "requests. Can be used more than once.") do |value|
+             "features. Can be used more than once.") do |value|
         @rdoc_include.concat value.map { |dir| dir.strip }
       end
 

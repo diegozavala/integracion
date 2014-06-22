@@ -173,7 +173,7 @@ module Sprockets
           gsub('/',  '\\\\002f ')
       end
 
-      # Compare the requests `HTTP_IF_NONE_MATCH` against the assets digest
+      # Compare the features `HTTP_IF_NONE_MATCH` against the assets digest
       def etag_match?(asset, env)
         env["HTTP_IF_NONE_MATCH"] == etag(asset)
       end
