@@ -1,7 +1,7 @@
 class Offer < ActiveRecord::Base
   include ApplicationHelper
 
-  def get_offers
+  def self.get_offers
     require "bunny" # don't forget to put gem "bunny" in your Gemfile
 
     b = Bunny.new('amqp://ukrtynvc:AXr6Up0yW2OEs7UdxRQyLbD11RvYwm4x@hyena.rmq.cloudamqp.com/ukrtynvc')
@@ -36,7 +36,7 @@ class Offer < ActiveRecord::Base
 
   end
 
-  def check_active
+  def self.check_active
     # verificar si una oferta debe ser publicada. Primero verifico si esta activa y luego si la fecha corresponde
     Offer.all.each do |o|
       if !o.active
@@ -50,9 +50,9 @@ class Offer < ActiveRecord::Base
           
           product=Spree::Variant.where(sku: o.sku).first
 
-          precio_aux=  product.price
-          product.price = o.price
-          o.price= precio_aux
+          #precio_aux=  product.price
+          #product.price = o.price
+          #o.price= precio_aux
 
 
 
@@ -61,7 +61,7 @@ class Offer < ActiveRecord::Base
     end
   end
 
-  def check_inactive
+  def self.check_inactive
     #verifico si el periodo de oferta ya terminó
     Offer.all.each do |o|
       if o.active
@@ -83,7 +83,7 @@ class Offer < ActiveRecord::Base
     end
   end
 
-  def send_tweet_offer(msg)
+  def self.send_tweet_offer(msg)
 
     client = Twitter::REST::Client.new do |config|
       config.consumer_key        = "VMskMaBDtwH11TFXvVlnrGdSr"

@@ -1,6 +1,6 @@
 class Home < ActiveRecord::Base
 
-  def get_reposicion
+  def self.get_reposicion
     require "bunny" # don't forget to put gem "bunny" in your Gemfile
 
     b = Bunny.new('amqp://ukrtynvc:AXr6Up0yW2OEs7UdxRQyLbD11RvYwm4x@hyena.rmq.cloudamqp.com/ukrtynvc')
