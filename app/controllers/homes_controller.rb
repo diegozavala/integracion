@@ -1214,6 +1214,7 @@ class HomesController < ApplicationController
 
 
   def test_ftp 
+   
     error =0
     linea = []
     
@@ -1385,6 +1386,7 @@ class HomesController < ApplicationController
                   end
                 end
                 
+                vaciar_recepcion
                 cant_a_despachar = cant_original-cant.to_i
                 
                 #si hay para despachar, se calcula cuanto y se despacha, y se registra
