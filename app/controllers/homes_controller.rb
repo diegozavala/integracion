@@ -1302,15 +1302,22 @@ class HomesController < ApplicationController
               stock_disp = sto.length
               
               
-              if( hay_stock[i] == 0 and stock_disp>cant.to_i)
+              if( hay_stock[i] == 0 and stock_disp>0)
                 puts "Hay stock en bodega"
                 hay_stock[i] = 2
+                if(stock_disp>cant.to_i)
+                  cant_a_despachar = cant.to_i
+                  cant = 0
+                else 
+                  cant_a_despachar = stock_disp
+                  cant=cant-stock_disp
+                end
                 
-                despachar(sku,cant.to_i, direccion, num_pedido)
+                despachar(sku,cant_a_despachar.to_i, direccion, num_pedido)
 
-                registro_dw(num_pedido,get_clientname(dirId),fecha,sku,Spree::Variant.where(sku: sku).name,cant,rut,get_companyname(rut),direccion, false)
+                registro_dw(num_pedido,get_clientname(dirId),fecha,sku,Spree::Variant.where(sku: sku).name,cant_a_despachar,rut,get_companyname(rut),direccion, false)
                 
-              elsif (hay_stock[i] == 0 )
+              elsif (cant>0)
                 #pedir apis!
                 usuario = "grupo2"
                 password = "qwertyuiop"
