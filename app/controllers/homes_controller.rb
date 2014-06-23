@@ -1120,7 +1120,10 @@ class HomesController < ApplicationController
       :taxon_ids => arr
       )
       # Add current stock level
-      api_products = JSON.parse(get_stock(Integra2::ALMACEN_OTRO,data['sku'], 200))
+      
+
+
+    api_products = JSON.parse(get_stock(Integra2::ALMACEN_OTRO,data['sku'], 200))
      
      s=Spree::StockItem.find_by_variant_id(product.master.id)
      s.adjust_count_on_hand(api_products.length)
@@ -1154,9 +1157,19 @@ class HomesController < ApplicationController
 
   end
 
-
-
+  def update_stock
+    products= Spree::Variant.all
+    products.each do |product|
+      
+      api_products = JSON.parse(get_stock(Integra2::ALMACEN_OTRO,product.sku, 200))
+      s=Spree::StockItem.find_by_variant_id(product.id)
+      s.adjust_count_on_hand(api_products.length)
+    end 
+  end
+  
+  
   def test_ftp 
+   
     error =0
     linea = []
     
@@ -1233,7 +1246,7 @@ class HomesController < ApplicationController
                   write_data_gdoc(j+4,linea[j][4]-cant)
                   
                   despachar(sku,cant.to_i, direccion, num_pedido)
-                   registro_dw(num_pedido,get_clientname(dirId),fecha,sku,Spree::Variant.where(sku: sku).name,cant,rut,get_companyname(rut),direccion, false)
+                   registro_dw(num_pedido,get_clientname(dirID),fecha,sku,Spree::Variant.get_variant_by_sku(sku).name,cant,rut,get_companyname(rut),direccion, false)
                   
                   break
                 end
@@ -1245,28 +1258,20 @@ class HomesController < ApplicationController
               stock_disp = sto.length
               
               
-              if( hay_stock[i] == 0 and stock_disp>0)
+              if( hay_stock[i] == 0 and stock_disp>cant.to_i)
                 puts "Hay stock en bodega"
                 hay_stock[i] = 2
-                if(stock_disp>cant.to_i)
-                  cant_a_despachar = cant.to_i
-                  cant = 0
-                else 
-                  cant_a_despachar = stock_disp
-                  cant=cant.to_i-stock_disp
-                end
                 
-                despachar(sku,cant_a_despachar.to_i, direccion, num_pedido)
+                despachar(sku,cant.to_i, direccion, num_pedido)
 
-                registro_dw(num_pedido,get_clientname(dirId),fecha,sku,Spree::Variant.where(sku: sku).name,cant_a_despachar,rut,get_companyname(rut),direccion, false)
+                registro_dw(num_pedido,get_clientname(dirID),fecha,sku,Spree::Variant.get_variant_by_sku(sku).name,cant,rut,get_companyname(rut),direccion, false)
                 
-              elsif (cant.to_i>0)
+              elsif (hay_stock[i] == 0 )
                 #pedir apis!
                 usuario = "grupo2"
                 password = "qwertyuiop"
                 recepcion = "5396513be4b0c7adbad816d7"
                 grupos = ApiUser.all.shuffle
-                cant_original = cant.to_i
                 grupos.each do |user|
                   #asumiendo que todos van a usar el mismo sistema de apis
                   id_grupo = user.name[-1]
@@ -1287,7 +1292,34 @@ class HomesController < ApplicationController
                         end
                       end
                     when 3
+                      password="grupo2"
+                      url_grupo =  "http://integra3.ing.puc.cl/api/pedirProducto"
+                       r = HTTParty.post(url_grupo, {
+                          :body => {"usuario" => usuario, "password" => password,
+                                    "almacenId" => recepcion, "sku" => sku, "cant" => cant.to_i
+                          }
+                      })
+                      if r["amountSent"]>0
+                        if r["amountSent"]>= cant
+                          break
+                        else
+                          cant=cant - r["cantidad"]
+                        end
+                      end
                     when 4
+                      url_grupo =  "http://integra4.ing.puc.cl/api/pedirProducto"
+                       r = HTTParty.post(url_grupo, {
+                          :body => {"usuario" => usuario, "password" => password,
+                                    "almacenId" => recepcion, "sku" => sku, "cant" => cant.to_i
+                          }
+                      })
+                      if r["amountSent"]>0
+                        if r["amountSent"]>= cant
+                          break
+                        else
+                          cant=cant - r["cantidad"]
+                        end
+                      end
                     when 5
                       url_grupo = "http://integra5.ing.puc.cl/api/v1/pedirProducto"
                       r = HTTParty.post(url_grupo, {
@@ -1303,9 +1335,23 @@ class HomesController < ApplicationController
                         end
                       end
                     when 6
+                      password="2"
+                      url_grupo ="http://integra6.ing.puc.cl/apiGrupo/pedido"
+                      r = HTTParty.post(url_grupo, {
+                          :body => {"usuario" => usuario, "password" => "b0399d2029f64d445bd131ffaa399a42d2f8e7dc",
+                                    "almacen_id" => recepcion, "SKU" => sku, "cantidad" => cant.to_i
+                          }
+                      })
+                      unless r["error"]
+                        if r["cantidad"] >= cant
+                          break
+                        else
+                          cant=cant - r["cantidad"]
+                        end
+                      end
                     when 7
                     when 8
-                      url_grupo = "http://integra8.ing.puc.cl//api/pedirProducto"
+                      url_grupo = "http://integra8.ing.puc.cl/api/pedirProducto"
 
                       r = HTTParty.post(url_grupo, {
                           :body => {"usuario" => usuario, "password" => "b0399d2029f64d445bd131ffaa399a42d2f8e7dc",
@@ -1327,7 +1373,9 @@ class HomesController < ApplicationController
                       #TODO falta saber que retorna esta api. Además api tira error interno
                   end
                 end
+
                 
+                vaciar_recepcion
                 cant_a_despachar = cant_original-cant.to_i
                 
                 #si hay para despachar, se calcula cuanto y se despacha, y se registra
@@ -1342,6 +1390,10 @@ class HomesController < ApplicationController
                 end
                  
                
+
+                #si hay, se despacha,y registro en dw
+                #si no hay en otras bodegas, informar quiebre a dw
+
                 
               end
               i+=1
@@ -1352,8 +1404,7 @@ class HomesController < ApplicationController
       end
     end     
   end
-  
-  
+
   private
   # Use callbacks to share common setup or constraints between actions.
   def set_home
@@ -1365,7 +1416,7 @@ class HomesController < ApplicationController
     params[:home]
   end
     
-  
+ 
     
     
   def despachar(sku, cantidad, direccion, num_pedido)
@@ -1380,18 +1431,18 @@ class HomesController < ApplicationController
     end
 
     #bajar stock de spree
-    p=Spree::Variant.where(sku: sku)
-    s=Spree::StockItem.find_by_variant_id(p[0].id)
+    p=Spree::Variant.find_variant_by_sku(sku)
+    s=Spree::StockItem.find_by_variant_id(p.master.id)
     s.adjust_count_on_hand(0-cantidad)
 
   end
 
   def registro_dw(numeropedido,nombrecliente,fecha,sku,nombreproducto,cantidad,rutorganizacion,nombreorganizacion,direccion, quiebre)
     host = ENV['MONGO_RUBY_DRIVER_HOST'] || 'localhost'
-    port = ENV['MONGO_RUBY_DRIVER_PORT'] || Mongo::MongoClient::DEFAULT_PORT
+    port = ENV['MONGO_RUBY_DRIVER_PORT'] || MongoClient::DEFAULT_PORT
 
     puts "Connecting to #{host}:#{port}"
-    db = Mongo::MongoClient.new(host, port).db('integra2-mongodb')
+    db = MongoClient.new(host, port).db('integra2-mongodb')
     coll = db.collection('datawarehouse')
     coll.insert(
         'numeropedido'=>numeropedido,

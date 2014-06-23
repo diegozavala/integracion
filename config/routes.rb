@@ -29,7 +29,7 @@ Integra2::Application.routes.draw do
   #####  Fin API   #####
 
   get 'create_prod' =>'homes#create_prod', as: 'create_prod'
-  
+  get 'update_stock' =>'homes#update_stock', as: 'update_stock'
 
   #Gestion de stocks
   post 'gestion_de_stocks/almacenes' => 'stock#post', as: 'stock_post'
