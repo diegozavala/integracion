@@ -1440,7 +1440,7 @@ class HomesController < ApplicationController
                       #TODO falta saber que retorna esta api. Además api tira error interno
                   end
                 end
-<<<<<<< HEAD
+
                 
                 vaciar_recepcion
                 cant_a_despachar = cant_original-cant.to_i
@@ -1457,10 +1457,10 @@ class HomesController < ApplicationController
                 end
                  
                
-=======
+
                 #si hay, se despacha,y registro en dw
                 #si no hay en otras bodegas, informar quiebre a dw
->>>>>>> FETCH_HEAD
+
                 
               end
               i+=1
