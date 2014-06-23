@@ -1316,6 +1316,7 @@ class HomesController < ApplicationController
                 password = "qwertyuiop"
                 recepcion = "5396513be4b0c7adbad816d7"
                 grupos = ApiUser.all.shuffle
+                cant_original = cant.to_i
                 grupos.each do |user|
                   #asumiendo que todos van a usar el mismo sistema de apis
                   id_grupo = user.name[-1]
@@ -1376,8 +1377,21 @@ class HomesController < ApplicationController
                       #TODO falta saber que retorna esta api. Además api tira error interno
                   end
                 end
-                #si hay, se despacha,y registro en dw
-                #si no hay en otras bodegas, informar quiebre a dw
+                
+                cant_a_despachar = cant_original-cant.to_i
+                
+                #si hay para despachar, se calcula cuanto y se despacha, y se registra
+                if cant_a_despachar>0
+                  despachar(sku,cant_a_despachar, direccion, num_pedido)
+                  registro_dw(num_pedido,get_clientname(dirId),fecha,sku,Spree::Variant.where(sku: sku).name,cant_a_despachar,rut,get_companyname(rut),direccion, false)
+                end
+                
+                #si es que la cantidad a despachar es menor que la original, hay que quebrar lo que no se despacha . se registra 
+                if cant_a_despachar<cant_original
+                    registro_dw(num_pedido,get_clientname(dirId),fecha,sku,Spree::Variant.where(sku: sku).name,cant,rut,get_companyname(rut),direccion, true)
+                end
+                 
+               
                 
               end
               i+=1
