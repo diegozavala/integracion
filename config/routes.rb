@@ -29,7 +29,7 @@ Integra2::Application.routes.draw do
   #####  Fin API   #####
 
   get 'create_prod' =>'homes#create_prod', as: 'create_prod'
-  
+  get 'update_stock' =>'homes#update_stock', as: 'update_stock'
 
   #Gestion de stocks
   post 'gestion_de_stocks/almacenes' => 'stock#post', as: 'stock_post'
@@ -56,7 +56,7 @@ Integra2::Application.routes.draw do
   #   get 'products/:id/purchase' => 'catalog#purchase', as: :purchase
 root :to => "homes#index"
 get 'dropbox' => 'homes#dropbox'
-get 'test_ftp' => 'homes#test_ftp', as: 'test_ftp'
+get 'test_ftp' => 'homes#test_ftp'
 
 
   #DROPBOX
