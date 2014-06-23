@@ -138,7 +138,7 @@ module ApplicationHelper
 	      end
 	    end
 
-		return @clientes.find{|instancia| instancia['cf_707'] = direccionID}['otherstreet']
+		return @clientes.find{|instancia| instancia['cf_707'] == direccionID.to_s}['otherstreet']
 	end
 
 	def get_clientname(direccionID)
@@ -158,8 +158,8 @@ module ApplicationHelper
 	        @clientes << aux
 	      end
 	    end
-	    nombre = @clientes.find{|instancia| instancia['cf_707'] = direccionID}['firstname']
-	    apellido = @clientes.find{|instancia| instancia['cf_707'] = direccionID}['lastname']
+	    nombre = @clientes.find{|instancia| instancia['cf_707'] == direccionID.to_s}['firstname']
+	    apellido = @clientes.find{|instancia| instancia['cf_707'] == direccionID.to_s}['lastname']
 	    nombreyapellido = nombre.to_s+ ' '+apellido.to_s
 		return nombreyapellido
 	end
@@ -181,7 +181,7 @@ module ApplicationHelper
 	      end
 	    end
 
-		return @accounts.find{|instancia| instancia['cf_705'] = direccionID}['accountname']
+		return @accounts.find{|instancia| instancia['cf_705'] == rut.to_s}['accountname']
 
 	end
 	def get_row_gdoc i

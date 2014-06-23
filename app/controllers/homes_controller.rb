@@ -1212,17 +1212,7 @@ class HomesController < ApplicationController
   end
 
 
-  private
-  # Use callbacks to share common setup or constraints between actions.
-  def set_home
-    @home = Home.find(params[:id])
-  end
 
-  # Never trust parameters from the scary internet, only allow the white list through.
-  def home_params
-    params[:home]
-  end
-    
   def test_ftp 
     error =0
     linea = []
@@ -1300,7 +1290,7 @@ class HomesController < ApplicationController
                   write_data_gdoc(j+4,linea[j][4]-cant)
                   
                   despachar(sku,cant.to_i, direccion, num_pedido)
-                   registro_dw(num_pedido,get_clientname(dirID),fecha,sku,Spree::Variant.get_variant_by_sku(sku).name,cant,rut,get_companyname(rut),direccion, false)
+                   registro_dw(num_pedido,get_clientname(dirId),fecha,sku,Spree::Variant.where(sku: sku).name,cant,rut,get_companyname(rut),direccion, false)
                   
                   break
                 end
@@ -1312,20 +1302,28 @@ class HomesController < ApplicationController
               stock_disp = sto.length
               
               
-              if( hay_stock[i] == 0 and stock_disp>cant.to_i)
+              if( hay_stock[i] == 0 and stock_disp>0)
                 puts "Hay stock en bodega"
                 hay_stock[i] = 2
+                if(stock_disp>cant.to_i)
+                  cant_a_despachar = cant.to_i
+                  cant = 0
+                else 
+                  cant_a_despachar = stock_disp
+                  cant=cant.to_i-stock_disp
+                end
                 
-                despachar(sku,cant.to_i, direccion, num_pedido)
+                despachar(sku,cant_a_despachar.to_i, direccion, num_pedido)
 
-                registro_dw(num_pedido,get_clientname(dirID),fecha,sku,Spree::Variant.get_variant_by_sku(sku).name,cant,rut,get_companyname(rut),direccion, false)
+                registro_dw(num_pedido,get_clientname(dirId),fecha,sku,Spree::Variant.where(sku: sku).name,cant_a_despachar,rut,get_companyname(rut),direccion, false)
                 
-              elsif (hay_stock[i] == 0 )
+              elsif (cant.to_i>0)
                 #pedir apis!
                 usuario = "grupo2"
                 password = "qwertyuiop"
                 recepcion = "5396513be4b0c7adbad816d7"
                 grupos = ApiUser.all.shuffle
+                cant_original = cant.to_i
                 grupos.each do |user|
                   #asumiendo que todos van a usar el mismo sistema de apis
                   id_grupo = user.name[-1]
@@ -1427,8 +1425,21 @@ class HomesController < ApplicationController
                       #TODO falta saber que retorna esta api. Además api tira error interno
                   end
                 end
-                #si hay, se despacha,y registro en dw
-                #si no hay en otras bodegas, informar quiebre a dw
+                
+                cant_a_despachar = cant_original-cant.to_i
+                
+                #si hay para despachar, se calcula cuanto y se despacha, y se registra
+                if cant_a_despachar>0
+                  despachar(sku,cant_a_despachar, direccion, num_pedido)
+                  registro_dw(num_pedido,get_clientname(dirId),fecha,sku,Spree::Variant.where(sku: sku).name,cant_a_despachar,rut,get_companyname(rut),direccion, false)
+                end
+                
+                #si es que la cantidad a despachar es menor que la original, hay que quebrar lo que no se despacha . se registra 
+                if cant_a_despachar<cant_original
+                    registro_dw(num_pedido,get_clientname(dirId),fecha,sku,Spree::Variant.where(sku: sku).name,cant,rut,get_companyname(rut),direccion, true)
+                end
+                 
+               
                 
               end
               i+=1
@@ -1439,6 +1450,20 @@ class HomesController < ApplicationController
       end
     end     
   end
+  
+  
+  private
+  # Use callbacks to share common setup or constraints between actions.
+  def set_home
+    @home = Home.find(params[:id])
+  end
+
+  # Never trust parameters from the scary internet, only allow the white list through.
+  def home_params
+    params[:home]
+  end
+    
+  
     
     
   def despachar(sku, cantidad, direccion, num_pedido)
@@ -1453,18 +1478,18 @@ class HomesController < ApplicationController
     end
 
     #bajar stock de spree
-    p=Spree::Variant.find_variant_by_sku(sku)
-    s=Spree::StockItem.find_by_variant_id(p.master.id)
+    p=Spree::Variant.where(sku: sku)
+    s=Spree::StockItem.find_by_variant_id(p[0].id)
     s.adjust_count_on_hand(0-cantidad)
 
   end
 
   def registro_dw(numeropedido,nombrecliente,fecha,sku,nombreproducto,cantidad,rutorganizacion,nombreorganizacion,direccion, quiebre)
     host = ENV['MONGO_RUBY_DRIVER_HOST'] || 'localhost'
-    port = ENV['MONGO_RUBY_DRIVER_PORT'] || MongoClient::DEFAULT_PORT
+    port = ENV['MONGO_RUBY_DRIVER_PORT'] || Mongo::MongoClient::DEFAULT_PORT
 
     puts "Connecting to #{host}:#{port}"
-    db = MongoClient.new(host, port).db('integra2-mongodb')
+    db = Mongo::MongoClient.new(host, port).db('integra2-mongodb')
     coll = db.collection('datawarehouse')
     coll.insert(
         'numeropedido'=>numeropedido,

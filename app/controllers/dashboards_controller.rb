@@ -5,31 +5,13 @@ class DashboardsController < ApplicationController
   # GET /dashboards
   # GET /dashboards.json
   def index
-
     @pedido = Pedido.all
     @cantidadpedidosdiarios = []
-    
+    @productospedidos = []
+    @cantidadpedida = []
     @from_date = Date.new(2014, 1, 1)
     to_date   = Date.new(2014, 12, 31)
 
-    (@from_date..to_date).each do |d|
-      @cantidadpedidosdiarios << Pedido.where(:fecha=>d).count
-    end
-    @dashboards = Dashboard.all
-
-    @unicos = PedidoProducto.all(:group => "producto_id")
-    @productospedidos = []
-    @cantidadpedida = []
-    cantidad = 0
-    @unicos.each do |a|
-      @productospedidos << Producto.find_by_id(a.producto_id).sku
-      @todos = PedidoProducto.where(:producto_id=>a.producto_id)
-      @todos.each do |uno|
-        cantidad = cantidad + uno.cantidad
-      end
-      @cantidadpedida << cantidad
-      cantidad = 0
-    end
 
   end
 
@@ -46,7 +28,7 @@ class DashboardsController < ApplicationController
     @dw = []
     coll.find().each do |col|
       @dw << {
-      :numeropedido=>col['numeropedido']
+      :numeropedido=>col['numeropedido'],
       :cliente=>col['nombrecliente'],
       :fecha=>col['fecha'],
       :sku=>col['sku'],
