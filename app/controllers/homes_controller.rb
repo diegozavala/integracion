@@ -1310,14 +1310,14 @@ class HomesController < ApplicationController
                   cant = 0
                 else 
                   cant_a_despachar = stock_disp
-                  cant=cant-stock_disp
+                  cant=cant.to_i-stock_disp
                 end
                 
                 despachar(sku,cant_a_despachar.to_i, direccion, num_pedido)
 
                 registro_dw(num_pedido,get_clientname(dirId),fecha,sku,Spree::Variant.where(sku: sku).name,cant_a_despachar,rut,get_companyname(rut),direccion, false)
                 
-              elsif (cant>0)
+              elsif (cant.to_i>0)
                 #pedir apis!
                 usuario = "grupo2"
                 password = "qwertyuiop"
