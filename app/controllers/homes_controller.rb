@@ -1281,7 +1281,7 @@ class HomesController < ApplicationController
                       #TODO este grupo no tiene bien guardada uestra contraseña, tener ojo pr si la arreglan para cambiarlo aqui (le falta la u a qwertyuiop)
                       url_grupo =  "http://integra1.ing.puc.cl/ecommerce/api/v1/pedirProducto"
                       r = HTTParty.post(url_grupo, {
-                          :body => {"usuario" => "Grupo2", "password" => qwertyiop,
+                          :body => {"usuario" => "Grupo2", "password" => "qwertyiop",
                                     "almacenId" => recepcion, "sku" => sku, "cant" => cant.to_i
                           }
                       })
@@ -1293,10 +1293,10 @@ class HomesController < ApplicationController
                         end
                       end
                     when 3
-                      password="grupo2"
+                      pass="grupo2"
                       url_grupo =  "http://integra3.ing.puc.cl/api/pedirProducto"
                        r = HTTParty.post(url_grupo, {
-                          :body => {"usuario" => usuario, "password" => password,
+                          :body => {"usuario" => usuario, "password" => pass,
                                     "almacenId" => recepcion, "sku" => sku, "cant" => cant.to_i
                           }
                       })
@@ -1339,7 +1339,7 @@ class HomesController < ApplicationController
                       password="2"
                       url_grupo ="http://integra6.ing.puc.cl/apiGrupo/pedido"
                       r = HTTParty.post(url_grupo, {
-                          :body => {"usuario" => usuario, "password" => "b0399d2029f64d445bd131ffaa399a42d2f8e7dc",
+                          :body => {"usuario" => usuario, "password" => "2",
                                     "almacen_id" => recepcion, "SKU" => sku, "cantidad" => cant.to_i
                           }
                       })
