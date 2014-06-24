@@ -12,6 +12,7 @@ class HomesController < ApplicationController
 
 
   def rabbit
+    Home.get_reposicion
   end
 
   # GET /homes/1

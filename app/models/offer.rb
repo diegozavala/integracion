@@ -49,10 +49,10 @@ class Offer < ActiveRecord::Base
 
           
           product=Spree::Variant.where(sku: o.sku).first
-
-          #precio_aux=  product.price
-          #product.price = o.price
-          #o.price= precio_aux
+          o.sku.to_s
+          precio_aux=  product.price
+          product.price = o.price
+          o.price= precio_aux
 
 
 
