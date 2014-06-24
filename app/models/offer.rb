@@ -47,12 +47,12 @@ class Offer < ActiveRecord::Base
           send_tweet_offer(msg)
          
 
-          
-          product=Spree::Variant.where(sku: o.sku).first
-          o.sku.to_s
-          precio_aux=  product.price
-          product.price = o.price
-          o.price= precio_aux
+
+          #product=Spree::Variant.where(sku: o.sku).first
+          #o.sku.to_s
+          #precio_aux=  product.price
+          #product.price = o.price
+          #o.price= precio_aux
 
 
 
@@ -72,8 +72,8 @@ class Offer < ActiveRecord::Base
 
           # habria q guardar el 
         
-          product=Spree::Variant.where(sku: o.sku).first
-          product.price = o.price
+          #product=Spree::Variant.where(sku: o.sku).first
+          #product.price = o.price
 
           #volver a cambiar los precios!
 
