@@ -62,7 +62,7 @@ get 'test_ftp' => 'homes#test_ftp', as: 'test_ftp'
   #DROPBOX
   get 'tweet'=> 'homes#tweet'
   get 'rabbit' => 'homes#rabbit'
-  get 'offer' => 'offers#offer'
+  get 'get_all' => 'offers#get_all',as: 'get_all'
   #  # Example resource route (maps HTTP verbs to controller actions automatically):
   #   resources :products
 

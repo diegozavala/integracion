@@ -12,7 +12,7 @@ class OffersController < ApplicationController
   def show
   end
 
-  def offer
+  def get_all
     Offer.get_offers
     Offer.check_active
     Offer.check_inactive
