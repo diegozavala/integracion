@@ -56,7 +56,7 @@ class Offer < ActiveRecord::Base
           rescue => exception
 
           end
-          o.destroy
+
 
 
         end
@@ -78,7 +78,9 @@ class Offer < ActiveRecord::Base
           rescue => exception
 
           end
-          # habria q guardar el 
+          o.destroy
+
+          # habria q guardar el
         
           #product=Spree::Variant.where(sku: o.sku).first
           #product.price = o.price
