@@ -12,6 +12,12 @@ class OffersController < ApplicationController
   def show
   end
 
+  def offer
+    Offer.get_offers
+    Offer.check_active
+    Offer.check_inactive
+  end
+
   # GET /offers/new
   def new
     @offer = Offer.new

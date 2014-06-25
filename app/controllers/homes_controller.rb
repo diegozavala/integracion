@@ -9,7 +9,9 @@ class HomesController < ApplicationController
     @homes = Home.all
   end
 
-
+  def dropbox
+    Home.test_dropbox
+  end
 
   def rabbit
     Home.get_reposicion
