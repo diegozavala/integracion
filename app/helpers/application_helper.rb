@@ -71,6 +71,17 @@ module ApplicationHelper
     end
   end
 
+  def despachar_todo
+    puts "Despachando items..."
+    skus_despacho = JSON.parse(get_skus_with_stock(Integra2::ALMACEN_DESPACHO))
+    skus_despacho.each do |sku|
+      prods_despacho = JSON.parse(get_stock(Integra2::ALMACEN_DESPACHO,sku["_id"].to_s))
+      prods_despacho.each do |producto|
+        despachar_stock(producto["_id"],producto["direccion"],producto["precio"],"0000")
+      end
+    end
+  end
+
 
 	def mover_stock_cantidad(sku,almacen_dest,cantidad,modo=nil)
 		if modo == 'recepcion'
@@ -102,9 +113,14 @@ module ApplicationHelper
 
 	def despachar_stock(producto, direccion, precio, pedido)
 		#@request = JSON.parse(RestClient.delete Integra2::STOCK_API_URL+'stock', {:Authorization => generate_auth_hash('DELETE'+producto+direccion+precio.to_s+pedido), :params=>{:productoId=>producto, :direccion=>direccion, :precio=>precio, :pedidoId=>pedido}})
-		r = HTTParty.delete(Integra2::STOCK_API_URL+'stock',
+		puts "Despachando stock..."
+    puts "Producto: "+producto.to_s
+    puts "direccion: "+direccion
+    puts "precio: "+precio.to_s
+    puts "pedidoID: "+pedido
+    r = HTTParty.delete(Integra2::STOCK_API_URL+'stock',
 		{ 
-		:body => {"productoId" => producto, "direccion" => direccion, "precio" => precio, "pedidoId"=> pedido},
+		:body => {"productoId" => producto, "direccion" => direccion, "precio" => precio.to_s, "pedidoId"=> pedido},
 		:headers => {'Authorization' => generate_auth_hash('DELETE'+producto.to_s+direccion+precio.to_s+pedido.to_s)}
 		})
 		puts "Stock despachado => "+r.to_s

@@ -12,7 +12,7 @@ class StockController < ApplicationController
 
 	def post
 		action = params["go_to"]
-    puts "TEST"+action
+    puts "TEST "+action
 		if action == 'mover_stock'
 			mover_stock(params["ID Producto"],params["ID Almacen"])
 		elsif action == 'mover_stock_bodega'
@@ -21,6 +21,8 @@ class StockController < ApplicationController
 			despachar_stock(params["ID Producto"],params["Direccion"],params["Precio"],params["Id Pedido"])
     elsif action == 'vaciar'
       vaciar
+    elsif action == 'despachar'
+      despachar_todo
 		else puts "Accion no válida"
 		end
 		redirect_to stock_almacenes_path
