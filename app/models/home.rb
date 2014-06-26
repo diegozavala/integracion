@@ -1,6 +1,87 @@
 class Home < ActiveRecord::Base
+  def self.vaciar_recepcion
+    require 'json'
+    puts "Vaciando recepcion..."
+    skus_recepcion = JSON.parse(get_skus_with_stock(Integra2::ALMACEN_RECEPCION))
+    puts skus_recepcion.to_s
+    skus_recepcion.each do |sku|
+      mover_stock_cantidad(sku["_id"],'53571c4f682f95b80b7563e6',sku["total"],'recepcion')
+      puts 'A total of '+sku["total"].to_s+' products sku: '+sku["id"].to_s+' where moved'
+    end
+  end
 
-  def get_reposicion
+  def self.get_skus_with_stock(almacen)
+    @request = RestClient.get Integra2::STOCK_API_URL+'skusWithStock', {:Authorization => generate_auth_hash('GET'+almacen), :params=>{:almacenId=>almacen}}
+  end
+
+  def self.generate_auth_hash(action)
+    require 'openssl'
+    require "base64"
+    #funciona solo para test por ahora (por el GET)
+    #codigo basado en http://jokecamp.wordpress.com/2012/10/21/examples-of-creating-base64-hashes-using-hmac-sha256-in-different-languages/#ruby
+    hash  = Base64.encode64(OpenSSL::HMAC.digest('sha1', Integra2::STOCK_PRIVATE_KEY, action))
+    auth = 'UC '+Integra2::STOCK_PUBLIC_KEY+':'+hash
+  end
+
+
+  def self.mover_stock_cantidad(sku,almacen_dest,cantidad,modo=nil)
+    if modo == 'recepcion'
+      productos = JSON.parse(get_stock(Integra2::ALMACEN_RECEPCION,sku,cantidad))
+    elsif modo == 'pulmon'
+      productos = JSON.parse(get_stock(Integra2::ALMACEN_PULMON,sku,cantidad))
+    else
+      productos = JSON.parse(get_stock('53571c4f682f95b80b7563e6',sku,cantidad))
+    end
+    # productos_a_despachar = productos.take(a_despachar)
+    #RESTAR reservas
+    if productos.length<cantidad.to_i
+      return JSON.parse({error: 'No hay stock para la cantidad solicitada'}.to_json)
+    end
+    productos.each do |p|
+      if modo == 'api'
+        response = mover_stock(p["_id"],Integra2::ALMACEN_DESPACHO)
+        response = mover_stock_bodega(p["_id"],almacen_dest)
+      else
+        response = mover_stock(p["_id"],almacen_dest)
+      end
+      puts response
+      if response["error"]
+        return response
+      end
+    end
+    return JSON.parse({'SKU' => sku.to_s, cantidad: cantidad.to_s}.to_json)
+  end
+
+  def self.get_stock(almacen, sku, limit=nil)
+    if limit == nil
+      RestClient.get Integra2::STOCK_API_URL+'stock', {:Authorization => generate_auth_hash('GET'+almacen+sku), :params=>{:almacenId=>almacen, :sku=>sku}}
+    else
+      RestClient.get Integra2::STOCK_API_URL+'stock', {:Authorization => generate_auth_hash('GET'+almacen+sku), :params=>{:almacenId=>almacen, :sku=>sku, :limit=>limit}}
+    end
+  end
+
+  #metodos de la api por usar
+  def self.mover_stock (producto, almacen)
+    r = HTTParty.post(Integra2::STOCK_API_URL+'moveStock',
+    {
+    :body => {"productoId" => producto, "almacenId" => almacen},
+    :headers => {'Authorization' => generate_auth_hash('POST'+producto+almacen)}
+    })
+    #retorna Producto
+  end
+
+  def self.mover_stock_bodega(producto, almacen)
+    r = HTTParty.post(Integra2::STOCK_API_URL+'moveStockBodega',
+    {
+      :body => {"productoId" => producto, "almacenId" => almacen},
+      :headers => {'Authorization' => generate_auth_hash('POST'+producto+almacen)}
+    })
+    #retorna Producto
+  end
+
+
+
+  def self.get_reposicion
     require "bunny" # don't forget to put gem "bunny" in your Gemfile
 
     b = Bunny.new('amqp://ukrtynvc:AXr6Up0yW2OEs7UdxRQyLbD11RvYwm4x@hyena.rmq.cloudamqp.com/ukrtynvc')

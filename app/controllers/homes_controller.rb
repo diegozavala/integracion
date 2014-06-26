@@ -9,66 +9,12 @@ class HomesController < ApplicationController
     @homes = Home.all
   end
 
-
+  def dropbox
+    Home.test_dropbox
+  end
 
   def rabbit
-    require "bunny" # don't forget to put gem "bunny" in your Gemfile
-
-    b = Bunny.new('amqp://ukrtynvc:AXr6Up0yW2OEs7UdxRQyLbD11RvYwm4x@hyena.rmq.cloudamqp.com/ukrtynvc')
-    b.start # start a communication session with the amqp server
-
-    q = b.queue("ofertas",:auto_delete => true) # declare a queue
-
-# declare default direct exchange which is bound to all queues
-    e = b.exchange("")
-    msg = q.pop # get message from the queue
-    require 'json'
-    require 'date'
-
-    hash = JSON[msg.last]
-    sku =hash['sku']
-    precio =hash['precio']
-    sec = (hash['inicio'].to_s.to_f / 1000).to_s
-    #inicio = Date.strptime(sec, '%s')
-    inicio = Date.today()
-    sec2 = (hash['fin'].to_s.to_f / 1000).to_s
-    fin = Date.strptime(sec2, '%s')
-
-    @offer = Offer.new(:sku => sku.to_s,:price => precio.to_i,:start => inicio,:end => fin,:active => false)
-## Ver si creo Activa o Inactiva las oferta.... Cambiar Dates
-    @offer.save
-
-    puts msg.last.to_s
-    puts inicio.to_s
-    puts fin.to_s
-    e.publish(msg.last.to_s, :key => 'ofertas')
-## crear oferta con estos parametros!
-    b.stop # close the connection
-
-    Offer.all.each do |o|
-      if !o.active
-        if (Date.today() >= o.start && o.end>Date.today())
-          #Si la fecha
-          o.active = true
-          msg = "OFERTA! El producto "+o.sku.to_s+" a solo $"+o.price.to_s+" desde "+o.start.to_s+" hasta el "+o.end.to_s
-          client = Twitter::REST::Client.new do |config|
-            config.consumer_key        = "VMskMaBDtwH11TFXvVlnrGdSr"
-            config.consumer_secret     = "lILUxZ3rFEs6FamFUiRN6NISeGOTCGNuKP6w7h1Z3tg2YsyVK9"
-            config.access_token        = "2567568456-ojoAMV8ui23FGYkXvFU6TTj4NLbhprZMQQ1u5v4"
-            config.access_token_secret = "nefBA9qDiKcphnIfsiZqcaYzcBzTMxsAnLs3zHCLN987M"
-          end
-
-#Ademas actualizar en caso de que sean ofertas
-          client.update(msg)
-        else
-          puts "NOOOOOO"
-        end
-
-      end
-    end
-
-
-
+    Home.get_reposicion
   end
 
   # GET /homes/1
@@ -1177,7 +1123,10 @@ class HomesController < ApplicationController
       :taxon_ids => arr
       )
       # Add current stock level
-      api_products = JSON.parse(get_stock(Integra2::ALMACEN_OTRO,data['sku'], 200))
+      
+
+
+    api_products = JSON.parse(get_stock(Integra2::ALMACEN_OTRO,data['sku'], 200))
      
      s=Spree::StockItem.find_by_variant_id(product.master.id)
      s.adjust_count_on_hand(api_products.length)
@@ -1211,9 +1160,19 @@ class HomesController < ApplicationController
 
   end
 
-
-
+  def update_stock
+    products= Spree::Variant.all
+    products.each do |product|
+      
+      api_products = JSON.parse(get_stock(Integra2::ALMACEN_OTRO,product.sku, 200))
+      s=Spree::StockItem.find_by_variant_id(product.id)
+      s.adjust_count_on_hand(api_products.length)
+    end 
+  end
+  
+  
   def test_ftp 
+   
     error =0
     linea = []
     
@@ -1290,7 +1249,7 @@ class HomesController < ApplicationController
                   write_data_gdoc(j+4,linea[j][4]-cant)
                   
                   despachar(sku,cant.to_i, direccion, num_pedido)
-                   registro_dw(num_pedido,get_clientname(dirId),fecha,sku,Spree::Variant.where(sku: sku).name,cant,rut,get_companyname(rut),direccion, false)
+                   registro_dw(num_pedido,get_clientname(dirID),fecha,sku,Spree::Variant.get_variant_by_sku(sku).name,cant,rut,get_companyname(rut),direccion, false)
                   
                   break
                 end
@@ -1308,7 +1267,7 @@ class HomesController < ApplicationController
                 
                 despachar(sku,cant.to_i, direccion, num_pedido)
 
-                registro_dw(num_pedido,get_clientname(dirId),fecha,sku,Spree::Variant.where(sku: sku).name,cant,rut,get_companyname(rut),direccion, false)
+                registro_dw(num_pedido,get_clientname(dirID),fecha,sku,Spree::Variant.get_variant_by_sku(sku).name,cant,rut,get_companyname(rut),direccion, false)
                 
               elsif (hay_stock[i] == 0 )
                 #pedir apis!
@@ -1324,7 +1283,7 @@ class HomesController < ApplicationController
                       #TODO este grupo no tiene bien guardada uestra contraseña, tener ojo pr si la arreglan para cambiarlo aqui (le falta la u a qwertyuiop)
                       url_grupo =  "http://integra1.ing.puc.cl/ecommerce/api/v1/pedirProducto"
                       r = HTTParty.post(url_grupo, {
-                          :body => {"usuario" => "Grupo2", "password" => qwertyiop,
+                          :body => {"usuario" => "Grupo2", "password" => "qwertyiop",
                                     "almacenId" => recepcion, "sku" => sku, "cant" => cant.to_i
                           }
                       })
@@ -1336,7 +1295,34 @@ class HomesController < ApplicationController
                         end
                       end
                     when 3
+                      pass="grupo2"
+                      url_grupo =  "http://integra3.ing.puc.cl/api/pedirProducto"
+                       r = HTTParty.post(url_grupo, {
+                          :body => {"usuario" => usuario, "password" => pass,
+                                    "almacenId" => recepcion, "sku" => sku, "cant" => cant.to_i
+                          }
+                      })
+                      if r["amountSent"]>0
+                        if r["amountSent"]>= cant
+                          break
+                        else
+                          cant=cant - r["cantidad"]
+                        end
+                      end
                     when 4
+                      url_grupo =  "http://integra4.ing.puc.cl/api/pedirProducto"
+                       r = HTTParty.post(url_grupo, {
+                          :body => {"usuario" => usuario, "password" => password,
+                                    "almacenId" => recepcion, "sku" => sku, "cant" => cant.to_i
+                          }
+                      })
+                      if r["amountSent"]>0
+                        if r["amountSent"]>= cant
+                          break
+                        else
+                          cant=cant - r["cantidad"]
+                        end
+                      end
                     when 5
                       url_grupo = "http://integra5.ing.puc.cl/api/v1/pedirProducto"
                       r = HTTParty.post(url_grupo, {
@@ -1352,9 +1338,23 @@ class HomesController < ApplicationController
                         end
                       end
                     when 6
+                      password="2"
+                      url_grupo ="http://integra6.ing.puc.cl/apiGrupo/pedido"
+                      r = HTTParty.post(url_grupo, {
+                          :body => {"usuario" => usuario, "password" => "2",
+                                    "almacen_id" => recepcion, "SKU" => sku, "cantidad" => cant.to_i
+                          }
+                      })
+                      unless r["error"]
+                        if r["cantidad"] >= cant
+                          break
+                        else
+                          cant=cant - r["cantidad"]
+                        end
+                      end
                     when 7
                     when 8
-                      url_grupo = "http://integra8.ing.puc.cl//api/pedirProducto"
+                      url_grupo = "http://integra8.ing.puc.cl/api/pedirProducto"
 
                       r = HTTParty.post(url_grupo, {
                           :body => {"usuario" => usuario, "password" => "b0399d2029f64d445bd131ffaa399a42d2f8e7dc",
@@ -1376,8 +1376,27 @@ class HomesController < ApplicationController
                       #TODO falta saber que retorna esta api. Además api tira error interno
                   end
                 end
+
+                
+                vaciar_recepcion
+                cant_a_despachar = cant_original-cant.to_i
+                
+                #si hay para despachar, se calcula cuanto y se despacha, y se registra
+                if cant_a_despachar>0
+                  despachar(sku,cant_a_despachar, direccion, num_pedido)
+                  registro_dw(num_pedido,get_clientname(dirId),fecha,sku,Spree::Variant.where(sku: sku).name,cant_a_despachar,rut,get_companyname(rut),direccion, false)
+                end
+                
+                #si es que la cantidad a despachar es menor que la original, hay que quebrar lo que no se despacha . se registra 
+                if cant_a_despachar<cant_original
+                    registro_dw(num_pedido,get_clientname(dirId),fecha,sku,Spree::Variant.where(sku: sku).name,cant,rut,get_companyname(rut),direccion, true)
+                end
+                 
+               
+
                 #si hay, se despacha,y registro en dw
                 #si no hay en otras bodegas, informar quiebre a dw
+
                 
               end
               i+=1
@@ -1388,8 +1407,7 @@ class HomesController < ApplicationController
       end
     end     
   end
-  
-  
+
   private
   # Use callbacks to share common setup or constraints between actions.
   def set_home
@@ -1401,7 +1419,7 @@ class HomesController < ApplicationController
     params[:home]
   end
     
-  
+ 
     
     
   def despachar(sku, cantidad, direccion, num_pedido)
@@ -1416,18 +1434,18 @@ class HomesController < ApplicationController
     end
 
     #bajar stock de spree
-    p=Spree::Variant.where(sku: sku)
-    s=Spree::StockItem.find_by_variant_id(p[0].id)
+    p=Spree::Variant.find_variant_by_sku(sku)
+    s=Spree::StockItem.find_by_variant_id(p.master.id)
     s.adjust_count_on_hand(0-cantidad)
 
   end
 
   def registro_dw(numeropedido,nombrecliente,fecha,sku,nombreproducto,cantidad,rutorganizacion,nombreorganizacion,direccion, quiebre)
     host = ENV['MONGO_RUBY_DRIVER_HOST'] || 'localhost'
-    port = ENV['MONGO_RUBY_DRIVER_PORT'] || Mongo::MongoClient::DEFAULT_PORT
+    port = ENV['MONGO_RUBY_DRIVER_PORT'] || MongoClient::DEFAULT_PORT
 
     puts "Connecting to #{host}:#{port}"
-    db = Mongo::MongoClient.new(host, port).db('integra2-mongodb')
+    db = MongoClient.new(host, port).db('integra2-mongodb')
     coll = db.collection('datawarehouse')
     coll.insert(
         'numeropedido'=>numeropedido,

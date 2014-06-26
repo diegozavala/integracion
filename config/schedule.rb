@@ -21,22 +21,3 @@
 
 set :environment, "development"
 
-every 2.hours do
-  runner "Home.test_dropbox"
-end
-
-every 2.hours do
-  runner "Home.get_reposicion"
-end
-
-every 5.hours do
-  runner "Offer.check_inactive"
-end
-
-every 5.hours do
-  runner "Offer.check_active"
-end
-
-every 5.hours do
-  runner "Offer.get_offers"
-end
