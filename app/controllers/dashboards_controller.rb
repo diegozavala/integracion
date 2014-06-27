@@ -13,18 +13,6 @@ class DashboardsController < ApplicationController
     mongo_client = Mongo::MongoClient.new(host, port)
     db = mongo_client.db('integra2-mongodb')
     coll = db.collection('datawarehouse')
-    coll.insert(
-        'numeropedido'=>152,
-        'nombrecliente'=>'nombrecliente',
-        'fecha'=>'2014-05-23',
-        'sku'=>15,
-        'producto'=>'nombreproducto',
-        'cantidad'=>52,
-        'rutorganizacion'=>'rutorganizacion',
-        'nombreorganizacion'=>'nombreorganizacion',
-        'direccion'=>'direccion',
-        'quiebre'=>true
-    )
     @dw = []
     coll.find().each do |col|
       @dw << {
@@ -127,14 +115,15 @@ class DashboardsController < ApplicationController
 
   # GET /dashboards/new
   def new
-    host = ENV['MONGO_RUBY_DRIVER_HOST'] || 'localhost'
+     host = ENV['MONGO_RUBY_DRIVER_HOST'] || 'localhost'
     port = ENV['MONGO_RUBY_DRIVER_PORT'] || Mongo::MongoClient::DEFAULT_PORT
 
     puts "Connecting to #{host}:#{port}"
     mongo_client = Mongo::MongoClient.new(host, port)
     db = mongo_client.db('integra2-mongodb')
-    db.drop_collection("datawarehouse")
-    db.create_collection('datawarehouse', :capped => false)
+    coll = db.collection('datawarehouse')
+    coll.remove(:sku=>156132)
+    coll.remove(:sku=>15)
   end
 
   # GET /dashboards/1/edit
