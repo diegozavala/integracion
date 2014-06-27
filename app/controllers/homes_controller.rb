@@ -1276,7 +1276,7 @@ class HomesController < ApplicationController
                 usuario = "grupo2"
                 password = "qwertyuiop"
                 recepcion = "5396513be4b0c7adbad816d7"
-                cant_original = cant
+                cant_original = cant.to_i
                 grupos = ApiUser.all.shuffle
                 grupos.each do |user|
                   #asumiendo que todos van a usar el mismo sistema de apis
