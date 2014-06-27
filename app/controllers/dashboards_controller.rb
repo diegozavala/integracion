@@ -115,15 +115,14 @@ class DashboardsController < ApplicationController
 
   # GET /dashboards/new
   def new
-     host = ENV['MONGO_RUBY_DRIVER_HOST'] || 'localhost'
+    host = ENV['MONGO_RUBY_DRIVER_HOST'] || 'localhost'
     port = ENV['MONGO_RUBY_DRIVER_PORT'] || Mongo::MongoClient::DEFAULT_PORT
 
     puts "Connecting to #{host}:#{port}"
     mongo_client = Mongo::MongoClient.new(host, port)
     db = mongo_client.db('integra2-mongodb')
-    coll = db.collection('datawarehouse')
-    coll.remove(:sku=>156132)
-    coll.remove(:sku=>15)
+    db.drop_collection("datawarehouse")
+    db.create_collection('datawarehouse', :capped => false)
   end
 
   # GET /dashboards/1/edit
