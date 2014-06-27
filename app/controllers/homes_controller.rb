@@ -1248,8 +1248,9 @@ class HomesController < ApplicationController
                   hay_stock[i] = 1
                   write_data_gdoc(j+4,linea[j][4]-cant)
                   
+                  
+                   registro_dw(num_pedido,get_clientname(dirId),fecha,sku,Spree::Variant.where(sku: sku).name,cant,rut,get_companyname(rut),direccion, false)
                   despachar(sku,cant.to_i, direccion, num_pedido)
-                   registro_dw(num_pedido,get_clientname(dirID),fecha,sku,Spree::Variant.get_variant_by_sku(sku).name,cant,rut,get_companyname(rut),direccion, false)
                   
                   break
                 end
@@ -1265,15 +1266,17 @@ class HomesController < ApplicationController
                 puts "Hay stock en bodega"
                 hay_stock[i] = 2
                 
-                despachar(sku,cant.to_i, direccion, num_pedido)
+                
 
-                registro_dw(num_pedido,get_clientname(dirID),fecha,sku,Spree::Variant.get_variant_by_sku(sku).name,cant,rut,get_companyname(rut),direccion, false)
+                registro_dw(num_pedido,get_clientname(dirId),fecha,sku,Spree::Variant.where(sku: sku).name,cant,rut,get_companyname(rut),direccion, false)
+                despachar(sku,cant.to_i, direccion, num_pedido)
                 
               elsif (hay_stock[i] == 0 )
                 #pedir apis!
                 usuario = "grupo2"
                 password = "qwertyuiop"
                 recepcion = "5396513be4b0c7adbad816d7"
+                cant_original = cant.to_i
                 grupos = ApiUser.all.shuffle
                 grupos.each do |user|
                   #asumiendo que todos van a usar el mismo sistema de apis
@@ -1383,8 +1386,9 @@ class HomesController < ApplicationController
                 
                 #si hay para despachar, se calcula cuanto y se despacha, y se registra
                 if cant_a_despachar>0
-                  despachar(sku,cant_a_despachar, direccion, num_pedido)
+                  
                   registro_dw(num_pedido,get_clientname(dirId),fecha,sku,Spree::Variant.where(sku: sku).name,cant_a_despachar,rut,get_companyname(rut),direccion, false)
+                  despachar(sku,cant_a_despachar, direccion, num_pedido)
                 end
                 
                 #si es que la cantidad a despachar es menor que la original, hay que quebrar lo que no se despacha . se registra 
@@ -1430,22 +1434,22 @@ class HomesController < ApplicationController
     
     cantidad.times do |j|    
       mover_stock(sto[j]["_id"].to_s, '53571c4f682f95b80b7563e5')
-      despachar_stock(sto[j]["_id"], direccion, precio, num_pedido)
+      despachar_stock(sto[j]["_id"], direccion, precio, num_pedido.to_s)
     end
 
     #bajar stock de spree
-    p=Spree::Variant.find_variant_by_sku(sku)
-    s=Spree::StockItem.find_by_variant_id(p.master.id)
+    p=Spree::Variant.where(sku: sku)
+    s=Spree::StockItem.find_by_variant_id(p[0].id)
     s.adjust_count_on_hand(0-cantidad)
 
   end
 
   def registro_dw(numeropedido,nombrecliente,fecha,sku,nombreproducto,cantidad,rutorganizacion,nombreorganizacion,direccion, quiebre)
     host = ENV['MONGO_RUBY_DRIVER_HOST'] || 'localhost'
-    port = ENV['MONGO_RUBY_DRIVER_PORT'] || MongoClient::DEFAULT_PORT
+    port = ENV['MONGO_RUBY_DRIVER_PORT'] || Mongo::MongoClient::DEFAULT_PORT
 
     puts "Connecting to #{host}:#{port}"
-    db = MongoClient.new(host, port).db('integra2-mongodb')
+    db = Mongo::MongoClient.new(host, port).db('integra2-mongodb')
     coll = db.collection('datawarehouse')
     coll.insert(
         'numeropedido'=>numeropedido,

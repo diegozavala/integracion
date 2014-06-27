@@ -59,10 +59,16 @@
 					= text_field_tag "ID Pedido",'', class: 'form-group form-control', placeholder: "ID Pedido"
 					= submit_tag "Despachar", class: 'btn btn-success btn-mini'
 		.row
-			.col-md-10.col-md-offset-1
+			.col-md-5.col-md-offset-1
 				%h2
-					Vaciar Recepcion y Pulmon
+					Vaciar Recepcion
 				= form_tag stock_post_path(go_to: "vaciar"), class: 'form-inline' do
 					= hidden_field_tag "action", value: 'vaciar'
 					= submit_tag "Vaciar", class: 'btn btn-success btn-mini'
+			.col-md-5
+				%h2
+					Despachar todo
+				= form_tag stock_post_path(go_to: "despachar"), class: 'form-inline' do
+					= hidden_field_tag "action", value: 'despachar'
+					= submit_tag "Despachar", class: 'btn btn-success btn-mini'
 
