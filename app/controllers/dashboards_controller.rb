@@ -13,6 +13,21 @@ class DashboardsController < ApplicationController
     mongo_client = Mongo::MongoClient.new(host, port)
     db = mongo_client.db('integra2-mongodb')
     coll = db.collection('datawarehouse')
+    coll.insert(
+        'numeropedido'=>110,
+        'nombrecliente'=>'nombrecliente',
+        'fecha'=>'2014-06-24',
+        'sku'=>156132,
+        'producto'=>'nombreproducto',
+        'cantidad'=>'5.00',
+        'rutorganizacion'=>'rutorganizacion',
+        'nombreorganizacion'=>'nombreorganizacion',
+        'direccion'=>'direccion',
+        'quiebre'=>true
+    )
+
+
+
     @dw = []
     coll.find().each do |col|
       @dw << {
@@ -39,7 +54,7 @@ class DashboardsController < ApplicationController
       cantAux2 = 0
       @dw.each do |dwpedido|
         if dwpedido[:sku]==codSku
-          cantAux = cantAux + dwpedido[:cantidad]
+          cantAux = cantAux + dwpedido[:cantidad].to_i
           if dwpedido[:quiebre]
             cantAux2 = cantAux2 +1
           end
