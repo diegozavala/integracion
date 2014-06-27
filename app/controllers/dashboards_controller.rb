@@ -38,7 +38,7 @@ class DashboardsController < ApplicationController
       cantAux = 0
       cantAux2 = 0
       @dw.each do |dwpedido|
-        if dwpedido[:sku]==codSku[:sku]
+        if dwpedido[:sku].to_i==codSku[:sku].to_i
           cantAux = cantAux + dwpedido[:cantidad].to_i
           if dwpedido[:quiebre]
             cantAux2 = cantAux2 +1
