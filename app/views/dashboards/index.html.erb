@@ -3,6 +3,22 @@
 <br>
 <%= link_to 'Revisar DataWarehouse', dashboard_path(:id=>1) %> 
 <h3>Graficos</h3>
+<br>
+<table>
+  <thead>
+    <tr>
+      <th><div id= "pedidos-por-dia-charts" style = "width:500px; height:300px;"></div></th>
+      <th><div id= "pedidos-por-producto-charts" style = "width:500px; height:300px;"></div></th>
+    </tr>
+  </thead>
+  <tbody>
+      <tr>
+        <td><div id= "quiebres-por-dia-charts" style = "width:500px; height:300px;"></div></td>
+        <td><div id= "quiebres-por-producto-charts" style = "width:500px; height:300px;"></div></td>
+      </tr>
+  </tbody>
+</table>
+
 
 <script type="text/javascript" charset="uts-8"> 
   $(function () {
@@ -11,7 +27,7 @@
       renderTo: 'pedidos-por-dia-charts' 
     },
     title: { 
-      text: 'Pedidos por cada dia' 
+      text: 'Cantidad de pedidos por dia' 
   },
     xAxis: { 
       type: 'datetime'
@@ -25,7 +41,7 @@
   });
 });
 </script>
-<div id= "pedidos-por-dia-charts" style = "width:560px; height:300px;"></div>
+
 <script type="text/javascript" charset="uts-8"> 
   $(function () {
   new Highcharts.Chart({
@@ -34,10 +50,10 @@
       renderTo: 'pedidos-por-producto-charts' 
     },
     title: { 
-      text: 'Pedidos por producto' 
+      text: 'Cantidad pedida por producto' 
     },
     xAxis: { 
-      categories: <%=@productospedidos%>,
+      categories: <%=@uniqSku%>,
       title: { 
         text: 'SKU'
       }
@@ -49,7 +65,55 @@
   });
 });
 </script>
-<div id= "pedidos-por-producto-charts" style = "width:560px; height:300px;"></div>
+
+
+<script type="text/javascript" charset="uts-8"> 
+  $(function () {
+  new Highcharts.Chart({
+    chart: { 
+      renderTo: 'quiebres-por-dia-charts' 
+    },
+    title: { 
+      text: 'Cantidad de quiebres de pedidos por dia' 
+  },
+    xAxis: { 
+      type: 'datetime'
+  },
+    series: [{
+      name: 'Cantidad quiebres',
+      pointInterval: <%= 1.day * 1000 %>,
+      pointStart: <%= 31536000000*44+950400000 %>,
+      data: <%=@cantidadquiebresdiarios%>
+    }]
+  });
+});
+</script>
+
+<script type="text/javascript" charset="uts-8"> 
+  $(function () {
+  new Highcharts.Chart({
+    chart: { 
+      type: 'bar',
+      renderTo: 'quiebres-por-producto-charts' 
+    },
+    title: { 
+      text: 'Cantidad de quiebres por producto' 
+    },
+    xAxis: { 
+      categories: <%=@uniqSku%>,
+      title: { 
+        text: 'SKU'
+      }
+    },
+    series: [{
+      name: 'Cantidad quiebres',
+      data: <%=@cantidadquebrada%>
+    }]
+  });
+});
+</script>
+
+
 
 
 

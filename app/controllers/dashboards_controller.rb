@@ -5,12 +5,68 @@ class DashboardsController < ApplicationController
   # GET /dashboards
   # GET /dashboards.json
   def index
-    @pedido = Pedido.all
+
+    host = ENV['MONGO_RUBY_DRIVER_HOST'] || 'localhost'
+    port = ENV['MONGO_RUBY_DRIVER_PORT'] || Mongo::MongoClient::DEFAULT_PORT
+
+    puts "Connecting to #{host}:#{port}"
+    mongo_client = Mongo::MongoClient.new(host, port)
+    db = mongo_client.db('integra2-mongodb')
+    coll = db.collection('datawarehouse')
+    @dw = []
+    coll.find().each do |col|
+      @dw << {
+      :numeropedido=>col['numeropedido'],
+      :cliente=>col['nombrecliente'],
+      :fecha=>col['fecha'],
+      :sku=>col['sku'],
+      :producto=>col['producto'],
+      :cantidad=>col['cantidad'],
+      :rutorganizacion=>col['rutorganizacion'],
+      :nombreorganizacion=>col['nombreorganizacion'],
+      :direccion=>col['direccion'],
+      :quiebre=>col['quiebre']}
+    end
+    @skus=[]
+    @dw.each do |pedido|
+      @skus << pedido[:sku]
+    end
+    @uniqSku = @skus.uniq
+    @cantidadpedida=[]
+    @cantidadquebrada=[]
+    @uniqSku.each do |codSku|
+      cantAux = 0
+      cantAux2 = 0
+      @dw.each do |dwpedido|
+        if dwpedido[:sku]==codSku
+          cantAux = cantAux + dwpedido[:cantidad]
+          if dwpedido[:quiebre]
+            cantAux2 = cantAux2 +1
+          end
+        end
+      end
+      @cantidadpedida << cantAux
+      @cantidadquebrada << cantAux2
+    end
+
     @cantidadpedidosdiarios = []
-    @productospedidos = []
-    @cantidadpedida = []
+    @cantidadquiebresdiarios = []
     @from_date = Date.new(2014, 1, 1)
     to_date   = Date.new(2014, 12, 31)
+    (@from_date..to_date).each do |d|
+      cantAux=0
+      cantAux2=0
+      @dw.each do |pedido|
+        if pedido[:fecha].to_date==d
+          cantAux = cantAux+1
+          if pedido[:quiebre]
+            cantAux2 = cantAux2+1
+          end
+        end
+      end
+      @cantidadpedidosdiarios << cantAux
+      @cantidadquiebresdiarios << cantAux2
+    end
 
 
   end
