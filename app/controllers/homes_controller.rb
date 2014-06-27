@@ -1248,8 +1248,9 @@ class HomesController < ApplicationController
                   hay_stock[i] = 1
                   write_data_gdoc(j+4,linea[j][4]-cant)
                   
-                  despachar(sku,cant.to_i, direccion, num_pedido)
+                  
                    registro_dw(num_pedido,get_clientname(dirID),fecha,sku,Spree::Variant.get_variant_by_sku(sku).name,cant,rut,get_companyname(rut),direccion, false)
+                  despachar(sku,cant.to_i, direccion, num_pedido)
                   
                   break
                 end
@@ -1265,9 +1266,10 @@ class HomesController < ApplicationController
                 puts "Hay stock en bodega"
                 hay_stock[i] = 2
                 
-                despachar(sku,cant.to_i, direccion, num_pedido)
+                
 
                 registro_dw(num_pedido,get_clientname(dirID),fecha,sku,Spree::Variant.get_variant_by_sku(sku).name,cant,rut,get_companyname(rut),direccion, false)
+                despachar(sku,cant.to_i, direccion, num_pedido)
                 
               elsif (hay_stock[i] == 0 )
                 #pedir apis!
@@ -1383,8 +1385,9 @@ class HomesController < ApplicationController
                 
                 #si hay para despachar, se calcula cuanto y se despacha, y se registra
                 if cant_a_despachar>0
-                  despachar(sku,cant_a_despachar, direccion, num_pedido)
+                  
                   registro_dw(num_pedido,get_clientname(dirId),fecha,sku,Spree::Variant.where(sku: sku).name,cant_a_despachar,rut,get_companyname(rut),direccion, false)
+                  despachar(sku,cant_a_despachar, direccion, num_pedido)
                 end
                 
                 #si es que la cantidad a despachar es menor que la original, hay que quebrar lo que no se despacha . se registra 
