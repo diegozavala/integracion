@@ -13,6 +13,18 @@ class DashboardsController < ApplicationController
     mongo_client = Mongo::MongoClient.new(host, port)
     db = mongo_client.db('integra2-mongodb')
     coll = db.collection('datawarehouse')
+    coll.insert(
+        'numeropedido'=>152,
+        'nombrecliente'=>'nombrecliente',
+        'fecha'=>'2014-05-23',
+        'sku'=>15,
+        'producto'=>'nombreproducto',
+        'cantidad'=>52,
+        'rutorganizacion'=>'rutorganizacion',
+        'nombreorganizacion'=>'nombreorganizacion',
+        'direccion'=>'direccion',
+        'quiebre'=>true
+    )
     @dw = []
     coll.find().each do |col|
       @dw << {
@@ -29,25 +41,41 @@ class DashboardsController < ApplicationController
     end
     @skus=[]
     @dw.each do |pedido|
-      @skus << pedido[:sku].to_i
+      @skus << {:sku=>pedido[:sku].to_i}
     end
-    @uniqSku = @skus.uniq
+    @uniqSku = @skus.uniq()
     @cantidadpedida=[]
     @cantidadquebrada=[]
     @uniqSku.each do |codSku|
       cantAux = 0
       cantAux2 = 0
       @dw.each do |dwpedido|
-        if dwpedido[:sku]==codSku
+        if dwpedido[:sku]==codSku[:sku]
           cantAux = cantAux + dwpedido[:cantidad].to_i
           if dwpedido[:quiebre]
             cantAux2 = cantAux2 +1
           end
         end
       end
-      @cantidadpedida << cantAux
-      @cantidadquebrada << cantAux2
+      @cantidadpedida << {:sku=>codSku[:sku].to_i, :cantidad=>cantAux}
+      @cantidadquebrada << {:sku=>codSku[:sku].to_i, :cantidad=>cantAux2}
     end
+    @topdiezpedidos = @cantidadpedida.sort_by{|s| -s[:cantidad]}.first(10)
+    @topdiezquiebres = @cantidadquebrada.sort_by{|s| -s[:cantidad]}.first(10)
+    @skuspedidosordenados=[]
+    @skusquiebresordenados=[]
+    @cantidadquiebresordenados=[]
+    @cantidadpedidosordenados=[]
+    @topdiezpedidos.each do |toppedidos|
+      @skuspedidosordenados << toppedidos[:sku] 
+      @cantidadpedidosordenados<<toppedidos[:cantidad]     
+    end
+     @topdiezquiebres.each do |topquiebres|
+      @skusquiebresordenados << topquiebres[:sku] 
+      @cantidadquiebresordenados<<topquiebres[:cantidad]     
+    end
+
+
 
     @cantidadpedidosdiarios = []
     @cantidadquiebresdiarios = []

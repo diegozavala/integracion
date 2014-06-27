@@ -50,17 +50,17 @@
       renderTo: 'pedidos-por-producto-charts' 
     },
     title: { 
-      text: 'Cantidad pedida por producto' 
+      text: 'Cantidad pedida por producto (Top 10)' 
     },
     xAxis: { 
-      categories: <%=@uniqSku%>,
+      categories: <%=@skuspedidosordenados%>,
       title: { 
         text: 'SKU'
       }
     },
     series: [{
       name: 'Cantidad pedida',
-      data: <%=@cantidadpedida%>
+      data: <%=@cantidadpedidosordenados%>
     }]
   });
 });
@@ -97,17 +97,17 @@
       renderTo: 'quiebres-por-producto-charts' 
     },
     title: { 
-      text: 'Cantidad de quiebres por producto' 
+      text: 'Cantidad de quiebres por producto (Top 10)' 
     },
     xAxis: { 
-      categories: <%=@uniqSku%>,
+      categories: <%=@skusquiebresordenados%>,
       title: { 
         text: 'SKU'
       }
     },
     series: [{
       name: 'Cantidad quiebres',
-      data: <%=@cantidadquebrada%>
+      data: <%=@cantidadquiebresordenados%>
     }]
   });
 });
